@@ -2,19 +2,31 @@ package root;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.Scanner;
 
 public class ServerMain {
+    NetworkListener nl;
+    MessageListener ml;
+
+    boolean running = true;
+
     public ServerMain(int port) {
-
         try (ServerSocket serverSocket = new ServerSocket(port)) {
+            serverSocket.setSoTimeout(100);
+            System.out.println(Utils.getTime() + " [ServerMain] Server started on port " + port);
 
-            System.out.println("Server is listening on port " + port);
+            ml = new MessageListener();
+            ml.start();
+            nl = new NetworkListener(serverSocket, ml);
+            nl.start();
 
-            while (true) {
-                Client client = new Client(serverSocket.accept());
-                System.out.println("New client connected");
-                new ServerThread(client).start();
+            while (running) {
+                Scanner scanner = new Scanner(System.in);
+                String input = scanner.nextLine();
+
+                if(input.matches("stop")){
+                    stop();
+                }
             }
 
         } catch (IOException ex) {
@@ -23,7 +35,15 @@ public class ServerMain {
         }
     }
 
+    public void stop() throws IOException {
+        System.out.println(Utils.getTime() + "[ServerMain] Shutting down Server");
+        running = false;
+        nl.close();
+        ml.close();
+
+    }
+
     public static void main(String[] args) {
-        new ServerMain(1234);
+        new ServerMain(Settings.PORT);
     }
 }

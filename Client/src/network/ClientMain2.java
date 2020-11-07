@@ -1,28 +1,26 @@
 package network;
 
 import Objects.Login;
-import Objects.Text;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class ClientMain {
+public class ClientMain2 {
     private Socket server;
-    private UpdateListener ul;
 
     private ObjectOutputStream out;
 
     boolean running = true;
 
-    public ClientMain(String hostname, int port) {
+    public ClientMain2(String hostname, int port) {
 
         try {
             server = new Socket();
             server.connect(new InetSocketAddress(hostname,port),1000);
 
-            ul = new UpdateListener(server);
+            UpdateListener ul = new UpdateListener(server);
             ul.start();
 
             out = new ObjectOutputStream(server.getOutputStream());
@@ -31,7 +29,7 @@ public class ClientMain {
             login();
             send("Hallo, wie gehts?");
 
-            //while(server.isConnected());
+            while(server.isConnected());
             disconnect();
         } catch(IOException e) {
             e.printStackTrace();
@@ -40,7 +38,8 @@ public class ClientMain {
 
     private void send(String str) {
         try {
-            out.writeObject(new Text(str));
+            out.writeInt(2);
+            out.writeUTF(str);
 
             //System.out.println("Validation: " + (in.readInt() == 2));
         } catch (IOException e) {
@@ -50,7 +49,7 @@ public class ClientMain {
 
     private void login() {
         try {
-            out.writeObject(new Login("Peter", "123456"));
+            out.writeObject(new Login("Hans", "654321"));
 
             //System.out.println("Validation: " + (in.readInt() == 1));
         } catch (IOException e) {
@@ -63,7 +62,6 @@ public class ClientMain {
             System.out.println("Closing Connection");
             server.close();
             out.close();
-            ul.close();
             //in.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -71,7 +69,7 @@ public class ClientMain {
     }
 
     public static void main(String[] args) {
-        new ClientMain("localhost", 54321);
+        new ClientMain2("localhost", 54321);
     }
 
     boolean isAlive(String SERVER_ADDRESS, int TCP_SERVER_PORT){

@@ -1,24 +1,30 @@
 package root;
 
+import Objects.Login;
+import Objects.Text;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 
 public class Client {
     private Socket socket;
+    private MessageListener ml;
 
     private String name;
     private String password;
 
     private boolean isLoggedIn = false;
 
-    DataInputStream in;
+    ObjectInputStream in;
     DataOutputStream out;
 
-    public Client(Socket socket) throws IOException {
+    public Client(Socket socket, MessageListener ml) throws IOException {
         this.socket = socket;
-        in = new DataInputStream(socket.getInputStream());
+        this.ml = ml;
+        in = new ObjectInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
     }
 
@@ -31,22 +37,30 @@ public class Client {
         return in.readInt();
     }
 
-    public void login() throws IOException {
-        System.out.println("name: " + read());
-        System.out.println("passw: " + read());
+    public void login(Login login) throws IOException, ClassNotFoundException {
+        System.out.println("[Login]");
+        System.out.println("name: " + login.getName());
+        System.out.println("passw: " + login.getPassword());
 
         answer(Codes.LOGIN);
 
         isLoggedIn = true;
     }
 
-    public void text() throws IOException {
-        System.out.println(read());
+    public void text(Text text) throws IOException, ClassNotFoundException {
+        System.out.println("[Text]");
+        System.out.println("Text: " + text.getText());
         answer(Codes.TEXT);
+        ml.message(this, text.getText());
     }
 
-    public String read() throws IOException {
-        return in.readUTF();
+    public Object read() throws ClassNotFoundException, IOException {
+        return in.readObject();
+    }
+
+    public void send(String str) throws IOException {
+        out.writeInt(3);
+        out.writeUTF(str);
     }
 
     public void answer(int code) throws IOException {
@@ -70,8 +84,8 @@ public class Client {
     }
 
     public void close() throws IOException {
-        in.close();
-        out.close();
+        //out.close();
+        //in.close();
         socket.close();
     }
 }
