@@ -1,10 +1,11 @@
 package Objects;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Login implements Serializable {
-    private String name;
-    private String password;
+    private final String name;
+    private final String password;
 
     public Login(String name, String password){
         this.name = name;
@@ -25,5 +26,19 @@ public class Login implements Serializable {
                 "name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Login login = (Login) o;
+        return Objects.equals(name, login.name) &&
+                Objects.equals(password, login.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, password);
     }
 }

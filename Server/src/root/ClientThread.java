@@ -18,16 +18,17 @@ public class ClientThread extends Thread {
             while (!client.isClosed()) {
                 Object obj = client.read();
 
-                if(obj instanceof Login)
+                if (obj instanceof Login)
                     client.login((Login) obj);
-                else if(obj instanceof Text)
+                else if (obj instanceof Text)
                     client.text((Text) obj);
-                //else
-                    //System.out.println(obj.toString());
+                else
+                    System.out.println(obj.toString());
             }
             client.close();
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println(Utils.getTime() + " [ClientThread] Client disconnected");
+            client.removeClient();
+            System.out.println(Utils.getTime() + " [ClientThread] Client <" + client.getName() + "> disconnected");
         }
     }
 }

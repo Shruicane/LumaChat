@@ -1,12 +1,10 @@
 package root;
 
 import Objects.Login;
+import Objects.Success;
 import Objects.Text;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class Client {
@@ -19,52 +17,40 @@ public class Client {
     private boolean isLoggedIn = false;
 
     ObjectInputStream in;
-    DataOutputStream out;
+    ObjectOutputStream out;
 
     public Client(Socket socket, MessageListener ml) throws IOException {
         this.socket = socket;
         this.ml = ml;
         in = new ObjectInputStream(socket.getInputStream());
-        out = new DataOutputStream(socket.getOutputStream());
+        out = new ObjectOutputStream(socket.getOutputStream());
     }
 
-    public Client(String name, String password, Socket socket) {
-        this.name = name;
-        this.password = password;
-    }
+    public void login(Login login) throws IOException {
+        name = login.getName();
+        password = login.getPassword();
+        System.out.println("[Login] " + name + ":" + password);
 
-    public int getCode() throws IOException {
-        return in.readInt();
-    }
+        send(new Success("Login","Welcome!"));
 
-    public void login(Login login) throws IOException, ClassNotFoundException {
-        System.out.println("[Login]");
-        System.out.println("name: " + login.getName());
-        System.out.println("passw: " + login.getPassword());
-
-        answer(Codes.LOGIN);
+        ml.message(new Text("System", "[" + name + "] logged in"));
 
         isLoggedIn = true;
     }
 
-    public void text(Text text) throws IOException, ClassNotFoundException {
+    public void text(Text text) throws IOException {
         System.out.println("[Text]");
         System.out.println("Text: " + text.getText());
-        answer(Codes.TEXT);
-        ml.message(this, text.getText());
+        send(new Success("Text",text.getText()));
+        ml.message(text);
     }
 
     public Object read() throws ClassNotFoundException, IOException {
         return in.readObject();
     }
 
-    public void send(String str) throws IOException {
-        out.writeInt(3);
-        out.writeUTF(str);
-    }
-
-    public void answer(int code) throws IOException {
-        out.writeInt(code);
+    public void send(Object obj) throws IOException {
+        out.writeObject(obj);
     }
 
     public boolean isLoggedIn() {
@@ -84,8 +70,21 @@ public class Client {
     }
 
     public void close() throws IOException {
-        //out.close();
-        //in.close();
+        out.close();
+        in.close();
         socket.close();
+    }
+
+    public void removeClient() {
+        ml.removeClient(this);
+        try {
+            ml.message(new Text("System", "[" + name + "] disconnected"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getName() {
+        return name;
     }
 }
