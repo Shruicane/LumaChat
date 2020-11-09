@@ -13,7 +13,14 @@ public class ClientMain {
 
     private boolean running = true;
 
-    public ClientMain(String name, String password) {
+    private String hostname;
+    private int port;
+
+    //<editor-fold desc="Client">
+    public ClientMain(String hostname, int port, String name, String password) {
+        this.hostname = hostname;
+        this.port = port;
+
         connect();
         Scanner scanner = new Scanner(System.in);
 
@@ -30,11 +37,12 @@ public class ClientMain {
             }
         }
     }
+    //</editor-fold>
 
     public void connect() {
         try {
             server = new Socket();
-            server.connect(new InetSocketAddress("localhost", 54321), 1000);
+            server.connect(new InetSocketAddress(hostname, port), 1000);
             System.out.println("[Client] connected to \"localhost\" on port 54321");
             iHandler = new InputHandler(server, this);
             iHandler.start();

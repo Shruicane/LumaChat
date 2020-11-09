@@ -21,7 +21,6 @@ public class ClientManager {
         client.close();
         onlineClients.remove(client);
         System.out.println("[NetworkListener] Client <" + client.getName() + "> disconnected");
-        System.out.println(onlineClients);
     }
 
     public LinkedList<Client> getAllClients() {
