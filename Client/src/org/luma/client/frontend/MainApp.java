@@ -1,4 +1,4 @@
-package frontend;
+package org.luma.client.frontend;
 
 import javafx.application.Application;
 import javafx.stage.Stage;

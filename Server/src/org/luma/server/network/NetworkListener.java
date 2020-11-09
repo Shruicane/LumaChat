@@ -1,0 +1,39 @@
+package org.luma.server.network;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+
+public class NetworkListener extends Thread {
+    private final ServerSocket serverSocket;
+    private final ClientManager cm;
+
+    private boolean running = true;
+
+    public NetworkListener(ClientManager cm, ServerSocket serverSocket) {
+        System.out.println("[org.luma.server.org.luma.network.NetworkListener] Started Listener");
+        this.cm = cm;
+        this.serverSocket = serverSocket;
+    }
+
+    @Override
+    public void run() {
+        while (running) {
+            try {
+                Client client = new Client(serverSocket.accept());
+                client.setNetworkListener(this);
+                cm.addClient(client);
+            } catch (IOException ignored) {
+            }
+        }
+    }
+
+    public void disconnectClient(Client client) {
+        cm.disconnectClient(client);
+    }
+
+    public void close() {
+        running = false;
+        interrupt();
+        System.out.println("[org.luma.server.org.luma.network.NetworkListener] Closed Listener");
+    }
+}

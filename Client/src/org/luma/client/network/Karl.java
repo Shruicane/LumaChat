@@ -1,9 +1,9 @@
-package network;
+package org.luma.client.network;
 
-public class Karl extends Client {
+public class Karl extends ClientMain {
 
     public Karl(String hostname, int port) {
-        super(hostname, port, "Karl", "123456");
+        super("Karl", "123456");
     }
 
     public static void main(String[] args) {

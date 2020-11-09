@@ -1,4 +1,4 @@
-package root;
+package old_root;
 
 import Objects.Login;
 import Objects.Success;
@@ -13,8 +13,6 @@ public class Client {
 
     private String name;
     private String password;
-
-    private boolean isLoggedIn = false;
 
     ObjectInputStream in;
     ObjectOutputStream out;
@@ -31,17 +29,17 @@ public class Client {
         password = login.getPassword();
         System.out.println("[Login] " + name + ":" + password);
 
-        send(new Success("Login","Welcome!"));
+        send(new Success("Login", "Welcome!"));
 
         ml.message(new Text("System", "[" + name + "] logged in"));
-
-        isLoggedIn = true;
     }
 
     public void text(Text text) throws IOException {
         System.out.println("[Text]");
+        System.out.println("Sender: " + text.getSender());
         System.out.println("Text: " + text.getText());
-        send(new Success("Text",text.getText()));
+        send(new Success("Text", text.getText()));
+
         ml.message(text);
     }
 
@@ -51,18 +49,6 @@ public class Client {
 
     public void send(Object obj) throws IOException {
         out.writeObject(obj);
-    }
-
-    public boolean isLoggedIn() {
-        return isLoggedIn;
-    }
-
-    public DataInputStream getDataInputStream() throws IOException {
-        return new DataInputStream(socket.getInputStream());
-    }
-
-    public DataOutputStream getDataOutputStream() throws IOException {
-        return new DataOutputStream(socket.getOutputStream());
     }
 
     public boolean isClosed() {
@@ -84,7 +70,24 @@ public class Client {
         }
     }
 
+    public void update(String name, String password) {
+        if (name != null) this.name = name;
+        if (password != null) this.password = password;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean compareName(String name) {
+        return this.name.matches(name);
+    }
+
+    public boolean comparePassword(String password){
+        return this.password.matches(password);
     }
 }
