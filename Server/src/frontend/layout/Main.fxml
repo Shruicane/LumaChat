@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="586.0" prefWidth="899.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="frontend.controller.Controller">
+  <tabs>
+    <Tab text="Server Log">
+         <content>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <TextArea fx:id="logArea" editable="false" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+               </children></HBox>
+         </content></Tab>
+      <Tab text="User Management">
+         <content>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <TableView fx:id="userTableView" prefHeight="557.0" prefWidth="380.0">
+                    <columns>
+                      <TableColumn prefWidth="197.0" text="Username" />
+                      <TableColumn prefWidth="182.0" text="Password" />
+                    </columns>
+                  </TableView>
+                  <VBox prefHeight="371.0" prefWidth="252.0" spacing="15.0">
+                     <children>
+                        <Button fx:id="warnUserButton" mnemonicParsing="false" onAction="#onClickWarnUserButton" text="Warn user" />
+                        <Button fx:id="tempBanButton" mnemonicParsing="false" onAction="#onClickTempBanButton" text="Ban user Temporary" />
+                        <Button fx:id="permanentBanButton" mnemonicParsing="false" onAction="#onClickPermanentBanButton" text="Ban User permanent" />
+                        <Button fx:id="unbanButton" mnemonicParsing="false" onAction="#onClickUnbanButton" text="Unban User" />
+                        <ToggleButton fx:id="showPwdButton" mnemonicParsing="false" onAction="#onClickShowPwdButton" text="Show Passwords" />
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets left="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+         </content>
+      </Tab>
+      <Tab text="Group Management">
+         <content>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <ListView fx:id="groupList" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="userList" prefHeight="200.0" prefWidth="200.0" />
+                  <VBox prefHeight="371.0" prefWidth="209.0" spacing="15.0">
+                     <children>
+                        <Button fx:id="removeUserButton" mnemonicParsing="false" onAction="#onClickRemoveUserButton" text="Remove User" />
+                        <Button fx:id="addUserButton" mnemonicParsing="false" onAction="#onClickAddUserButton" text="Add User" />
+                        <Button fx:id="deleteGroupButton" mnemonicParsing="false" onAction="#onClickDeleteGroupButton" text="Delete Group" />
+                        <Button fx:id="createGroupButton" mnemonicParsing="false" onAction="#onClickCreateGroupButton" text="Create Group" />
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets left="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+         </content>
+      </Tab>
+      <Tab text="Settings">
+         <content>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <TextField fx:id="ipAddressTextField" layoutX="20.0" layoutY="95.0" prefHeight="25.0" prefWidth="121.0" />
+                  <TextField fx:id="databaseTextField" layoutX="243.0" layoutY="95.0" prefHeight="25.0" prefWidth="124.0" />
+                  <Label layoutX="14.0" layoutY="14.0" prefHeight="21.0" prefWidth="143.0" text="Database Settings" underline="true" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="20.0" layoutY="69.0" prefHeight="0.0" prefWidth="96.0" text="IP-Adresse" />
+                  <Label layoutX="156.0" layoutY="70.0" prefHeight="17.0" prefWidth="32.0" text="Port" />
+                  <Label layoutX="243.0" layoutY="69.0" prefHeight="0.0" prefWidth="96.0" text="Database name" />
+                  <Label layoutX="424.0" layoutY="47.0" prefHeight="0.0" prefWidth="96.0" text="Database Login:" underline="true" />
+                  <Label layoutX="425.0" layoutY="69.0" prefHeight="17.0" prefWidth="49.0" text="User" />
+                  <Label layoutX="515.0" layoutY="69.0" prefHeight="0.0" prefWidth="96.0" text="Password" />
+                  <TextField fx:id="portTextField" layoutX="154.0" layoutY="95.0" prefHeight="25.0" prefWidth="48.0" promptText="12345" />
+                  <Label layoutX="146.0" layoutY="99.0" text=":" />
+                  <TextField fx:id="dataBaseUserTextField" layoutX="425.0" layoutY="95.0" prefHeight="25.0" prefWidth="77.0" />
+                  <TextField fx:id="databasePasswordTextField" layoutX="515.0" layoutY="95.0" prefHeight="25.0" prefWidth="83.0" />
+                  <ButtonBar layoutX="685.0" layoutY="503.0" prefHeight="40.0" prefWidth="210.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0">
+                    <buttons>
+                      <Button fx:id="saveSettingsBtn" mnemonicParsing="false" onAction="#onClickSaveBtn" text="Save Settings" />
+                        <Button fx:id="discardSettingsBtn" mnemonicParsing="false" onAction="#onClickDiscardBtn" text="Discard" />
+                    </buttons>
+                  </ButtonBar>
+               </children></AnchorPane>
+         </content>
+      </Tab>
+  </tabs>
+</TabPane>
