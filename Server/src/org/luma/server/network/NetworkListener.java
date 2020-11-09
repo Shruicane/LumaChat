@@ -10,7 +10,7 @@ public class NetworkListener extends Thread {
     private boolean running = true;
 
     public NetworkListener(ClientManager cm, ServerSocket serverSocket) {
-        System.out.println("[org.luma.server.org.luma.network.NetworkListener] Started Listener");
+        System.out.println("[NetworkListener] Started Listener");
         this.cm = cm;
         this.serverSocket = serverSocket;
     }
@@ -34,6 +34,6 @@ public class NetworkListener extends Thread {
     public void close() {
         running = false;
         interrupt();
-        System.out.println("[org.luma.server.org.luma.network.NetworkListener] Closed Listener");
+        System.out.println("[NetworkListener] Closed Listener");
     }
 }

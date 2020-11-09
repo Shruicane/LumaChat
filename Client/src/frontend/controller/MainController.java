@@ -1,6 +1,6 @@
 package frontend.controller;
 
-import frontend.MainApp;
+import org.luma.client.frontend.MainApp;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;

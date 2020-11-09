@@ -14,14 +14,13 @@ public class ClientManager {
         allClients.add(client);
         onlineClients.add(client);
         client.start();
-        System.out.println("[org.luma.server.org.luma.network.NetworkListener] New client connected");
-        System.out.println(onlineClients);
+        System.out.println("[NetworkListener] New client connected");
     }
 
     public void disconnectClient(Client client) {
         client.close();
         onlineClients.remove(client);
-        System.out.println("[NetworkListsner] org.luma.server.org.luma.network.Client <" + client.getName() + "> disconnected");
+        System.out.println("[NetworkListener] Client <" + client.getName() + "> disconnected");
         System.out.println(onlineClients);
     }
 

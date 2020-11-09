@@ -8,7 +8,7 @@ public class MessageListener {
     private final ClientManager cm;
 
     public MessageListener(ClientManager cm) {
-        System.out.println("[org.luma.server.org.luma.network.MessageListener] Started Listener");
+        System.out.println("[MessageListener] Started Listener");
         this.cm = cm;
     }
 
