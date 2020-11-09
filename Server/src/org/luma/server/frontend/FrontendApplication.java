@@ -1,4 +1,4 @@
-package frontend;
+package org.luma.server.frontend;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

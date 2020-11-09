@@ -1,6 +1,6 @@
-package root;
+package org.luma.server.settings;
 
-import database.MySQLConnection;
+import org.luma.server.database.MySQLConnection;
 
 public class ServerMain {
     public static void main(String[] args) {

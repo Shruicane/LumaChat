@@ -1,4 +1,4 @@
-package settings;
+package org.luma.server.settings;
 
 public class ServerSettings {
 

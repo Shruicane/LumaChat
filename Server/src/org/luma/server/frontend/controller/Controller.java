@@ -1,10 +1,10 @@
-package frontend.controller;
+package org.luma.server.frontend.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import settings.ServerSettings;
-import settings.Settings;
+import org.luma.server.settings.ServerSettings;
+import org.luma.server.settings.Settings;
 
 public class Controller {
 

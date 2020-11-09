@@ -1,4 +1,4 @@
-package database;
+package org.luma.server.database;
 
 public enum BanStatus {
 

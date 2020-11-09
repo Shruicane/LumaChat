@@ -1,4 +1,4 @@
-package database;
+package org.luma.server.database;
 
 
 import java.sql.*;
