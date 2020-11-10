@@ -1,5 +1,7 @@
 package org.luma.server.network;
 
+import Objects.Login;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -29,6 +31,10 @@ public class NetworkListener extends Thread {
 
     public void disconnectClient(Client client) {
         cm.disconnectClient(client);
+    }
+
+    public boolean login(Login login) {
+        return cm.login(login);
     }
 
     public void close() {

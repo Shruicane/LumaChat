@@ -1,11 +1,15 @@
 package org.luma.server.network;
 
+import Objects.Login;
+import Objects.RequestObject;
+import Objects.Success;
 import Objects.Text;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Objects;
 
 public class Client {
     private Socket socket;
@@ -15,6 +19,8 @@ public class Client {
     private String name;
     private String password;
 
+    private boolean loggedIn = false;
+
     private boolean running = true;
 
     ObjectInputStream in;
@@ -22,18 +28,41 @@ public class Client {
 
     Thread inputHandler;
 
+    public Client(Login login) {
+        this.name = login.getSender();
+        this.password = login.getMessage();
+    }
+
     public Client(Socket socket) throws IOException {
         this.socket = socket;
         in = new ObjectInputStream(socket.getInputStream());
         out = new ObjectOutputStream(socket.getOutputStream());
 
         inputHandler = new Thread(() -> {
-            while(running) {
+            while (running) {
                 try {
                     Object obj = in.readObject();
 
-                    if (obj instanceof Text) {
-                        ml.shout((Text) obj);
+                    System.out.println("Recieved Object: " + obj.toString());
+
+                    if (!loggedIn) {
+                        if(obj instanceof Login){
+                            if(loggedIn = nl.login((Login) obj)) {
+                                send(new Success((RequestObject) obj, "Login Successful", true));
+                                name = ((Login) obj).getSender();
+                                password = ((Login) obj).getMessage();
+                            }
+                            else {
+                                send(new Success((RequestObject) obj, "Login Failed", false));
+                            }
+                        } else{
+                            send(new Success((RequestObject) obj, "Not Logging in!", false));
+                        }
+                    } else {
+                        if (obj instanceof Text) {
+                            send(new Success((RequestObject) obj, "Message Received", true));
+                            ml.shout(new Text(name, ((Text) obj).getMessage()));
+                        }
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     nl.disconnectClient(this);
@@ -66,6 +95,9 @@ public class Client {
 
     public void send(Object obj) {
         try {
+            System.out.println("Send Object: " + obj.toString());
+            // Free Client InputStream from reading
+            out.writeObject(null);
             out.writeObject(obj);
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,5 +106,30 @@ public class Client {
 
     public String getName() {
         return name;
+    }
+
+    public boolean checkPassword(String password){
+        return this.password.equals(password);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return name.equals(client.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

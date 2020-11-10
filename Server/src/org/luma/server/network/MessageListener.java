@@ -14,10 +14,9 @@ public class MessageListener {
 
     public void shout(Text text) {
         System.out.println("From: " + text.getSender() + " To: All");
-        System.out.println("Message: " + text.getText());
+        System.out.println("Message: " + text.getMessage());
         LinkedList<Client> clients = cm.getOnlineClients();
-        System.out.println(clients);
-        for(Client client:clients){
+        for(Client client:clients) {
             client.send(text);
         }
     }

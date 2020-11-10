@@ -25,11 +25,11 @@ public class Client {
     }
 
     public void login(Login login) throws IOException {
-        name = login.getName();
-        password = login.getPassword();
+        name = login.getSender();
+        password = login.getMessage();
         System.out.println("[Login] " + name + ":" + password);
 
-        send(new Success("Login", "Welcome!"));
+        //send(new Success("Login", "Welcome!"));
 
         ml.message(new Text("System", "[" + name + "] logged in"));
     }
@@ -37,8 +37,8 @@ public class Client {
     public void text(Text text) throws IOException {
         System.out.println("[Text]");
         System.out.println("Sender: " + text.getSender());
-        System.out.println("Text: " + text.getText());
-        send(new Success("Text", text.getText()));
+        System.out.println("Text: " + text.getMessage());
+        //send(new Success("Text", text.getMessage()));
 
         ml.message(text);
     }

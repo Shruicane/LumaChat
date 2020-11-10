@@ -1,6 +1,5 @@
 package old_root;
 
-import Objects.Close;
 import Objects.Login;
 import Objects.Success;
 import Objects.Text;
@@ -74,11 +73,11 @@ public class Client {
                     Object obj = in.readObject();
 
                     if (obj instanceof Text)
-                        System.out.println(getTime() + " [" + ((Text) obj).getSender() + "] " + ((Text) obj).getText());
-                    else if (obj instanceof Success)
-                        System.out.println("[Client] " + ((Success) obj).getType() + " Request successful with message: " + ((Success) obj).getMsg());
-                    else if (obj instanceof Close)
-                        disconnect();
+                        System.out.println(getTime() + " [" + ((Text) obj).getSender() + "] " + ((Text) obj).getMessage());
+                    else if (obj instanceof Success);
+                        //System.out.println("[Client] " + ((Success) obj).getType() + " Request successful with message: " + ((Success) obj).getMessage());
+                    //else if (obj instanceof Close)
+                    //   disconnect();
                 } catch (IOException | ClassNotFoundException e) {
                     System.out.println("[Client] Closing Listener");
                     disconnect();

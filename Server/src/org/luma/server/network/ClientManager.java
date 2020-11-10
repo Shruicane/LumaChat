@@ -1,5 +1,7 @@
 package org.luma.server.network;
 
+import Objects.Login;
+
 import java.util.LinkedList;
 
 public class ClientManager {
@@ -7,14 +9,25 @@ public class ClientManager {
     private final LinkedList<Client> onlineClients = new LinkedList<>();
 
     public ClientManager() {
+
     }
 
     public void addClient(Client client) {
+        System.out.println("[NetworkListener] New client connected");
         client.setMessageListener(new MessageListener(this));
         allClients.add(client);
         onlineClients.add(client);
         client.start();
-        System.out.println("[NetworkListener] New client connected");
+    }
+
+    public boolean login(Login login){
+        Client client = new Client(login);
+        if(onlineClients.contains(client))
+            return false;
+        int index = allClients.indexOf(client);
+        if(index == -1)
+            return true;
+        return allClients.get(index).checkPassword(login.getMessage());
     }
 
     public void disconnectClient(Client client) {
@@ -23,15 +36,7 @@ public class ClientManager {
         System.out.println("[NetworkListener] Client <" + client.getName() + "> disconnected");
     }
 
-    public LinkedList<Client> getAllClients() {
-        LinkedList<Client> clone = new LinkedList<>();
-        clone.addAll(allClients);
-        return clone;
-    }
-
     public LinkedList<Client> getOnlineClients() {
-        LinkedList<Client> clone = new LinkedList<>();
-        clone.addAll(onlineClients);
-        return clone;
+        return onlineClients;
     }
 }

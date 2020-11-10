@@ -1,5 +1,6 @@
 package org.luma.client.network;
 
+import Objects.Login;
 import Objects.Text;
 
 import java.io.IOException;
@@ -9,15 +10,18 @@ import java.util.Scanner;
 
 public class ClientMain {
     private Socket server;
-    private InputHandler iHandler;
+    private IOHandler ioHandler;
 
     private boolean running = true;
+    private boolean loggedIn = false;
 
-    private String hostname;
-    private int port;
+    private final String hostname;
+    private final int port;
 
-    //<editor-fold desc="Client">
-    public ClientMain(String hostname, int port, String name, String password) {
+    private String name;
+    private String password;
+
+    public ClientMain(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
 
@@ -27,37 +31,54 @@ public class ClientMain {
         while (running) {
             String input = scanner.nextLine();
             if (input.matches("exit")) {
-                disconnect();
+                disconnect("[Client:ClientMain] disconnected");
             } else if (input.matches("stop")) {
                 stop();
-            } else if (input.matches("login")) {
-                connect();
-            } else {
-                iHandler.send(new Text(name, input));
+            } else if (!loggedIn && input.split(" ")[0].matches("login")) {
+                try {
+                    String[] acc = input.split(" ")[1].split(":");
+                    if(loggedIn = login(new Login(acc[0], acc[1]))){
+                        name = acc[0];
+                        password = acc[1];
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("[Client:ClientMain] Wrong Format: login <name>:<password>");
+                }
+            } else if (!input.isEmpty()) {
+                boolean success = ioHandler.send(new Text(name, input));
             }
         }
     }
-    //</editor-fold>
+
+    public boolean login(Login login) {
+        if(!isConnected())
+            connect();
+        return ioHandler.send(login);
+    }
 
     public void connect() {
         try {
             server = new Socket();
             server.connect(new InetSocketAddress(hostname, port), 1000);
-            System.out.println("[Client] connected to \"localhost\" on port 54321");
-            iHandler = new InputHandler(server, this);
-            iHandler.start();
+            System.out.println("[Client:connect] connected to " + hostname + " on port " + port);
+            ioHandler = new IOHandler(server, this);
+            ioHandler.start();
         } catch (IOException e) {
-            System.out.println("[Client] Server is not reachable");
+            System.out.println("[Client:connect] Server is not reachable");
         }
     }
 
-    public void disconnect() {
+    public void disconnect(String msg) {
         if (!isConnected())
-            System.out.println("[Client] not connected");
+            System.out.println("[Client:disconnect] not connected");
         else try {
-            iHandler.close();
-            System.out.println("[Client] disconnected");
-        } catch (NullPointerException ignored) {
+            loggedIn = false;
+            ioHandler.close();
+            server.close();
+            System.out.println(msg);
+        } catch (NullPointerException | IOException ignored) {
+            System.out.println("Test:disconnect");
         }
     }
 
@@ -66,9 +87,9 @@ public class ClientMain {
     }
 
     public void stop() {
-        System.out.println("[Client] stopping");
+        System.out.println("[Client:stop] stopping");
         running = false;
-        if(isConnected())
-            disconnect();
+        if (isConnected())
+            disconnect("[Client:stop] disconnected");
     }
 }

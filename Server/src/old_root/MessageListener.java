@@ -1,6 +1,5 @@
 package old_root;
 
-import Objects.Close;
 import Objects.Text;
 
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class MessageListener extends Thread {
     public void close() throws IOException {
         this.interrupt();
         for (Client client : clients) {
-            client.send(new Close());
+            //client.send(new Close());
             client.close();
         }
         System.out.println(Utils.getTime() + " [MessageListener] Closed MessageListener");

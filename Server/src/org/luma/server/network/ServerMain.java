@@ -6,32 +6,31 @@ import java.net.ServerSocket;
 public class ServerMain {
     ServerSocket serverSocket;
 
-    private NetworkListener nl;
-
-    int port = 54321;
-
     public ServerMain() {
+        System.out.println("[Server] Starting");
+        long startTime = System.currentTimeMillis();
         ClientManager cm = new ClientManager();
 
         start();
 
-        nl = new NetworkListener(cm, serverSocket);
+        NetworkListener nl = new NetworkListener(cm, serverSocket);
 
         nl.start();
 
-        while(true);
+        System.out.println("[Server] Done! (" + (System.currentTimeMillis() - startTime) + "ms)");
+        while (true) ;
     }
 
-    private void start(){
+    private void start() {
         try {
-            serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(54321);
             serverSocket.setSoTimeout(100);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         new ServerMain();
     }
 }
