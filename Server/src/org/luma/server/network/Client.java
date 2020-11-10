@@ -4,6 +4,7 @@ import Objects.Login;
 import Objects.RequestObject;
 import Objects.Success;
 import Objects.Text;
+import Objects.SystemText;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -47,10 +48,11 @@ public class Client {
 
                     if (!loggedIn) {
                         if(obj instanceof Login){
-                            if(loggedIn = nl.login((Login) obj)) {
+                            if(loggedIn = nl.login((Login) obj, this)) {
                                 send(new Success((RequestObject) obj, "Login Successful", true));
                                 name = ((Login) obj).getSender();
                                 password = ((Login) obj).getMessage();
+                                nl.shout(new SystemText("[+] " + name));
                             }
                             else {
                                 send(new Success((RequestObject) obj, "Login Failed", false));
@@ -108,6 +110,10 @@ public class Client {
         return name;
     }
 
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
     public boolean checkPassword(String password){
         return this.password.equals(password);
     }
@@ -117,7 +123,7 @@ public class Client {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return name.equals(client.name);
+        return Objects.equals(name, client.name);
     }
 
     @Override

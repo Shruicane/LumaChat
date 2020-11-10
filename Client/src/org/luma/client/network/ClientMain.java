@@ -6,6 +6,7 @@ import Objects.Text;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 public class ClientMain {
@@ -25,26 +26,31 @@ public class ClientMain {
         this.hostname = hostname;
         this.port = port;
 
+        System.out.println("[Client] Started");
         connect();
+
         Scanner scanner = new Scanner(System.in);
 
         while (running) {
             String input = scanner.nextLine();
-            if (input.matches("exit")) {
-                disconnect("[Client:ClientMain] disconnected");
-            } else if (input.matches("stop")) {
+
+            if (input.matches("stop")) {
                 stop();
+            } else if (input.matches("exit")) {
+                disconnect("[Client:ClientMain] disconnected");
             } else if (!loggedIn && input.split(" ")[0].matches("login")) {
                 try {
                     String[] acc = input.split(" ")[1].split(":");
-                    if(loggedIn = login(new Login(acc[0], acc[1]))){
+                    if (loggedIn = login(new Login(acc[0], acc[1]))) {
                         name = acc[0];
                         password = acc[1];
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println("[Client:ClientMain] Wrong Format: login <name>:<password>");
                 }
+            } else if (!isConnected()) {
+                System.out.println("[Client:ClientMain] not connected");
             } else if (!input.isEmpty()) {
                 boolean success = ioHandler.send(new Text(name, input));
             }
@@ -52,7 +58,7 @@ public class ClientMain {
     }
 
     public boolean login(Login login) {
-        if(!isConnected())
+        if (!isConnected())
             connect();
         return ioHandler.send(login);
     }
@@ -65,6 +71,11 @@ public class ClientMain {
             ioHandler = new IOHandler(server, this);
             ioHandler.start();
         } catch (IOException e) {
+            try {
+                server.close();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
             System.out.println("[Client:connect] Server is not reachable");
         }
     }
@@ -78,7 +89,6 @@ public class ClientMain {
             server.close();
             System.out.println(msg);
         } catch (NullPointerException | IOException ignored) {
-            System.out.println("Test:disconnect");
         }
     }
 

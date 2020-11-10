@@ -1,9 +1,12 @@
 package org.luma.server.network;
 
 import Objects.Login;
+import Objects.SystemText;
+import Objects.Text;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.LinkedList;
 
 public class NetworkListener extends Thread {
     private final ServerSocket serverSocket;
@@ -21,20 +24,35 @@ public class NetworkListener extends Thread {
     public void run() {
         while (running) {
             try {
-                Client client = new Client(serverSocket.accept());
-                client.setNetworkListener(this);
-                cm.addClient(client);
+                connectClient(new Client(serverSocket.accept()));
             } catch (IOException ignored) {
+                // Timeout after 100ms
             }
         }
     }
 
-    public void disconnectClient(Client client) {
-        cm.disconnectClient(client);
+    private void connectClient(Client client) {
+        client.setNetworkListener(this);
+        cm.addClient(client);
     }
 
-    public boolean login(Login login) {
-        return cm.login(login);
+    public void disconnectClient(Client client) {
+        cm.disconnectClient(client);
+        if(client.isLoggedIn())
+            shout(new SystemText("[-] " + client.getName()));
+    }
+
+    public boolean login(Login login, Client client) {
+        return cm.login(login, client);
+    }
+
+    public void shout(SystemText text) {
+        System.out.println("From: " + text.getSender() + " To: All");
+        System.out.println("Message: " + text.getMessage());
+        LinkedList<Client> clients = cm.getOnlineClients();
+        for (Client client : clients) {
+            client.send(text);
+        }
     }
 
     public void close() {
