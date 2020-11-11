@@ -1,7 +1,9 @@
 package org.luma.server.network;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.Scanner;
 
 public class ServerMain {
@@ -63,6 +65,8 @@ public class ServerMain {
             serverSocket.setSoTimeout(100);
             nl = new NetworkListener(cm, serverSocket);
             nl.start();
+        } catch (SocketException e) {
+            Logger.error("Server >> Address already in use");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -100,7 +104,7 @@ public class ServerMain {
         Logger.cmd("help >> exit");
         Logger.cmd("help >> list all/connected/online");
         Logger.cmd("help >> kick [name] <reason>");
-        Logger.cmd("help >> edit [name] name/passw [string]");
+        Logger.cmd("help >> edit name/passw [name] [string]");
         Logger.cmd("help >> new [name]:[password]");
         Logger.cmd("help >> delete [name] <reason>");
     }
@@ -134,19 +138,19 @@ public class ServerMain {
     private void edit(String input) {
         String[] cmd = input.split(" ");
         if (cmd.length == 4) {
-            Client client = cm.findClient(cmd[1]);
+            Client client = cm.findClientFromAll(cmd[2]);
             if (client == null)
                 Logger.error("CMD >> That User does not exist!");
-            else if (cmd[2].matches("name")) {
+            else if (cmd[1].matches("name")) {
                 client.update(cmd[3], null);
-                Logger.cmd("edit >> Changed name from \"" + Logger.italic(cmd[1]) + "\" to \"" + Logger.italic(cmd[3]) + "\"");
-            } else if (cmd[2].matches("passw")) {
+                Logger.cmd("edit >> Changed name from \"" + Logger.italic(cmd[2]) + "\" to \"" + Logger.italic(cmd[3]) + "\"");
+            } else if (cmd[1].matches("passw")) {
                 client.update(null, cmd[3]);
-                Logger.cmd("edit >> Changed password from \"" + Logger.italic(cmd[1]) + "\" to \"" + Logger.italic(cmd[3]) + "\"");
+                Logger.cmd("edit >> Changed password from \"" + Logger.italic(cmd[2]) + "\" to \"" + Logger.italic(cmd[3]) + "\"");
             } else
-                Logger.error("CMD >> Wrong Format: edit [name] name/passw [string]");
+                Logger.error("CMD >> Wrong Format: edit name/passw [name] [string]");
         } else
-            Logger.error("CMD >> Wrong Format: edit [name] name/passw [string]");
+            Logger.error("CMD >> Wrong Format: edit name/passw [name] [string]");
     }
 
     private void newC(String input) {
@@ -175,7 +179,11 @@ public class ServerMain {
     }
 
     private boolean isAlive() {
-        return !serverSocket.isClosed();
+        try {
+            return !serverSocket.isClosed();
+        } catch (Exception ignore) {
+        }
+        return false;
     }
 
     public static void main(String[] args) {

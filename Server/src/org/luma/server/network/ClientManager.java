@@ -29,7 +29,7 @@ public class ClientManager {
     public void deleteClient(String name, String msg) {
         Client client = findClientFromAll(name);
         if (client == null) {
-            Logger.network("ClientManager >> No client <" + Logger.italic(name) + "> found");
+            Logger.warning("ClientManager >> No client <" + Logger.italic(name) + "> found");
         } else {
             kick(name, msg);
             allClients.remove(client);
