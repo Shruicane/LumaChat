@@ -5,7 +5,9 @@ import Objects.RequestObject;
 import Objects.Success;
 import Objects.Text;
 import Objects.SystemText;
+import Objects.Get;
 
+import javax.annotation.processing.SupportedSourceVersion;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -44,22 +46,25 @@ public class Client {
                 try {
                     Object obj = in.readObject();
 
-                    System.out.println("Recieved Object: " + obj.toString());
+                    Logger.info("Recieved Object: " + obj.toString());
 
                     if (!loggedIn) {
-                        if(obj instanceof Login){
-                            if(loggedIn = nl.login((Login) obj, this)) {
+                        if (obj instanceof Login) {
+                            if (loggedIn = nl.login((Login) obj, this)) {
                                 send(new Success((RequestObject) obj, "Login Successful", true));
                                 name = ((Login) obj).getSender();
                                 password = ((Login) obj).getMessage();
-                                nl.shout(new SystemText("[+] " + name));
-                            }
-                            else {
+                                ml.shout(new SystemText("[+] " + name));
+                                send(new SystemText("Online Users: " + ml.getOnlineClients()));
+                            } else {
                                 send(new Success((RequestObject) obj, "Login Failed", false));
                             }
-                        } else{
+                        } else {
                             send(new Success((RequestObject) obj, "Not Logging in!", false));
                         }
+                    } else if (obj instanceof Get) {
+                        if (((Get) obj).getType().matches("onlineClients"))
+                            send(new Success((Get) obj, ml.getOnlineClients(), true));
                     } else {
                         if (obj instanceof Text) {
                             send(new Success((RequestObject) obj, "Message Received", true));
@@ -67,7 +72,8 @@ public class Client {
                         }
                     }
                 } catch (IOException | ClassNotFoundException e) {
-                    nl.disconnectClient(this);
+                    if (!socket.isClosed())
+                        nl.disconnectClient(this);
                 }
             }
         });
@@ -88,7 +94,7 @@ public class Client {
     public void close() {
         try {
             running = false;
-            inputHandler.interrupt();
+            //inputHandler.interrupt();
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,13 +103,22 @@ public class Client {
 
     public void send(Object obj) {
         try {
-            System.out.println("Send Object: " + obj.toString());
+            Logger.info("Send Object: " + obj.toString());
             // Free Client InputStream from reading
             out.writeObject(null);
             out.writeObject(obj);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void logout() {
+        loggedIn = false;
+    }
+
+    public void update(String name, String password) {
+        if (name != null) this.name = name;
+        if (password != null) this.password = password;
     }
 
     public String getName() {
@@ -114,7 +129,11 @@ public class Client {
         return loggedIn;
     }
 
-    public boolean checkPassword(String password){
+    public boolean checkName(String name) {
+        return this.name.equals(name);
+    }
+
+    public boolean checkPassword(String password) {
         return this.password.equals(password);
     }
 

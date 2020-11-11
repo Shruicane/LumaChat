@@ -1,5 +1,6 @@
 package org.luma.client.network;
 
+import Objects.Get;
 import Objects.Login;
 import Objects.Text;
 
@@ -26,7 +27,7 @@ public class ClientMain {
         this.hostname = hostname;
         this.port = port;
 
-        System.out.println("[Client] Started");
+        Logger.network("Client >> Started");
         connect();
 
         Scanner scanner = new Scanner(System.in);
@@ -37,37 +38,48 @@ public class ClientMain {
             if (input.matches("stop")) {
                 stop();
             } else if (input.matches("exit")) {
-                disconnect("[Client:ClientMain] disconnected");
+                disconnect("Client >> Disconnected");
             } else if (!loggedIn && input.split(" ")[0].matches("login")) {
-                try {
-                    String[] acc = input.split(" ")[1].split(":");
-                    if (loggedIn = login(new Login(acc[0], acc[1]))) {
-                        name = acc[0];
-                        password = acc[1];
-                    }
-                } catch (NullPointerException ignored) {
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.out.println("[Client:ClientMain] Wrong Format: login <name>:<password>");
-                }
+                login(input);
+            } else if (input.matches("help")) {
+                Logger.cmd("help >> login [name]:[password]");
+                Logger.cmd("help >> stop");
+                Logger.cmd("help >> exit");
+                Logger.cmd("help >> list");
             } else if (!isConnected()) {
-                System.out.println("[Client:ClientMain] not connected");
+                Logger.error("Client >> Not connected");
+            } else if (input.matches("list")) {
+                Logger.cmd("list >> Online Users: " + ioHandler.send(new Get("onlineClients")));
             } else if (!input.isEmpty()) {
                 boolean success = ioHandler.send(new Text(name, input));
             }
         }
     }
 
-    public boolean login(Login login) {
+    private void login(String input) {
+        try {
+            String[] acc = input.split(" ")[1].split(":");
+            if (loggedIn = login(new Login(acc[0], acc[1]))) {
+                name = acc[0];
+                password = acc[1];
+            }
+        } catch (NullPointerException ignored) {
+        } catch (ArrayIndexOutOfBoundsException e) {
+            Logger.error("CMD >> Wrong Format: login [name]:[password]");
+        }
+    }
+
+    private boolean login(Login login) {
         if (!isConnected())
             connect();
         return ioHandler.send(login);
     }
 
-    public void connect() {
+    private void connect() {
         try {
             server = new Socket();
             server.connect(new InetSocketAddress(hostname, port), 1000);
-            System.out.println("[Client:connect] connected to " + hostname + " on port " + port);
+            Logger.network("Client >> Connected to " + hostname + " on port " + port);
             ioHandler = new IOHandler(server, this);
             ioHandler.start();
         } catch (IOException e) {
@@ -76,18 +88,18 @@ public class ClientMain {
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
-            System.out.println("[Client:connect] Server is not reachable");
+            Logger.warning("Client >> Server is not reachable");
         }
     }
 
     public void disconnect(String msg) {
         if (!isConnected())
-            System.out.println("[Client:disconnect] not connected");
+            Logger.error("Client >> Not connected");
         else try {
             loggedIn = false;
             ioHandler.close();
             server.close();
-            System.out.println(msg);
+            Logger.network(msg);
         } catch (NullPointerException | IOException ignored) {
         }
     }
@@ -96,10 +108,10 @@ public class ClientMain {
         return !server.isClosed();
     }
 
-    public void stop() {
-        System.out.println("[Client:stop] stopping");
-        running = false;
+    private void stop() {
         if (isConnected())
-            disconnect("[Client:stop] disconnected");
+            disconnect("Client >> Disconnected");
+        Logger.network("Client >> Stopping");
+        running = false;
     }
 }

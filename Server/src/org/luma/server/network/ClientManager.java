@@ -1,6 +1,7 @@
 package org.luma.server.network;
 
 import Objects.Login;
+import Objects.SystemText;
 
 import java.util.LinkedList;
 
@@ -15,7 +16,7 @@ public class ClientManager {
     }
 
     public void addClient(Client client) {
-        System.out.println("[ClientManager] New client connected");
+        Logger.network("ClientManager >> New client connected");
         client.setMessageListener(new MessageListener(this));
         connectedClients.add(client);
         client.start();
@@ -28,22 +29,83 @@ public class ClientManager {
         }
         int index = allClients.indexOf(new Client(login));
         //if client is not in allClients or password matches registered Client
-        if (index == -1 || allClients.get(index).checkPassword(login.getMessage())) {
+        if (index == -1) {
             allClients.add(client);
+            onlineClients.add(client);
+            return true;
+        }
+        if (allClients.get(index).checkPassword(login.getMessage())) {
             onlineClients.add(client);
             return true;
         }
         return false;
     }
 
+    public Client findClient(String name) {
+        for (Client client : connectedClients) {
+            if (client.checkName(name))
+                return client;
+        }
+        return null;
+    }
+
+    public void kick(String name, String msg) {
+        Client client = findClient(name);
+        if (client == null) {
+            Logger.network("ClientManager >> No client <" + name + "> connected");
+        } else {
+            String output = "Kicked by Server";
+            if (msg != null)
+                output += " - Reason: " + msg;
+            client.send(new SystemText(output));
+            disconnectClient(client);
+        }
+    }
+
     public void disconnectClient(Client client) {
         client.close();
         onlineClients.remove(client);
         connectedClients.remove(client);
-        System.out.println("[NetworkListener] Client <" + client.getName() + "> disconnected");
+        if (client.isLoggedIn()) {
+            shout(new SystemText("[-] " + client.getName()));
+        }
+        client.logout();
+        Logger.network("NetworkListener >> Client <" + client.getName() + "> disconnected");
+    }
+
+    public void close() {
+        for (Client client : new LinkedList<>(connectedClients)) {
+            disconnectClient(client);
+        }
+    }
+
+    public void shout(SystemText text) {
+        Logger.message(text.getSender() + " >> All: " + text.getMessage());
+        LinkedList<Client> clients = getOnlineClients();
+        for (Client client : clients) {
+            client.send(text);
+        }
+    }
+
+    public String formatList(LinkedList<Client> list) {
+        StringBuilder sb = new StringBuilder();
+        if (!list.isEmpty())
+            sb.append(list.get(0).getName());
+        for (int i = 1; i < list.size(); i++) {
+            sb.append(", " + list.get(i).getName());
+        }
+        return sb.toString();
     }
 
     public LinkedList<Client> getOnlineClients() {
         return onlineClients;
+    }
+
+    public LinkedList<Client> getAllClients() {
+        return allClients;
+    }
+
+    public LinkedList<Client> getConnectedClients() {
+        return connectedClients;
     }
 }

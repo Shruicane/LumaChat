@@ -1,6 +1,7 @@
 package org.luma.client.network;
 
 import Objects.AnswerObject;
+import Objects.Get;
 import Objects.SystemText;
 import Objects.Text;
 
@@ -37,14 +38,14 @@ public class IOHandler extends Thread {
                     if (obj == null) {
                         // Free InputStream from reading in this synchronized Block
                     } else if (obj instanceof Text) {
-                        System.out.println(((Text) obj).getSender() + ": " + ((Text) obj).getMessage());
+                        Logger.message(((Text) obj).getSender() + ": " + ((Text) obj).getMessage());
                     } else if (obj instanceof SystemText) {
-                        System.err.println(((SystemText) obj).getMessage());
+                        Logger.system(((SystemText) obj).getMessage());
                     } else
-                        System.out.println(obj.toString());
+                        Logger.info(obj.toString());
                 } catch (IOException | ClassNotFoundException e) {
                     if (main.isConnected())
-                        main.disconnect("[Client] Server closed");
+                        main.disconnect("Client >> Server closed");
                 }
             }
         }
@@ -69,20 +70,43 @@ public class IOHandler extends Thread {
                     AnswerObject answer;
                     while ((answer = (AnswerObject) in.readObject()) == null) ;
 
-                    System.out.println(answer.getType() + " Request was Successful. Server responded with: " +
+                    Logger.info(answer.getType() + " Request was Successful. Server responded with: " +
                             answer.getMessage() + " (" + answer.isSuccess() + ")");
 
                     return answer.isSuccess();
                 } catch (IOException | ClassNotFoundException e) {
                     if (main.isConnected())
-                        main.disconnect("[IOHandler:send] Server closed");
+                        main.disconnect("IOHandler >> Server closed");
                 }
             }
         } catch (IOException e) {
-            System.out.println(main.isConnected());
             if (main.isConnected())
-                main.disconnect("[IOHandler:send] not connected");
+                main.disconnect("IOHandler >> Not connected");
         }
         return false;
+    }
+
+    public Object send(Get request) {
+        try {
+            out.writeObject(request);
+            synchronized (in) {
+                try {
+                    AnswerObject answer;
+                    while ((answer = (AnswerObject) in.readObject()) == null) ;
+
+                    Logger.info(answer.getType() + " Request was Successful. Server responded with: " +
+                            answer.getMessage() + " (" + answer.isSuccess() + ")");
+
+                    return answer.getMessage();
+                } catch (IOException | ClassNotFoundException e) {
+                    if (main.isConnected())
+                        main.disconnect("IOHandler >> Server closed");
+                }
+            }
+        } catch (IOException e) {
+            if (main.isConnected())
+                main.disconnect("IOHandler >> Not connected");
+        }
+        return null;
     }
 }

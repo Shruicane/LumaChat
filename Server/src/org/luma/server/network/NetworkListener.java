@@ -15,7 +15,7 @@ public class NetworkListener extends Thread {
     private boolean running = true;
 
     public NetworkListener(ClientManager cm, ServerSocket serverSocket) {
-        System.out.println("[NetworkListener] Started Listener");
+        Logger.network("NetworkListener >> Started Listener");
         this.cm = cm;
         this.serverSocket = serverSocket;
     }
@@ -38,26 +38,15 @@ public class NetworkListener extends Thread {
 
     public void disconnectClient(Client client) {
         cm.disconnectClient(client);
-        if(client.isLoggedIn())
-            shout(new SystemText("[-] " + client.getName()));
     }
 
     public boolean login(Login login, Client client) {
         return cm.login(login, client);
     }
 
-    public void shout(SystemText text) {
-        System.out.println("From: " + text.getSender() + " To: All");
-        System.out.println("Message: " + text.getMessage());
-        LinkedList<Client> clients = cm.getOnlineClients();
-        for (Client client : clients) {
-            client.send(text);
-        }
-    }
-
     public void close() {
         running = false;
         interrupt();
-        System.out.println("[NetworkListener] Closed Listener");
+        Logger.network("NetworkListener >> Closed Listener");
     }
 }
