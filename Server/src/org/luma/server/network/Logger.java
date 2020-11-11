@@ -20,37 +20,37 @@ public class Logger {
 
     public static void network(String str) {
         //green
-        String prefix = "[NET] ";
+        String prefix = Logger.bold("[NET] ");
         System.out.println(colorize(prefix + str, 32));
     }
 
     public static void info(String str) {
         //gray
-        String prefix = "[INF] ";
+        String prefix = Logger.bold("[INF] ");
         System.out.println(colorize(prefix + str, 90));
     }
 
     public static void error(String str) {
         //red
-        String prefix = "[ERR] ";
+        String prefix = Logger.bold("[ERR] ");
         System.out.println(colorize(prefix + str, 31));
     }
 
     public static void warning(String str) {
         //yellow
-        String prefix = "[WAR] ";
+        String prefix = Logger.bold("[WAR] ");
         System.out.println(colorize(prefix + str, 33));
     }
 
     public static void cmd(String str) {
         //dark white
-        String prefix = "[CMD] ";
+        String prefix = Logger.bold("[CMD] ");
         System.out.println(colorize(prefix + str, 37));
     }
 
     public static void message(String str) {
         //white
-        String prefix = "[MSG] ";
+        String prefix = Logger.bold("[MSG] ");
         System.out.println(colorize(prefix + str, 0));
     }
 

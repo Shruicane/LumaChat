@@ -7,67 +7,128 @@ import java.util.Scanner;
 public class ServerMain {
     private ServerSocket serverSocket;
     private NetworkListener nl;
-    private ClientManager cm;
+    private final ClientManager cm;
 
     private boolean running = true;
 
     public ServerMain() {
-
         long startTime = System.currentTimeMillis();
-
         cm = new ClientManager();
         start();
-
         Logger.network("Server >> Done! (" + (System.currentTimeMillis() - startTime) + "ms)");
+
         while (running) {
             Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
+            String cmd = input.split(" ")[0];
 
-            if (input.matches("stop")) {
+            if (cmd.matches("start")) {
+                start("");
+            } else if (cmd.matches("restart")) {
+                restart();
+            } else if (cmd.matches("stop")) {
                 stop();
-            } else if (input.matches("exit")) {
+            } else if (cmd.matches("exit")) {
                 close();
-            } else if (input.matches("start")) {
-                if (isAlive())
-                    Logger.warning("Server >> Already running!");
-                else
-                    start();
-            } else if (input.split(" ")[0].matches("list")) {
-                String[] args = input.split(" ");
-                if (args.length > 1 && args[1].matches("all")) {
-                    Logger.cmd("list all >> " + cm.getAllClients().size() + " User registered:");
-                    Logger.cmd("list all >> " + cm.formatList(cm.getAllClients()));
-                } else if (args.length > 1 && args[1].matches("connected")) {
-                    Logger.cmd("list connected >> " + cm.getConnectedClients().size() + " User connected:");
-                    Logger.cmd("list connected >> " + cm.formatList(cm.getConnectedClients()));
-                } else if (args.length > 1 && args[1].matches("online")) {
-                    Logger.cmd("list online >> " + cm.getOnlineClients().size() + " User online:");
-                    Logger.cmd("list online >> " + cm.formatList(cm.getOnlineClients()));
-                } else {
-                    Logger.error("CMD >> Wrong Format: list all/connected/online");
-                }
-            } else if (input.split(" ")[0].matches("kick")) {
-                String[] args = input.split(" ");
-                if (args.length > 1) {
-                    kick(args[1], args.length == 3 ? args[2] : null);
-                } else {
-                    Logger.error("CMD >> Wrong Format: kick [name] <reason>");
-                }
-            }
-            if (input.split(" ")[0].matches("edit")) {
+            } else if (cmd.matches("help")) {
+                help();
+            } else if (cmd.matches("list")) {
+                list(input);
+            } else if (cmd.matches("kick")) {
+                kick(input);
+            } else if (cmd.matches("edit")) {
                 edit(input);
-            } else if (input.matches("help")) {
-                Logger.cmd("help >> start");
-                Logger.cmd("help >> stop");
-                Logger.cmd("help >> exit");
-                Logger.cmd("help >> list all/connected/online");
-                Logger.cmd("help >> kick [name] <reason>");
+            } else if (cmd.matches("new")) {
+                newC(input);
+            } else if (cmd.matches("delete")) {
+                delete(input);
+            } else {
+                Logger.error("CMD >> Unknown Command: \"" + input + "\"");
             }
         }
     }
 
-    private void kick(String name, String msg) {
-        cm.kick(name, msg);
+    private void start(String nllptr) {
+        if (isAlive())
+            Logger.warning("Server >> Already running!");
+        else
+            start();
+    }
+
+    private void start() {
+        try {
+            running = true;
+            Logger.network("Server >> Starting");
+            serverSocket = new ServerSocket(54321);
+            serverSocket.setSoTimeout(100);
+            nl = new NetworkListener(cm, serverSocket);
+            nl.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void restart() {
+        stop();
+        start();
+    }
+
+    private void stop() {
+        close();
+        Logger.network("Server >> Stopping");
+        running = false;
+    }
+
+    private void close() {
+        if (isAlive()) {
+            try {
+                Logger.network("Server >> Closing");
+                serverSocket.close();
+                cm.close();
+                nl.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else
+            Logger.warning("Server >> Already closed");
+    }
+
+    private void help() {
+        Logger.cmd("help >> start");
+        Logger.cmd("help >> restart");
+        Logger.cmd("help >> stop");
+        Logger.cmd("help >> exit");
+        Logger.cmd("help >> list all/connected/online");
+        Logger.cmd("help >> kick [name] <reason>");
+        Logger.cmd("help >> edit [name] name/passw [string]");
+        Logger.cmd("help >> new [name]:[password]");
+        Logger.cmd("help >> delete [name] <reason>");
+    }
+
+    private void list(String input) {
+        String[] args = input.split(" ");
+        if (args.length > 1 && args[1].matches("all")) {
+            Logger.cmd("list all >> " + cm.getAllClients().size() + " User registered:");
+            Logger.cmd("list all >> " + cm.formatList(cm.getAllClients()));
+        } else if (args.length > 1 && args[1].matches("connected")) {
+            Logger.cmd("list connected >> " + cm.getConnectedClients().size() + " User connected:");
+            Logger.cmd("list connected >> " + cm.formatList(cm.getConnectedClients()));
+        } else if (args.length > 1 && args[1].matches("online")) {
+            Logger.cmd("list online >> " + cm.getOnlineClients().size() + " User online:");
+            Logger.cmd("list online >> " + cm.formatList(cm.getOnlineClients()));
+        } else {
+            Logger.error("CMD >> Wrong Format: list all/connected/online");
+        }
+    }
+
+    private void kick(String input) {
+        String[] args = input.split(" ");
+        if (args.length > 1) {
+            String extra = input.replace(args[0] + " " + args[1], "");
+            cm.kick(args[1], "Kicked by Server" + (args.length > 2 ? " - Reason:" + extra : ""));
+        } else {
+            Logger.error("CMD >> Wrong Format: kick [name] <reason>");
+        }
     }
 
     private void edit(String input) {
@@ -88,36 +149,29 @@ public class ServerMain {
             Logger.error("CMD >> Wrong Format: edit [name] name/passw [string]");
     }
 
-    private void start() {
-        try {
-            Logger.network(Logger.bold("Server >> Starting"));
-            serverSocket = new ServerSocket(54321);
-            serverSocket.setSoTimeout(100);
-            nl = new NetworkListener(cm, serverSocket);
-            nl.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void close() {
-        if (isAlive()) {
-            try {
-                Logger.network("Server >> Closing");
-                serverSocket.close();
-                cm.close();
-                nl.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private void newC(String input) {
+        String[] args = input.split(" ");
+        if (args.length == 2 && args[1].contains(":")) {
+            args = args[1].split(":");
+            args[1] = input.split(" ")[1].replaceFirst(args[0] + ":", "");
+            //String[] args2 = args[1].split(":");
+            //args2[1] = args[1].replaceFirst(args2[0] + ":", "");
+            if (cm.addSilentClient(args[0], args[1]))
+                Logger.cmd("new >> Added new Client " + args[0] + ":" + args[1]);
+            else
+                Logger.cmd("new >> Account \"" + args[0] + "\" already exists");
         } else
-            Logger.warning("Server >> Already closed");
+            Logger.error("CMD >> Wrong Format: new [name]:[password]");
     }
 
-    private void stop() {
-        close();
-        Logger.network("Server >> Stopping");
-        running = false;
+    private void delete(String input) {
+        String[] args = input.split(" ");
+        if (args.length > 1) {
+            String extra = input.replace(args[0] + " " + args[1], "");
+            cm.deleteClient(args[1], "Account Deleted by Server" + (args.length > 2 ? " - Reason:" + extra : ""));
+        } else {
+            Logger.error("CMD >> Wrong Format: delete [name] <reason>");
+        }
     }
 
     private boolean isAlive() {

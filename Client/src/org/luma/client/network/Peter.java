@@ -7,6 +7,7 @@ public class Peter extends ClientMain {
     }
 
     public static void main(String[] args) {
-        new Peter("ask4.ddns.ms", 54321);
+        //new Peter("ask4.ddns.ms", 54321); //Remote Communication
+        new Peter("localhost", 54321); //Localhost
     }
 }

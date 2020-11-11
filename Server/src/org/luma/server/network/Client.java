@@ -7,7 +7,6 @@ import Objects.Text;
 import Objects.SystemText;
 import Objects.Get;
 
-import javax.annotation.processing.SupportedSourceVersion;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -26,10 +25,10 @@ public class Client {
 
     private boolean running = true;
 
-    ObjectInputStream in;
-    ObjectOutputStream out;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
-    Thread inputHandler;
+    private Thread inputHandler;
 
     public Client(Login login) {
         this.name = login.getSender();
@@ -55,7 +54,7 @@ public class Client {
                                 name = ((Login) obj).getSender();
                                 password = ((Login) obj).getMessage();
                                 ml.shout(new SystemText("[+] " + name));
-                                send(new SystemText("Online Users: " + ml.getOnlineClients()));
+                                send(new SystemText("Online Users: " + ml.getOnlineClients(this)));
                             } else {
                                 send(new Success((RequestObject) obj, "Login Failed", false));
                             }
@@ -64,7 +63,7 @@ public class Client {
                         }
                     } else if (obj instanceof Get) {
                         if (((Get) obj).getType().matches("onlineClients"))
-                            send(new Success((Get) obj, ml.getOnlineClients(), true));
+                            send(new Success((Get) obj, ml.getOnlineClients(this), true));
                     } else {
                         if (obj instanceof Text) {
                             send(new Success((RequestObject) obj, "Message Received", true));
@@ -79,14 +78,6 @@ public class Client {
         });
     }
 
-    public void setMessageListener(MessageListener ml) {
-        this.ml = ml;
-    }
-
-    public void setNetworkListener(NetworkListener nl) {
-        this.nl = nl;
-    }
-
     public void start() {
         inputHandler.start();
     }
@@ -94,7 +85,6 @@ public class Client {
     public void close() {
         try {
             running = false;
-            //inputHandler.interrupt();
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,20 +111,32 @@ public class Client {
         if (password != null) this.password = password;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-
     public boolean checkName(String name) {
         return this.name.equals(name);
     }
 
     public boolean checkPassword(String password) {
         return this.password.equals(password);
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setMessageListener(MessageListener ml) {
+        this.ml = ml;
+    }
+
+    public void setNetworkListener(NetworkListener nl) {
+        this.nl = nl;
     }
 
     @Override

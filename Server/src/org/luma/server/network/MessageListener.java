@@ -25,7 +25,11 @@ public class MessageListener {
         cm.shout(text);
     }
 
-    public String getOnlineClients(){
-        return cm.formatList(cm.getOnlineClients());
+    public String getOnlineClients(Client client){
+        String name = client.getName();
+        client.setName(name + " (You)");
+        String output =  cm.formatList(cm.getOnlineClients());
+        client.setName(name);
+        return output;
     }
 }

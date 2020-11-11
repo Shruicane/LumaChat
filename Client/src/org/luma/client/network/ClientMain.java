@@ -21,7 +21,6 @@ public class ClientMain {
     private final int port;
 
     private String name;
-    private String password;
 
     public ClientMain(String hostname, int port) {
         this.hostname = hostname;
@@ -59,9 +58,9 @@ public class ClientMain {
     private void login(String input) {
         try {
             String[] acc = input.split(" ")[1].split(":");
+            acc[1] = input.split(" ")[1].replaceFirst(acc[0]+":", "");
             if (loggedIn = login(new Login(acc[0], acc[1]))) {
                 name = acc[0];
-                password = acc[1];
             }
         } catch (NullPointerException ignored) {
         } catch (ArrayIndexOutOfBoundsException e) {

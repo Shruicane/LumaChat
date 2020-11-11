@@ -11,15 +11,45 @@ public class ClientManager {
 
     private final LinkedList<Client> onlineClients = new LinkedList<>();
 
-    public ClientManager() {
-
-    }
-
     public void addClient(Client client) {
         Logger.network("ClientManager >> New client connected");
         client.setMessageListener(new MessageListener(this));
         connectedClients.add(client);
         client.start();
+    }
+
+    public boolean addSilentClient(String name, String password) {
+        if(allClients.contains(new Client(new Login(name, password))))
+            return false;
+        Client client = new Client(new Login(name, password));
+        allClients.add(client);
+        return true;
+    }
+
+    public void deleteClient(String name, String msg) {
+        Client client = findClientFromAll(name);
+        if (client == null) {
+            Logger.network("ClientManager >> No client <" + Logger.italic(name) + "> found");
+        } else {
+            kick(name, msg);
+            allClients.remove(client);
+        }
+    }
+
+    public Client findClient(String name) {
+        for (Client client : connectedClients) {
+            if (client.checkName(name))
+                return client;
+        }
+        return null;
+    }
+
+    public Client findClientFromAll(String name) {
+        for (Client client : allClients) {
+            if (client.checkName(name))
+                return client;
+        }
+        return null;
     }
 
     public boolean login(Login login, Client client) {
@@ -41,27 +71,6 @@ public class ClientManager {
         return false;
     }
 
-    public Client findClient(String name) {
-        for (Client client : connectedClients) {
-            if (client.checkName(name))
-                return client;
-        }
-        return null;
-    }
-
-    public void kick(String name, String msg) {
-        Client client = findClient(name);
-        if (client == null) {
-            Logger.network("ClientManager >> No client <" + name + "> connected");
-        } else {
-            String output = "Kicked by Server";
-            if (msg != null)
-                output += " - Reason: " + msg;
-            client.send(new SystemText(output));
-            disconnectClient(client);
-        }
-    }
-
     public void disconnectClient(Client client) {
         client.close();
         onlineClients.remove(client);
@@ -71,6 +80,16 @@ public class ClientManager {
         }
         client.logout();
         Logger.network("NetworkListener >> Client <" + client.getName() + "> disconnected");
+    }
+
+    public void kick(String name, String msg) {
+        Client client = findClient(name);
+        if (client == null) {
+            Logger.network("ClientManager >> No client <" + name + "> connected");
+        } else {
+            client.send(new SystemText(msg));
+            disconnectClient(client);
+        }
     }
 
     public void close() {
@@ -92,7 +111,7 @@ public class ClientManager {
         if (!list.isEmpty())
             sb.append(list.get(0).getName());
         for (int i = 1; i < list.size(); i++) {
-            sb.append(", " + list.get(i).getName());
+            sb.append(", ").append(list.get(i).getName());
         }
         return sb.toString();
     }
