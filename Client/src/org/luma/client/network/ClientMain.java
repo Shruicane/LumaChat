@@ -40,8 +40,11 @@ public class ClientMain {
                     stop();
                 } else if (input.matches("exit")) {
                     disconnect("Client >> Disconnected");
-                } else if (!loggedIn && input.split(" ")[0].matches("login")) {
-                    login(input);
+                } else if (input.split(" ")[0].matches("login")) {
+                    if(!loggedIn)
+                        login(input);
+                    else
+                        Logger.error("login >> You are already logged in");
                 } else if (input.matches("help")) {
                     Logger.cmd("help >> login [name]:[password]");
                     Logger.cmd("help >> stop");
