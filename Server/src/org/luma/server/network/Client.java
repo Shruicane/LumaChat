@@ -28,7 +28,7 @@ public class Client {
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
-    private Thread inputHandler;
+    private Thread ioHandler;
 
     public Client(Login login) {
         this.name = login.getSender();
@@ -40,7 +40,8 @@ public class Client {
         in = new ObjectInputStream(socket.getInputStream());
         out = new ObjectOutputStream(socket.getOutputStream());
 
-        inputHandler = new Thread(() -> {
+        // Handels Connection (In/Out) to Single Client
+        ioHandler = new Thread(() -> {
             while (running) {
                 try {
                     Object obj = in.readObject();
@@ -51,9 +52,12 @@ public class Client {
                         if (obj instanceof Login) {
                             if (loggedIn = nl.login((Login) obj, this)) {
                                 send(new Success((RequestObject) obj, "Login Successful", true));
+
                                 name = ((Login) obj).getSender();
                                 password = ((Login) obj).getMessage();
+
                                 ml.shout(new SystemText("[+] " + name));
+
                                 send(new SystemText("Online Users: " + ml.getOnlineClients(this)));
                             } else {
                                 send(new Success((RequestObject) obj, "Login Failed", false));
@@ -79,7 +83,7 @@ public class Client {
     }
 
     public void start() {
-        inputHandler.start();
+        ioHandler.start();
     }
 
     public void close() {

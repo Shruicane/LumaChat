@@ -8,7 +8,6 @@ import java.util.LinkedList;
 public class ClientManager {
     private final LinkedList<Client> allClients = new LinkedList<>();
     private final LinkedList<Client> connectedClients = new LinkedList<>();
-
     private final LinkedList<Client> onlineClients = new LinkedList<>();
 
     public void addClient(Client client) {

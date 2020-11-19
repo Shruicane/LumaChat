@@ -23,10 +23,10 @@ public class ServerMain {
             String input = scanner.nextLine();
             String cmd = input.split(" ")[0];
 
-            if(cmd.startsWith("//")) {
+            if (cmd.startsWith("//")) {
                 cmd = cmd.replaceFirst("//", "");
                 if (cmd.matches("start")) {
-                    start("");
+                    start();
                 } else if (cmd.matches("restart")) {
                     restart();
                 } else if (cmd.matches("stop")) {
@@ -52,29 +52,26 @@ public class ServerMain {
         }
     }
 
-    private void start(String nllptr) {
+    private void start() {
         if (isAlive())
             Logger.warning("Server >> Already running!");
-        else
-            start();
-    }
-
-    private void start() {
-        try {
-            running = true;
-            Logger.network("Server >> Starting");
-            serverSocket = new ServerSocket(54321);
-            serverSocket.setSoTimeout(100);
-            nl = new NetworkListener(cm, serverSocket);
-            nl.start();
-        } catch (SocketException e) {
-            Logger.error("Server >> Address already in use");
-        } catch (IOException e) {
-            e.printStackTrace();
+        else {
+            try {
+                running = true;
+                Logger.network("Server >> Starting");
+                serverSocket = new ServerSocket(54321);
+                serverSocket.setSoTimeout(100);
+                nl = new NetworkListener(cm, serverSocket);
+                nl.start();
+            } catch (SocketException e) {
+                Logger.error("Server >> Address already in use");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void restart() {
+    private void restart() {
         stop();
         start();
     }
