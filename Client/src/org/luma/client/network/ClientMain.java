@@ -34,21 +34,26 @@ public class ClientMain {
         while (running) {
             String input = scanner.nextLine();
 
-            if (input.matches("stop")) {
-                stop();
-            } else if (input.matches("exit")) {
-                disconnect("Client >> Disconnected");
-            } else if (!loggedIn && input.split(" ")[0].matches("login")) {
-                login(input);
-            } else if (input.matches("help")) {
-                Logger.cmd("help >> login [name]:[password]");
-                Logger.cmd("help >> stop");
-                Logger.cmd("help >> exit");
-                Logger.cmd("help >> list");
-            } else if (!isConnected()) {
-                Logger.error("Client >> Not connected");
-            } else if (input.matches("list")) {
-                Logger.cmd("list >> Online Users: " + ioHandler.send(new Get("onlineClients")));
+            if (input.startsWith("//")) {
+                input = input.replaceFirst("//", "");
+                if (input.matches("stop")) {
+                    stop();
+                } else if (input.matches("exit")) {
+                    disconnect("Client >> Disconnected");
+                } else if (!loggedIn && input.split(" ")[0].matches("login")) {
+                    login(input);
+                } else if (input.matches("help")) {
+                    Logger.cmd("help >> login [name]:[password]");
+                    Logger.cmd("help >> stop");
+                    Logger.cmd("help >> exit");
+                    Logger.cmd("help >> list");
+                } else if (!isConnected()) {
+                    Logger.error("Client >> Not connected");
+                } else if (input.matches("list")) {
+                    Logger.cmd("list >> Online Users: " + ioHandler.send(new Get("onlineClients")));
+                } else if (!input.isEmpty()) {
+                    Logger.error("CMD >> Unknown Command: \"" + input + "\" try help for more information");
+                }
             } else if (!input.isEmpty()) {
                 boolean success = ioHandler.send(new Text(name, input));
             }
@@ -58,7 +63,7 @@ public class ClientMain {
     private void login(String input) {
         try {
             String[] acc = input.split(" ")[1].split(":");
-            acc[1] = input.split(" ")[1].replaceFirst(acc[0]+":", "");
+            acc[1] = input.split(" ")[1].replaceFirst(acc[0] + ":", "");
             if (loggedIn = login(new Login(acc[0], acc[1]))) {
                 name = acc[0];
             }

@@ -1,7 +1,6 @@
 package org.luma.server.network;
 
 import java.io.IOException;
-import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.SocketException;
 import java.util.Scanner;
@@ -24,28 +23,31 @@ public class ServerMain {
             String input = scanner.nextLine();
             String cmd = input.split(" ")[0];
 
-            if (cmd.matches("start")) {
-                start("");
-            } else if (cmd.matches("restart")) {
-                restart();
-            } else if (cmd.matches("stop")) {
-                stop();
-            } else if (cmd.matches("exit")) {
-                close();
-            } else if (cmd.matches("help")) {
-                help();
-            } else if (cmd.matches("list")) {
-                list(input);
-            } else if (cmd.matches("kick")) {
-                kick(input);
-            } else if (cmd.matches("edit")) {
-                edit(input);
-            } else if (cmd.matches("new")) {
-                newC(input);
-            } else if (cmd.matches("delete")) {
-                delete(input);
-            } else {
-                Logger.error("CMD >> Unknown Command: \"" + input + "\"");
+            if(cmd.startsWith("//")) {
+                cmd = cmd.replaceFirst("//", "");
+                if (cmd.matches("start")) {
+                    start("");
+                } else if (cmd.matches("restart")) {
+                    restart();
+                } else if (cmd.matches("stop")) {
+                    stop();
+                } else if (cmd.matches("exit")) {
+                    close();
+                } else if (cmd.matches("help")) {
+                    help();
+                } else if (cmd.matches("list")) {
+                    list(input);
+                } else if (cmd.matches("kick")) {
+                    kick(input);
+                } else if (cmd.matches("edit")) {
+                    edit(input);
+                } else if (cmd.matches("new")) {
+                    newC(input);
+                } else if (cmd.matches("delete")) {
+                    delete(input);
+                } else {
+                    Logger.error("CMD >> Unknown Command: \"" + input + "\" try help for more information");
+                }
             }
         }
     }
