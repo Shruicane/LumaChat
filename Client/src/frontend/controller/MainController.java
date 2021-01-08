@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.luma.client.network.ClientMain;
 
 
 public class MainController {
@@ -28,7 +29,7 @@ public class MainController {
     private TabPane chatTabs;
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         //Chats laden
         privateChats.getItems().addAll("Chat1", "Chat2", "Chat3");
 
@@ -47,26 +48,33 @@ public class MainController {
     }
 
     @FXML
-    private void onClickLogOut(){
-        //TODO: Client ausloggen
+    private void onClickLogOut() {
+        ClientMain client = MainApp.getClient();
+
+        client.disconnect("Loggout");
         MainApp.showLoginScreen();
     }
 
     @FXML
-    private void onClickChangePwd(){
+    private void onClickChangePwd() {
         //TODO: Dialog zum Pwd ändern öffnen
         //TODO: in der Datenbank Pwd ändern
     }
 
     @FXML
-    private void showOnlineList(){
+    private void showOnlineList() {
         //TODO: online liste abrufen und anzeigen
 
     }
 
     @FXML
-    private void onClickSendMsg(){
+    private void onClickSendMsg() {
+        ClientMain client = MainApp.getClient();
         String msg = this.msgTextArea.getText();
+
+        if(!msg.isEmpty()){
+            client.send(msg);
+        }
         //TODO: msg an Server senden - nur in der Textliste anzeigen wenn vom Server eine Bestätigung kommt
     }
 

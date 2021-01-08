@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import org.luma.client.network.ClientMain;
 
 import java.awt.event.ActionEvent;
 
@@ -35,7 +36,19 @@ public class CreateAccountController {
 
     @FXML
     private void onClickCreateAccount(){
-        //Wenn account erfolgreich erstellt, zeige login screen
-        MainApp.showLoginScreen();
+
+        if(!passwordField.getText().matches(repeatPasswordField.getText())){
+            System.out.println("Passwörter stimmen nicht überein!");
+        } else {
+            ClientMain client = new ClientMain("localhost", 54321);
+
+            if(client.register(userNameTextField.getText(), passwordField.getText())){
+                client.disconnect("Account Created");
+                MainApp.showLoginScreen();
+            } else {
+                //Register failed
+                client.disconnect("Name probably already exists");
+            }
+        }
     }
 }

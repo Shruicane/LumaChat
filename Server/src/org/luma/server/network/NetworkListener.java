@@ -1,6 +1,7 @@
 package org.luma.server.network;
 
 import Objects.Login;
+import Objects.Register;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -39,6 +40,10 @@ public class NetworkListener extends Thread {
 
     public boolean login(Login login, Client client) {
         return cm.login(login, client);
+    }
+
+    public boolean register(Register register, Client client){
+        return cm.register(register, client);
     }
 
     public void close() {

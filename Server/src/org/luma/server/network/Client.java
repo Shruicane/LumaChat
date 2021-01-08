@@ -6,6 +6,7 @@ import Objects.Success;
 import Objects.Text;
 import Objects.SystemText;
 import Objects.Get;
+import Objects.Register;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -61,6 +62,16 @@ public class Client {
                                 send(new SystemText("Online Users: " + ml.getOnlineClients(this)));
                             } else {
                                 send(new Success((RequestObject) obj, "Login Failed", false));
+                            }
+                        } else if (obj instanceof Register) {
+                            boolean register = nl.register((Register) obj, this);
+                            if(register){
+                                send(new Success((RequestObject) obj, "Register Successful", true));
+
+                                name = ((Register) obj).getSender();
+                                password = ((Register) obj).getMessage();
+                            } else{
+                                send(new Success((RequestObject) obj, "Name already exists!", false));
                             }
                         } else {
                             send(new Success((RequestObject) obj, "Not Logging in!", false));

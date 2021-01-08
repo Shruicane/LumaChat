@@ -35,7 +35,7 @@
             <HBox prefHeight="50.0" prefWidth="608.0" BorderPane.alignment="CENTER">
                <children>
                   <TextArea fx:id="msgTextArea" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="sendMsgBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" HBox.hgrow="NEVER">
+                  <Button fx:id="sendMsgBtn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#onClickSendMsg" prefHeight="50.0" prefWidth="50.0" HBox.hgrow="NEVER">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -59,7 +59,7 @@
           <Menu mnemonicParsing="false" text="Settings">
             <items>
               <MenuItem mnemonicParsing="false" text="Change Password" />
-                  <MenuItem mnemonicParsing="false" text="Log out" />
+                  <MenuItem mnemonicParsing="false" onAction="#onClickLogOut" text="Log out" />
             </items>
           </Menu>
         </menus>

@@ -1,11 +1,13 @@
 package org.luma.client.frontend;
 
+import frontend.controller.LoginScreenController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.luma.client.network.ClientMain;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,11 +22,15 @@ public class MainApp extends Application {
 
     public static Image sendImage;
 
+    private static ClientMain client;
+
     public static void main(String[] args) {
 
         System.out.println(UUID.randomUUID());
         System.out.println(UUID.randomUUID());
         System.out.println(UUID.randomUUID());
+
+        client = new ClientMain("localhost", 54321);
 
         launch(args);
     }
@@ -40,7 +46,7 @@ public class MainApp extends Application {
         MainApp.primaryStage.show();
     }
 
-    public static void showMainScreen(){
+    public static void showMainScreen(ClientMain client){
         MainApp.primaryStage.setScene(MainApp.mainViewScene);
     }
 
@@ -50,5 +56,9 @@ public class MainApp extends Application {
 
     public static void showCreateAccountScreen(){
         MainApp.primaryStage.setScene(MainApp.createAccountScene);
+    }
+
+    public static ClientMain getClient() {
+        return client;
     }
 }

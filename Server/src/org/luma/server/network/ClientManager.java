@@ -1,6 +1,7 @@
 package org.luma.server.network;
 
 import Objects.Login;
+import Objects.Register;
 import Objects.SystemText;
 
 import java.util.LinkedList;
@@ -59,12 +60,21 @@ public class ClientManager {
         int index = allClients.indexOf(new Client(login));
         //if client is not in allClients or password matches registered Client
         if (index == -1) {
-            allClients.add(client);
-            onlineClients.add(client);
-            return true;
+            return false;
         }
         if (allClients.get(index).checkPassword(login.getMessage())) {
             onlineClients.add(client);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean register(Register register, Client client){
+        int index = allClients.indexOf(new Client(new Login(register.getSender(), register.getMessage())));
+        System.out.println(new Login(register.getSender(), register.getMessage()).toString());
+        //if client is not in allClients
+        if (index == -1) {
+            allClients.add(client);
             return true;
         }
         return false;

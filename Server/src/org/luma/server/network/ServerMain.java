@@ -23,7 +23,7 @@ public class ServerMain {
             String input = scanner.nextLine();
             String cmd = input.split(" ")[0];
 
-            if (cmd.startsWith("//")) {
+            if (cmd.startsWith("")) {
                 cmd = cmd.replaceFirst("//", "");
                 if (cmd.matches("start")) {
                     start();

@@ -2,6 +2,7 @@ package org.luma.client.network;
 
 import Objects.Get;
 import Objects.Login;
+import Objects.Register;
 import Objects.Text;
 
 import java.io.IOException;
@@ -29,51 +30,74 @@ public class ClientMain {
         Logger.network("Client >> Started");
         connect();
 
-        Scanner scanner = new Scanner(System.in);
+        new Thread() {
+            @Override
+            public void run() {
+                while (running) {
+                    Scanner scanner = new Scanner(System.in);
 
-        while (running) {
-            String input = scanner.nextLine();
+                    String input = scanner.nextLine();
 
-            if (input.startsWith("//")) {
-                input = input.replaceFirst("//", "");
-                if (input.matches("stop")) {
-                    stop();
-                } else if (input.matches("exit")) {
-                    disconnect("Client >> Disconnected");
-                } else if (input.split(" ")[0].matches("login")) {
-                    if(!loggedIn)
-                        login(input);
-                    else
-                        Logger.error("login >> You are already logged in");
-                } else if (input.matches("help")) {
-                    Logger.cmd("help >> login [name]:[password]");
-                    Logger.cmd("help >> stop");
-                    Logger.cmd("help >> exit");
-                    Logger.cmd("help >> list");
-                } else if (!isConnected()) {
-                    Logger.error("Client >> Not connected");
-                } else if (input.matches("list")) {
-                    Logger.cmd("list >> Online Users: " + ioHandler.send(new Get("onlineClients")));
-                } else if (!input.isEmpty()) {
-                    Logger.error("CMD >> Unknown Command: \"" + input + "\" try help for more information");
+                    if (input.startsWith(".")) {
+                        input = input.replaceFirst(".", "");
+                        if (input.matches("stop")) {
+                            stop();
+                        } else if (input.matches("exit")) {
+                            disconnect("Client >> Disconnected");
+                        } else if (input.split(" ")[0].matches("login")) {
+                            if (!loggedIn)
+                                login(input);
+                            else
+                                Logger.error("login >> You are already logged in");
+                        } else if (input.matches("help")) {
+                            Logger.cmd("help >> login [name]:[password]");
+                            Logger.cmd("help >> stop");
+                            Logger.cmd("help >> exit");
+                            Logger.cmd("help >> list");
+                        } else if (!isConnected()) {
+                            Logger.error("Client >> Not connected");
+                        } else if (input.matches("list")) {
+                            Logger.cmd("list >> Online Users: " + ioHandler.send(new Get("onlineClients")));
+                        } else if (!input.isEmpty()) {
+                            Logger.error("CMD >> Unknown Command: \"" + input + "\" try help for more information");
+                        }
+                    } else if (!input.isEmpty()) {
+                        boolean success = send(input);
+                    }
                 }
-            } else if (!input.isEmpty()) {
-                boolean success = ioHandler.send(new Text(name, input));
             }
-        }
+        }.start();
     }
 
-    private void login(String input) {
+    public boolean send(String msg) {
+        return ioHandler.send(new Text(name, msg));
+    }
+
+    public boolean register(String name, String password) {
+        System.out.println("register " + name + ":" + password);
+        if (!isConnected())
+            connect();
+        return ioHandler.send(new Register(name, password));
+    }
+
+    public boolean login(String name, String password) {
+        return login("login " + name + ":" + password);
+    }
+
+    private boolean login(String input) {
+        System.out.println(input);
         try {
             String[] acc = input.split(" ")[1].split(":");
             acc[1] = input.split(" ")[1].replaceFirst(acc[0] + ":", "");
             if (loggedIn = login(new Login(acc[0], acc[1]))) {
                 name = acc[0];
+                return loggedIn;
             }
         } catch (NullPointerException ignored) {
         } catch (ArrayIndexOutOfBoundsException e) {
             Logger.error("CMD >> Wrong Format: login [name]:[password]");
         }
+        return false;
     }
 
     private boolean login(Login login) {
