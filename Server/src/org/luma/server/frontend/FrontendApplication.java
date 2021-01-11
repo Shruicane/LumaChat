@@ -16,7 +16,7 @@ public class FrontendApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/Main.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/org/luma/server/frontend/resources/Main.fxml"));
         Scene home = new Scene(root);
         primaryStage.setScene(home);
         primaryStage.show();

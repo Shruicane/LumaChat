@@ -1,6 +1,5 @@
 package org.luma.client.frontend;
 
-import frontend.controller.LoginScreenController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -38,9 +37,9 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         MainApp.sendImage = new Image("https://www.iconfinder.com/icons/1564528/download/png/48");
-        MainApp.mainViewScene = new Scene(FXMLLoader.load(getClass().getResource("/MainView.fxml")));
-        MainApp.loginScene = new Scene(FXMLLoader.load(getClass().getResource("/LoginScreenView.fxml")));
-        MainApp.createAccountScene = new Scene(FXMLLoader.load(getClass().getResource("/CreateAccountView.fxml")));
+        MainApp.mainViewScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/MainView.fxml")));
+        MainApp.loginScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/LoginScreenView.fxml")));
+        MainApp.createAccountScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/CreateAccountView.fxml")));
         MainApp.primaryStage = primaryStage;
         MainApp.primaryStage.setScene(MainApp.loginScene);
         MainApp.primaryStage.show();
