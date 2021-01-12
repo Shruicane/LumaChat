@@ -1,7 +1,18 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="Client:jar">
-    <output-path>$PROJECT_DIR$/../FPP/out/artifacts/Client_jar</output-path>
-    <root id="archive" name="Client.jar">
+  <artifact type="javafx" name="Client:jar">
+    <output-path>X:/FPP/gui</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="org.luma.client.frontend.ClientGUI" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="nativeBundle" value="exe" />
+        <option name="title" value="" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+      </options>
+    </properties>
+    <root id="root">
       <element id="module-output" name="Client" />
       <element id="module-output" name="TransferObjects" />
       <element id="library" level="project" name="mysql-connector-java-5.1.38-bin" />

@@ -181,13 +181,14 @@ public class Controller {
 
         server = new ServerMain(this);
 
+        logArea.setFont(Font.font("Monospaced", FontWeight.MEDIUM, FontPosture.REGULAR, 15));
+
     }
 
     ServerMain server;
 
     public void updateLogArea(String log) {
         try {
-            logArea.setFont(Font.font("Monospaced", FontWeight.MEDIUM, FontPosture.REGULAR, 15));
             logArea.setText(logArea.getText() + log + "\n");
         } catch (Exception e) {
             System.out.println("ERROR: org/luma/server/frontend/controller/Controller.java -> updateLogArea()");

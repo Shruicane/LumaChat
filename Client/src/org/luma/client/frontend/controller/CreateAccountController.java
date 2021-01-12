@@ -1,6 +1,6 @@
 package org.luma.client.frontend.controller;
 
-import org.luma.client.frontend.ClientGUI;
+import org.luma.client.frontend.ClientGUI1;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -29,7 +29,7 @@ public class CreateAccountController {
     @FXML
     private void onClickLoginLabel(){
         //Wechsle View zu LoginView
-        ClientGUI.showLoginScreen();
+        ClientGUI1.showLoginScreen();
     }
 
     @FXML
@@ -38,11 +38,11 @@ public class CreateAccountController {
         if(!passwordField.getText().matches(repeatPasswordField.getText())){
             System.out.println("Passwörter stimmen nicht überein!");
         } else {
-            ClientMain client = new ClientMain("localhost", 54321);
+            ClientMain client = new ClientMain("localhost", 54321, null);
 
             if(client.register(userNameTextField.getText(), passwordField.getText())){
                 client.disconnect("Account Created");
-                ClientGUI.showLoginScreen();
+                ClientGUI1.showLoginScreen();
             } else {
                 //Register failed
                 client.disconnect("Name probably already exists");

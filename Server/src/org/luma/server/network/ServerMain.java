@@ -11,7 +11,9 @@ public class ServerMain {
     private ServerSocket serverSocket;
     private NetworkListener nl;
     private final ClientManager cm;
-    private Logger log;
+    private final Logger log;
+
+    private final Thread console;
 
     private boolean running = true;
 
@@ -22,7 +24,8 @@ public class ServerMain {
         start();
         log.network("Server >> Done! (" + (System.currentTimeMillis() - startTime) + "ms)");
 
-        initConsole();
+        console = initConsole();
+        console.start();
     }
 
     private void start() {
@@ -45,8 +48,8 @@ public class ServerMain {
     }
 
 
-    private void initConsole() {
-        new Thread() {
+    private Thread initConsole() {
+        return new Thread() {
             @Override
             public void run() {
                 while (running) {
@@ -82,7 +85,7 @@ public class ServerMain {
                     }
                 }
             }
-        }.start();
+        };
     }
 
     private void restart() {

@@ -1,6 +1,9 @@
 package org.luma.client.frontend.controller;
 
-import org.luma.client.frontend.ClientGUI;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import org.luma.client.frontend.ClientGUI1;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -16,7 +19,7 @@ public class MainController {
     private ListView<String> groupChats;
 
     @FXML
-    private TextArea msgTextArea;
+    private TextField msgTextArea;
 
     @FXML
     private Button sendMsgBtn;
@@ -32,26 +35,28 @@ public class MainController {
         //Chats laden
         privateChats.getItems().addAll("Chat1", "Chat2", "Chat3");
 
-        ImageView btnImg = new ImageView(ClientGUI.sendImage);
+        ImageView btnImg = new ImageView(ClientGUI1.sendImage);
         btnImg.setFitWidth(50);
         btnImg.setFitHeight(50);
 
         this.sendMsgBtn.setGraphic(btnImg);
+
+        messagesTextArea.setFont(Font.font("Monospaced", FontWeight.MEDIUM, FontPosture.REGULAR, 15));
 
         chatTabs.getSelectionModel().selectedItemProperty().addListener(
                 (ov, fromtTab, toTab) -> {
                     //TODO: Load Chats
                 }
         );
-
+        ClientGUI1.setMainController(this);
     }
 
     @FXML
     private void onClickLogOut() {
-        ClientMain client = ClientGUI.getClient();
+        ClientMain client = ClientGUI1.getClient();
 
         client.disconnect("Loggout");
-        ClientGUI.showLoginScreen();
+        ClientGUI1.showLoginScreen();
     }
 
     @FXML
@@ -68,14 +73,18 @@ public class MainController {
 
     @FXML
     private void onClickSendMsg() {
-        ClientMain client = ClientGUI.getClient();
-        String msg = this.msgTextArea.getText();
+        ClientMain client = ClientGUI1.getClient();
+        String msg = msgTextArea.getText();
 
         if(!msg.isEmpty()){
             client.send(msg);
         }
+        msgTextArea.clear();
+
         //TODO: msg an Server senden - nur in der Textliste anzeigen wenn vom Server eine Bestätigung kommt
     }
 
-
+    public void updateMessages(String msg){
+        messagesTextArea.setText((messagesTextArea.getText() + msg + "\n"));
+    }
 }

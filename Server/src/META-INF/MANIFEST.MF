@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: org.luma.server.network.ServerMain
+Main-Class: old_root.ServerMain
 

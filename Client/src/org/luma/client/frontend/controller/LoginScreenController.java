@@ -1,6 +1,11 @@
 package org.luma.client.frontend.controller;
 
-import org.luma.client.frontend.ClientGUI;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+import org.luma.client.frontend.ClientGUI1;
 import org.luma.client.network.ClientMain;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,10 +28,13 @@ public class LoginScreenController {
     private Button loginButton;
 
     @FXML
-    private void onClickLogin(){
-        ClientMain client = ClientGUI.getClient();
-        if(client.login(userNameTextField.getText(), passWordTextField.getText())) {
-            ClientGUI.showMainScreen(client);
+    private TextField ipTextField;
+
+    @FXML
+    private void onClickLogin() {
+        ClientMain client = ClientGUI1.getClient();
+        if (client.login(userNameTextField.getText(), passWordTextField.getText())) {
+            ClientGUI1.showMainScreen(client);
         } else {
             // Login Failed
             System.out.println("Wrong pwd or something");
@@ -34,9 +42,18 @@ public class LoginScreenController {
     }
 
     @FXML
-    private void onClickAccountLabel(){
+    private void onClickAccountLabel() {
         //Wechsle View zu CreateAccountView
-        ClientGUI.showCreateAccountScreen();
+        ClientGUI1.showCreateAccountScreen();
     }
 
+    @FXML
+    private void changeIp() {
+        boolean success = ClientGUI1.getClient().changeIp(ipTextField.getText());
+        if (success) {
+            ipTextField.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+        } else {
+            ipTextField.setBackground(new Background(new BackgroundFill(Color.INDIANRED, CornerRadii.EMPTY, Insets.EMPTY)));
+        }
+    }
 }

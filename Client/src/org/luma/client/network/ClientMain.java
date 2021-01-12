@@ -4,33 +4,52 @@ import Objects.Get;
 import Objects.Login;
 import Objects.Register;
 import Objects.Text;
+import org.luma.client.frontend.ClientGUI1;
+import org.luma.client.frontend.GUI;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 public class ClientMain {
     private Socket server;
     private IOHandler ioHandler;
+    private GUI gui;
+    private Logger log;
+
+    private Thread console;
 
     private boolean running = true;
     private boolean loggedIn = false;
 
-    private final String hostname;
+    private String hostname;
     private final int port;
 
     private String name;
 
-    public ClientMain(String hostname, int port) {
+    public ClientMain(String hostname, int port, GUI gui) {
         this.hostname = hostname;
         this.port = port;
 
-        Logger.network("Client >> Started");
+        this.gui = gui;
+        log = new Logger(gui);
+
+        log.network("Client >> Started");
         connect();
 
-        new Thread() {
+        console = initConsole();
+        console.start();
+    }
+
+    public boolean changeIp(String hostname) {
+        disconnect("IP Change");
+        this.hostname = hostname;
+        return connect();
+    }
+
+    private Thread initConsole(){
+        return new Thread() {
             @Override
             public void run() {
                 while (running) {
@@ -48,25 +67,25 @@ public class ClientMain {
                             if (!loggedIn)
                                 login(input);
                             else
-                                Logger.error("login >> You are already logged in");
+                                log.error("login >> You are already logged in");
                         } else if (input.matches("help")) {
-                            Logger.cmd("help >> login [name]:[password]");
-                            Logger.cmd("help >> stop");
-                            Logger.cmd("help >> exit");
-                            Logger.cmd("help >> list");
+                            log.cmd("help >> login [name]:[password]");
+                            log.cmd("help >> stop");
+                            log.cmd("help >> exit");
+                            log.cmd("help >> list");
                         } else if (!isConnected()) {
-                            Logger.error("Client >> Not connected");
+                            log.error("Client >> Not connected");
                         } else if (input.matches("list")) {
-                            Logger.cmd("list >> Online Users: " + ioHandler.send(new Get("onlineClients")));
+                            log.cmd("list >> Online Users: " + ioHandler.send(new Get("onlineClients")));
                         } else if (!input.isEmpty()) {
-                            Logger.error("CMD >> Unknown Command: \"" + input + "\" try help for more information");
+                            log.error("CMD >> Unknown Command: \"" + input + "\" try help for more information");
                         }
                     } else if (!input.isEmpty()) {
                         boolean success = send(input);
                     }
                 }
             }
-        }.start();
+        };
     }
 
     public boolean send(String msg) {
@@ -95,7 +114,7 @@ public class ClientMain {
             }
         } catch (NullPointerException ignored) {
         } catch (ArrayIndexOutOfBoundsException e) {
-            Logger.error("CMD >> Wrong Format: login [name]:[password]");
+            log.error("CMD >> Wrong Format: login [name]:[password]");
         }
         return false;
     }
@@ -106,12 +125,12 @@ public class ClientMain {
         return ioHandler.send(login);
     }
 
-    private void connect() {
+    private boolean connect() {
         try {
             server = new Socket();
             server.connect(new InetSocketAddress(hostname, port), 1000);
-            Logger.network("Client >> Connected to " + hostname + " on port " + port);
-            ioHandler = new IOHandler(server, this);
+            log.network("Client >> Connected to " + hostname + " on port " + port);
+            ioHandler = new IOHandler(server, this, log, gui);
             ioHandler.start();
         } catch (IOException e) {
             try {
@@ -119,18 +138,20 @@ public class ClientMain {
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
-            Logger.warning("Client >> Server is not reachable");
+            log.warning("Client >> Server is not reachable");
+            return false;
         }
+        return true;
     }
 
     public void disconnect(String msg) {
         if (!isConnected())
-            Logger.error("Client >> Not connected");
+            log.error("Client >> Not connected");
         else try {
             loggedIn = false;
             ioHandler.close();
             server.close();
-            Logger.network(msg);
+            log.network(msg);
         } catch (NullPointerException | IOException ignored) {
         }
     }
@@ -139,10 +160,11 @@ public class ClientMain {
         return !server.isClosed();
     }
 
-    private void stop() {
+    public void stop() {
         if (isConnected())
             disconnect("Client >> Disconnected");
-        Logger.network("Client >> Stopping");
+        log.network("Client >> Stopping");
         running = false;
+        System.exit(0);
     }
 }

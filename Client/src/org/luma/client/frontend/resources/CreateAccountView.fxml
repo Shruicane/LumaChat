@@ -26,7 +26,7 @@
          <font>
             <Font size="14.0" />
          </font></Label>
-      <TextField fx:id="userNameTextField" />
+      <TextField fx:id="userNameTextField" onAction="#onClickCreateAccount" />
       <Label text="Password">
          <font>
             <Font size="14.0" />
@@ -34,7 +34,7 @@
          <VBox.margin>
             <Insets top="20.0" />
          </VBox.margin></Label>
-      <PasswordField fx:id="passwordField" />
+      <PasswordField fx:id="passwordField" onAction="#onClickCreateAccount" />
       <Label text="Repeat Password">
          <font>
             <Font size="14.0" />

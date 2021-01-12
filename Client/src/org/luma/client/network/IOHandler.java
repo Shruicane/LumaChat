@@ -4,6 +4,8 @@ import Objects.AnswerObject;
 import Objects.Get;
 import Objects.SystemText;
 import Objects.Text;
+import org.luma.client.frontend.ClientGUI1;
+import org.luma.client.frontend.GUI;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,13 +14,18 @@ import java.net.Socket;
 
 public class IOHandler extends Thread {
     private final ClientMain main;
+    private final Logger log;
+    private final GUI gui;
+
     private boolean running = true;
 
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
 
-    public IOHandler(Socket server, ClientMain main) throws IOException {
+    public IOHandler(Socket server, ClientMain main, Logger log, GUI gui) throws IOException {
         this.main = main;
+        this.log = log;
+        this.gui = gui;
         out = new ObjectOutputStream(server.getOutputStream());
         in = new ObjectInputStream(server.getInputStream());
     }
@@ -38,11 +45,11 @@ public class IOHandler extends Thread {
                     if (obj == null) {
                         // Free InputStream from reading in this synchronized Block
                     } else if (obj instanceof Text) {
-                        Logger.message(((Text) obj).getSender() + ": " + ((Text) obj).getMessage());
+                        log.message(((Text) obj).getSender() + ": " + ((Text) obj).getMessage());
                     } else if (obj instanceof SystemText) {
-                        Logger.system(((SystemText) obj).getMessage());
+                        log.system(((SystemText) obj).getMessage());
                     } else
-                        Logger.info(obj.toString());
+                        log.info(obj.toString());
                 } catch (IOException | ClassNotFoundException e) {
                     if (main.isConnected())
                         main.disconnect("Client >> Server closed");
@@ -70,7 +77,7 @@ public class IOHandler extends Thread {
                     AnswerObject answer;
                     while ((answer = (AnswerObject) in.readObject()) == null) ;
 
-                    Logger.info(answer.getType() + " Request was Successful. Server responded with: " +
+                    log.info(answer.getType() + " Request was Successful. Server responded with: " +
                             answer.getMessage() + " (" + answer.isSuccess() + ")");
 
                     return answer.isSuccess();
@@ -94,7 +101,7 @@ public class IOHandler extends Thread {
                     AnswerObject answer;
                     while ((answer = (AnswerObject) in.readObject()) == null) ;
 
-                    Logger.info(answer.getType() + " Request was Successful. Server responded with: " +
+                    log.info(answer.getType() + " Request was Successful. Server responded with: " +
                             answer.getMessage() + " (" + answer.isSuccess() + ")");
 
                     return answer.getMessage();
