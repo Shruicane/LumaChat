@@ -1,19 +1,16 @@
 package org.luma.client.frontend;
 
-import frontend.controller.LoginScreenController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.luma.client.network.ClientMain;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.UUID;
 
-public class MainApp extends Application {
+public class ClientGUI extends Application {
 
     private static Stage primaryStage;
     private static Scene loginScene;
@@ -37,25 +34,25 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        MainApp.sendImage = new Image("https://www.iconfinder.com/icons/1564528/download/png/48");
-        MainApp.mainViewScene = new Scene(FXMLLoader.load(getClass().getResource("/MainView.fxml")));
-        MainApp.loginScene = new Scene(FXMLLoader.load(getClass().getResource("/LoginScreenView.fxml")));
-        MainApp.createAccountScene = new Scene(FXMLLoader.load(getClass().getResource("/CreateAccountView.fxml")));
-        MainApp.primaryStage = primaryStage;
-        MainApp.primaryStage.setScene(MainApp.loginScene);
-        MainApp.primaryStage.show();
+        ClientGUI.sendImage = new Image("https://www.iconfinder.com/icons/1564528/download/png/48");
+        ClientGUI.mainViewScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/MainView.fxml")));
+        ClientGUI.loginScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/LoginScreenView.fxml")));
+        ClientGUI.createAccountScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/CreateAccountView.fxml")));
+        ClientGUI.primaryStage = primaryStage;
+        ClientGUI.primaryStage.setScene(ClientGUI.loginScene);
+        ClientGUI.primaryStage.show();
     }
 
     public static void showMainScreen(ClientMain client){
-        MainApp.primaryStage.setScene(MainApp.mainViewScene);
+        ClientGUI.primaryStage.setScene(ClientGUI.mainViewScene);
     }
 
     public static void showLoginScreen(){
-        MainApp.primaryStage.setScene(MainApp.loginScene);
+        ClientGUI.primaryStage.setScene(ClientGUI.loginScene);
     }
 
     public static void showCreateAccountScreen(){
-        MainApp.primaryStage.setScene(MainApp.createAccountScene);
+        ClientGUI.primaryStage.setScene(ClientGUI.createAccountScene);
     }
 
     public static ClientMain getClient() {

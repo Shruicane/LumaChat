@@ -1,14 +1,12 @@
-package frontend.controller;
+package org.luma.client.frontend.controller;
 
-import org.luma.client.frontend.MainApp;
+import org.luma.client.frontend.ClientGUI;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.luma.client.network.ClientMain;
-
-import java.awt.event.ActionEvent;
 
 public class CreateAccountController {
 
@@ -31,7 +29,7 @@ public class CreateAccountController {
     @FXML
     private void onClickLoginLabel(){
         //Wechsle View zu LoginView
-        MainApp.showLoginScreen();
+        ClientGUI.showLoginScreen();
     }
 
     @FXML
@@ -44,7 +42,7 @@ public class CreateAccountController {
 
             if(client.register(userNameTextField.getText(), passwordField.getText())){
                 client.disconnect("Account Created");
-                MainApp.showLoginScreen();
+                ClientGUI.showLoginScreen();
             } else {
                 //Register failed
                 client.disconnect("Name probably already exists");

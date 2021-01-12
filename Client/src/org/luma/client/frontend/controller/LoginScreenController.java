@@ -1,14 +1,12 @@
-package frontend.controller;
+package org.luma.client.frontend.controller;
 
-import org.luma.client.frontend.MainApp;
+import org.luma.client.frontend.ClientGUI;
 import org.luma.client.network.ClientMain;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
-import java.awt.event.ActionEvent;
 
 public class LoginScreenController {
 
@@ -26,9 +24,9 @@ public class LoginScreenController {
 
     @FXML
     private void onClickLogin(){
-        ClientMain client = MainApp.getClient();
+        ClientMain client = ClientGUI.getClient();
         if(client.login(userNameTextField.getText(), passWordTextField.getText())) {
-            MainApp.showMainScreen(client);
+            ClientGUI.showMainScreen(client);
         } else {
             // Login Failed
             System.out.println("Wrong pwd or something");
@@ -38,7 +36,7 @@ public class LoginScreenController {
     @FXML
     private void onClickAccountLabel(){
         //Wechsle View zu CreateAccountView
-        MainApp.showCreateAccountScreen();
+        ClientGUI.showCreateAccountScreen();
     }
 
 }

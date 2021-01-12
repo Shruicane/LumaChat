@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="509.0" prefWidth="300.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="frontend.controller.CreateAccountController">
+<VBox prefHeight="509.0" prefWidth="300.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.luma.client.frontend.controller.LoginScreenController">
    <children>
-      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="340.0" text="Create Account" textAlignment="CENTER" underline="true">
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="340.0" text="Login" textAlignment="CENTER" underline="true">
          <font>
             <Font size="20.0" />
          </font>
@@ -25,7 +25,8 @@
          </VBox.margin>
          <font>
             <Font size="14.0" />
-         </font></Label>
+         </font>
+      </Label>
       <TextField fx:id="userNameTextField" />
       <Label text="Password">
          <font>
@@ -33,27 +34,20 @@
          </font>
          <VBox.margin>
             <Insets top="20.0" />
-         </VBox.margin></Label>
-      <PasswordField fx:id="passwordField" />
-      <Label text="Repeat Password">
-         <font>
-            <Font size="14.0" />
-         </font>
+         </VBox.margin>
+      </Label>
+      <PasswordField fx:id="passWordTextField" onAction="#onClickLogin" />
+      <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onClickLogin" prefHeight="25.0" prefWidth="289.0" text="Login">
          <VBox.margin>
-            <Insets top="20.0" />
-         </VBox.margin></Label>
-      <PasswordField fx:id="repeatPasswordField" onAction="#onClickCreateAccount" />
-      <Button fx:id="createAccountButton" alignment="CENTER" mnemonicParsing="false" onAction="#onClickCreateAccount" prefHeight="25.0" prefWidth="274.0" text="Create Account">
-         <VBox.margin>
-            <Insets top="50.0" />
+            <Insets top="70.0" />
          </VBox.margin>
       </Button>
-      <Label fx:id="loginLabel" alignment="CENTER" onMouseClicked="#onClickLoginLabel" prefHeight="17.0" prefWidth="309.0" text="Already have an Account? Login!" textFill="#008cff" underline="true">
+      <Label fx:id="createAccountLabel" alignment="CENTER" onMouseClicked="#onClickAccountLabel" prefHeight="17.0" prefWidth="309.0" text="Don't have an Account yet? Register!" textFill="#008cff" underline="true">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
          <VBox.margin>
-            <Insets top="141.0" />
+            <Insets top="180.0" />
          </VBox.margin>
       </Label>
    </children>

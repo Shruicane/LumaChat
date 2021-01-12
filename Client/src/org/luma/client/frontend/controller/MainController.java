@@ -1,9 +1,8 @@
-package frontend.controller;
+package org.luma.client.frontend.controller;
 
-import org.luma.client.frontend.MainApp;
+import org.luma.client.frontend.ClientGUI;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.luma.client.network.ClientMain;
 
@@ -33,7 +32,7 @@ public class MainController {
         //Chats laden
         privateChats.getItems().addAll("Chat1", "Chat2", "Chat3");
 
-        ImageView btnImg = new ImageView(MainApp.sendImage);
+        ImageView btnImg = new ImageView(ClientGUI.sendImage);
         btnImg.setFitWidth(50);
         btnImg.setFitHeight(50);
 
@@ -49,10 +48,10 @@ public class MainController {
 
     @FXML
     private void onClickLogOut() {
-        ClientMain client = MainApp.getClient();
+        ClientMain client = ClientGUI.getClient();
 
         client.disconnect("Loggout");
-        MainApp.showLoginScreen();
+        ClientGUI.showLoginScreen();
     }
 
     @FXML
@@ -69,7 +68,7 @@ public class MainController {
 
     @FXML
     private void onClickSendMsg() {
-        ClientMain client = MainApp.getClient();
+        ClientMain client = ClientGUI.getClient();
         String msg = this.msgTextArea.getText();
 
         if(!msg.isEmpty()){
