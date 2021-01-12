@@ -7,14 +7,16 @@ import java.util.LinkedList;
 
 public class MessageListener {
     private final ClientManager cm;
+    private Logger log;
 
-    public MessageListener(ClientManager cm) {
-        Logger.network("MessageListener >> Started Listener");
+    public MessageListener(ClientManager cm, Logger log) {
+        log.network("MessageListener >> Started Listener");
         this.cm = cm;
+        this.log = log;
     }
 
     public void shout(Text text) {
-        Logger.message(text.getSender() + " >> All: " + text.getMessage());
+        log.message(text.getSender() + " >> All: " + text.getMessage());
         LinkedList<Client> clients = cm.getOnlineClients();
         for(Client client:clients) {
             client.send(text);

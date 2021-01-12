@@ -1,8 +1,18 @@
 package org.luma.server.frontend.controller;
 
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import org.luma.server.network.ServerMain;
 import org.luma.server.settings.ServerSettings;
 import org.luma.server.settings.Settings;
 
@@ -168,6 +178,20 @@ public class Controller {
         this.databaseTextField.setText(Settings.getDatabase());
         this.dataBaseUserTextField.setText(Settings.getDatabaseUser());
         this.databasePasswordTextField.setText(Settings.getDatabasePassword());
+
+        server = new ServerMain(this);
+
     }
 
+    ServerMain server;
+
+    public void updateLogArea(String log) {
+        try {
+            logArea.setFont(Font.font("Monospaced", FontWeight.MEDIUM, FontPosture.REGULAR, 15));
+            logArea.setText(logArea.getText() + log + "\n");
+        } catch (Exception e) {
+            System.out.println("ERROR: org/luma/server/frontend/controller/Controller.java -> updateLogArea()");
+            e.printStackTrace();
+        }
+    }
 }

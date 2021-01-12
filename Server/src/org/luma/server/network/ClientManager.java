@@ -7,13 +7,18 @@ import Objects.SystemText;
 import java.util.LinkedList;
 
 public class ClientManager {
+    Logger log;
     private final LinkedList<Client> allClients = new LinkedList<>();
     private final LinkedList<Client> connectedClients = new LinkedList<>();
     private final LinkedList<Client> onlineClients = new LinkedList<>();
 
+    public ClientManager(Logger log){
+        this.log = log;
+    }
+
     public void addClient(Client client) {
-        Logger.network("ClientManager >> New client connected");
-        client.setMessageListener(new MessageListener(this));
+        log.network("ClientManager >> New client connected");
+        client.setMessageListener(new MessageListener(this, log));
         connectedClients.add(client);
         client.start();
     }
@@ -29,7 +34,7 @@ public class ClientManager {
     public void deleteClient(String name, String msg) {
         Client client = findClientFromAll(name);
         if (client == null) {
-            Logger.warning("ClientManager >> No client <" + Logger.italic(name) + "> found");
+            log.warning("ClientManager >> No client <" + log.italic(name) + "> found");
         } else {
             kick(name, msg);
             allClients.remove(client);
@@ -88,13 +93,13 @@ public class ClientManager {
             shout(new SystemText("[-] " + client.getName()));
         }
         client.logout();
-        Logger.network("NetworkListener >> Client <" + client.getName() + "> disconnected");
+        log.network("NetworkListener >> Client <" + client.getName() + "> disconnected");
     }
 
     public void kick(String name, String msg) {
         Client client = findClient(name);
         if (client == null) {
-            Logger.network("ClientManager >> No client <" + name + "> connected");
+            log.network("ClientManager >> No client <" + name + "> connected");
         } else {
             client.send(new SystemText(msg));
             disconnectClient(client);
@@ -108,7 +113,7 @@ public class ClientManager {
     }
 
     public void shout(SystemText text) {
-        Logger.message(text.getSender() + " >> All: " + text.getMessage());
+        log.message(text.getSender() + " >> All: " + text.getMessage());
         LinkedList<Client> clients = getOnlineClients();
         for (Client client : clients) {
             client.send(text);

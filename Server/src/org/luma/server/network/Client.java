@@ -18,6 +18,7 @@ public class Client {
     private Socket socket;
     private MessageListener ml;
     private NetworkListener nl;
+    private Logger log;
 
     private String name;
     private String password;
@@ -36,8 +37,9 @@ public class Client {
         this.password = login.getMessage();
     }
 
-    public Client(Socket socket) throws IOException {
+    public Client(Socket socket, Logger log) throws IOException {
         this.socket = socket;
+        this.log = log;
         in = new ObjectInputStream(socket.getInputStream());
         out = new ObjectOutputStream(socket.getOutputStream());
 
@@ -47,7 +49,7 @@ public class Client {
                 try {
                     Object obj = in.readObject();
 
-                    Logger.info("Recieved Object: " + obj.toString());
+                    log.info("Recieved Object: " + obj.toString());
 
                     if (!loggedIn) {
                         if (obj instanceof Login) {
@@ -108,7 +110,7 @@ public class Client {
 
     public void send(Object obj) {
         try {
-            Logger.info("Send Object: " + obj.toString());
+            log.info("Send Object: " + obj.toString());
             // Free Client InputStream from reading
             out.writeObject(null);
             out.writeObject(obj);

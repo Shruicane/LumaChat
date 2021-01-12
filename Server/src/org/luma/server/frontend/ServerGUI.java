@@ -1,10 +1,15 @@
 package org.luma.server.frontend;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import org.luma.server.network.ServerMain;
 
 import java.io.IOException;
 
@@ -20,5 +25,14 @@ public class ServerGUI extends Application {
         Scene home = new Scene(root);
         primaryStage.setScene(home);
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                // TODO: stop the server
+                System.err.println("Stopped the Server... in a really gorgeous way.....");
+                System.exit(-1);
+            }
+        });
     }
 }

@@ -9,20 +9,22 @@ import java.net.ServerSocket;
 public class NetworkListener extends Thread {
     private final ServerSocket serverSocket;
     private final ClientManager cm;
+    private final Logger log;
 
     private boolean running = true;
 
-    public NetworkListener(ClientManager cm, ServerSocket serverSocket) {
-        Logger.network("NetworkListener >> Started Listener");
+    public NetworkListener(ClientManager cm, ServerSocket serverSocket, Logger log) {
+        log.network("NetworkListener >> Started Listener");
         this.cm = cm;
         this.serverSocket = serverSocket;
+        this.log = log;
     }
 
     @Override
     public void run() {
         while (running) {
             try {
-                connectClient(new Client(serverSocket.accept()));
+                connectClient(new Client(serverSocket.accept(), log));
             } catch (IOException ignored) {
                 // Timeout after 100ms
             }
@@ -49,6 +51,6 @@ public class NetworkListener extends Thread {
     public void close() {
         running = false;
         interrupt();
-        Logger.network("NetworkListener >> Closed Listener");
+        log.network("NetworkListener >> Closed Listener");
     }
 }
