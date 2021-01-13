@@ -152,6 +152,7 @@ public class ClientMain {
             ioHandler.close();
             server.close();
             log.network(msg);
+            gui.logout();
         } catch (NullPointerException | IOException ignored) {
         }
     }

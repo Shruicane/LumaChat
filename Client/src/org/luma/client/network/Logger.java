@@ -84,6 +84,7 @@ public class Logger {
         //bright red
         String prefix = formatPrefix("[SYS]");
         System.out.println(colorize(prefix + str, 91));
+        gui.updateMessages(prefix + str);
     }
 
     public void print(String str) {

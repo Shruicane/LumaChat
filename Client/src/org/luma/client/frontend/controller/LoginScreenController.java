@@ -22,12 +22,6 @@ public class LoginScreenController {
     private PasswordField passWordTextField;
 
     @FXML
-    private Label createAccountLabel;
-
-    @FXML
-    private Button loginButton;
-
-    @FXML
     private TextField ipTextField;
 
     @FXML
@@ -35,8 +29,10 @@ public class LoginScreenController {
         ClientMain client = ClientGUI1.getClient();
         if (client.login(userNameTextField.getText(), passWordTextField.getText())) {
             ClientGUI1.showMainScreen(client);
+            clear();
         } else {
             // Login Failed
+            ClientGUI1.getController().showPopup("Wrong Password or Username! (or you are banned)");
             System.out.println("Wrong pwd or something");
         }
     }
@@ -45,6 +41,7 @@ public class LoginScreenController {
     private void onClickAccountLabel() {
         //Wechsle View zu CreateAccountView
         ClientGUI1.showCreateAccountScreen();
+        clear();
     }
 
     @FXML
@@ -55,5 +52,11 @@ public class LoginScreenController {
         } else {
             ipTextField.setBackground(new Background(new BackgroundFill(Color.INDIANRED, CornerRadii.EMPTY, Insets.EMPTY)));
         }
+    }
+
+    private void clear(){
+        userNameTextField.clear();
+        passWordTextField.clear();
+        userNameTextField.requestFocus();
     }
 }

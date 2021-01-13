@@ -3,17 +3,23 @@ package org.luma.server.network;
 import Objects.Login;
 import Objects.Register;
 import Objects.SystemText;
+import Objects.WarnText;
+import org.luma.server.database.MySQLConnection;
+import org.luma.server.database.UserManagement;
 
 import java.util.LinkedList;
 
 public class ClientManager {
     Logger log;
-    private final LinkedList<Client> allClients = new LinkedList<>();
+    //private final LinkedList<Client> allClients = new LinkedList<>();
     private final LinkedList<Client> connectedClients = new LinkedList<>();
     private final LinkedList<Client> onlineClients = new LinkedList<>();
+    UserManagement userManager;
 
-    public ClientManager(Logger log){
+
+    public ClientManager(Logger log, MySQLConnection mySQLConnection) {
         this.log = log;
+        userManager = mySQLConnection.getUserManager();
     }
 
     public void addClient(Client client) {
@@ -24,20 +30,23 @@ public class ClientManager {
     }
 
     public boolean addSilentClient(String name, String password) {
-        if(allClients.contains(new Client(new Login(name, password))))
+        if (userManager.userExists(name))
             return false;
         Client client = new Client(new Login(name, password));
-        allClients.add(client);
-        return true;
+        if (userManager.createUser(name, password)) {
+            //allClients.add(client);
+            return true;
+        }
+        return false;
     }
 
     public void deleteClient(String name, String msg) {
-        Client client = findClientFromAll(name);
-        if (client == null) {
-            log.warning("ClientManager >> No client <" + log.italic(name) + "> found");
+        if (userManager.userExists(name)) {
+            if (findClient(name) != null)
+                kick(name, msg, "Your Account was Deleted!");
+            userManager.deleteUser(name);
         } else {
-            kick(name, msg);
-            allClients.remove(client);
+            log.warning("ClientManager >> No client <" + log.italic(name) + "> found");
         }
     }
 
@@ -49,40 +58,33 @@ public class ClientManager {
         return null;
     }
 
-    public Client findClientFromAll(String name) {
-        for (Client client : allClients) {
-            if (client.checkName(name))
-                return client;
-        }
-        return null;
-    }
-
     public boolean login(Login login, Client client) {
         //if connectedClients contains client who is logging in - client is already connected
         if (connectedClients.contains(new Client(login))) {
             return false;
         }
-        int index = allClients.indexOf(new Client(login));
-        //if client is not in allClients or password matches registered Client
-        if (index == -1) {
+        if(!userManager.userExists(login.getSender())){
             return false;
         }
-        if (allClients.get(index).checkPassword(login.getMessage())) {
+        if (userManager.loginUser(login.getSender(), login.getMessage())) {
             onlineClients.add(client);
             return true;
         }
         return false;
     }
 
-    public boolean register(Register register, Client client){
-        int index = allClients.indexOf(new Client(new Login(register.getSender(), register.getMessage())));
-        System.out.println(new Login(register.getSender(), register.getMessage()).toString());
-        //if client is not in allClients
-        if (index == -1) {
-            allClients.add(client);
-            return true;
+    public boolean register(Register register, Client client) {
+        if(userManager.userExists((register.getSender()))){
+            return false;
         }
-        return false;
+        //int index = allClients.indexOf(new Client(new Login(register.getSender(), register.getMessage())));
+        //if client is not in allClients
+        //if (index == -1) {
+        //    allClients.add(client);
+        //    userManager.createUser(register.getSender(), register.getMessage());
+        //    return true;
+        //}
+        return userManager.createUser(register.getSender(), register.getMessage());
     }
 
     public void disconnectClient(Client client) {
@@ -96,14 +98,44 @@ public class ClientManager {
         log.network("NetworkListener >> Client <" + client.getName() + "> disconnected");
     }
 
-    public void kick(String name, String msg) {
-        Client client = findClient(name);
+    public void warn(String username, String msg){
+        Client client = findClient(username);
+        if(client != null){
+            client.send(new WarnText("You were Warned!", msg));
+        }
+
+    }
+
+    public void kick(String username, String msg, String type) {
+        Client client = findClient(username);
         if (client == null) {
-            log.network("ClientManager >> No client <" + name + "> connected");
+            log.network("ClientManager >> No client <" + username + "> connected");
         } else {
-            client.send(new SystemText(msg));
+            client.send(new WarnText(type, msg));
             disconnectClient(client);
         }
+    }
+
+    public void ban(String username, String msg){
+        if(isOnline(username))
+            kick(username, msg, "You were Banned!");
+        userManager.banUser(username);
+    }
+
+    public void unban(String username){
+        userManager.unbanUser(username);
+    }
+
+    public boolean isBanned(String username){
+        return userManager.isBanned(username);
+    }
+
+    private boolean isOnline(String username){
+        for (Client client : onlineClients) {
+            if (client.checkName(username))
+                return true;
+        }
+        return false;
     }
 
     public void close() {
@@ -134,9 +166,9 @@ public class ClientManager {
         return onlineClients;
     }
 
-    public LinkedList<Client> getAllClients() {
-        return allClients;
-    }
+    //public LinkedList<Client> getAllClients() {
+        //return allClients;
+    //}
 
     public LinkedList<Client> getConnectedClients() {
         return connectedClients;

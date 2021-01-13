@@ -19,17 +19,12 @@ public class CreateAccountController {
     @FXML
     private PasswordField repeatPasswordField;
 
-    @FXML
-    private Label loginLabel;
-
-    @FXML
-    private Button createAccountButton;
-
 
     @FXML
     private void onClickLoginLabel(){
         //Wechsle View zu LoginView
         ClientGUI1.showLoginScreen();
+        clear();
     }
 
     @FXML
@@ -41,12 +36,20 @@ public class CreateAccountController {
             ClientMain client = new ClientMain("localhost", 54321, null);
 
             if(client.register(userNameTextField.getText(), passwordField.getText())){
-                client.disconnect("Account Created");
                 ClientGUI1.showLoginScreen();
+                client.disconnect("Account creation");
+                clear();
             } else {
                 //Register failed
-                client.disconnect("Name probably already exists");
+                ClientGUI1.getController().showPopup("This Name is already taken!");
             }
         }
+    }
+
+    private void clear(){
+        userNameTextField.clear();
+        passwordField.clear();
+        repeatPasswordField.clear();
+        userNameTextField.requestFocus();
     }
 }

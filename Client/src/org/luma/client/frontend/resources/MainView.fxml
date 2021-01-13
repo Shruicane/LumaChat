@@ -54,12 +54,12 @@
         <menus>
           <Menu mnemonicParsing="false" text="Social">
             <items>
-              <MenuItem mnemonicParsing="false" text="Show Online List" />
+              <MenuItem mnemonicParsing="false" onAction="#showOnlineList" text="Show Online List" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Settings">
             <items>
-              <MenuItem mnemonicParsing="false" text="Change Password" />
+              <MenuItem mnemonicParsing="false" onAction="#onClickChangePwd" text="Change Password" />
                   <MenuItem mnemonicParsing="false" onAction="#onClickLogOut" text="Log out" />
             </items>
           </Menu>

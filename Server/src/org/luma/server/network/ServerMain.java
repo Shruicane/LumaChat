@@ -1,5 +1,6 @@
 package org.luma.server.network;
 
+import org.luma.server.database.MySQLConnection;
 import org.luma.server.frontend.controller.Controller;
 
 import java.io.IOException;
@@ -13,19 +14,14 @@ public class ServerMain {
     private final ClientManager cm;
     private final Logger log;
 
-    private final Thread console;
-
     private boolean running = true;
 
-    public ServerMain(Controller controller) {
+    public ServerMain(Controller controller, MySQLConnection mySQLConnection) {
         long startTime = System.currentTimeMillis();
         log = new Logger(controller);
-        cm = new ClientManager(log);
+        cm = new ClientManager(log, mySQLConnection);
         start();
         log.network("Server >> Done! (" + (System.currentTimeMillis() - startTime) + "ms)");
-
-        console = initConsole();
-        console.start();
     }
 
     private void start() {
@@ -45,47 +41,6 @@ public class ServerMain {
                 e.printStackTrace();
             }
         }
-    }
-
-
-    private Thread initConsole() {
-        return new Thread() {
-            @Override
-            public void run() {
-                while (running) {
-                    Scanner scanner = new Scanner(System.in);
-                    String input = scanner.nextLine();
-                    String cmd = input.split(" ")[0];
-
-                    if (cmd.startsWith("")) {
-                        cmd = cmd.replaceFirst("//", "");
-                        if (cmd.matches("start")) {
-                            start();
-                        } else if (cmd.matches("restart")) {
-                            restart();
-                        } else if (cmd.matches("stop")) {
-                            stop();
-                        } else if (cmd.matches("exit")) {
-                            close();
-                        } else if (cmd.matches("help")) {
-                            help();
-                        } else if (cmd.matches("list")) {
-                            list(input);
-                        } else if (cmd.matches("kick")) {
-                            kick(input);
-                        } else if (cmd.matches("edit")) {
-                            edit(input);
-                        } else if (cmd.matches("new")) {
-                            newC(input);
-                        } else if (cmd.matches("delete")) {
-                            delete(input);
-                        } else {
-                            log.error("CMD >> Unknown Command: \"" + input + "\" try help for more information");
-                        }
-                    }
-                }
-            }
-        };
     }
 
     private void restart() {
@@ -128,8 +83,8 @@ public class ServerMain {
     private void list(String input) {
         String[] args = input.split(" ");
         if (args.length > 1 && args[1].matches("all")) {
-            log.cmd("list all >> " + cm.getAllClients().size() + " User registered:");
-            log.cmd("list all >> " + cm.formatList(cm.getAllClients()));
+            //log.cmd("list all >> " + cm.getAllClients().size() + " User registered:");
+            //log.cmd("list all >> " + cm.formatList(cm.getAllClients()));
         } else if (args.length > 1 && args[1].matches("connected")) {
             log.cmd("list connected >> " + cm.getConnectedClients().size() + " User connected:");
             log.cmd("list connected >> " + cm.formatList(cm.getConnectedClients()));
@@ -145,28 +100,10 @@ public class ServerMain {
         String[] args = input.split(" ");
         if (args.length > 1) {
             String extra = input.replace(args[0] + " " + args[1], "");
-            cm.kick(args[1], "Kicked by Server" + (args.length > 2 ? " - Reason:" + extra : ""));
+            cm.kick(args[1], "Kicked by Server" + (args.length > 2 ? " - Reason:" + extra : ""), "You were Kicked!");
         } else {
             log.error("CMD >> Wrong Format: kick [name] <reason>");
         }
-    }
-
-    private void edit(String input) {
-        String[] cmd = input.split(" ");
-        if (cmd.length == 4) {
-            Client client = cm.findClientFromAll(cmd[2]);
-            if (client == null)
-                log.error("CMD >> That User does not exist!");
-            else if (cmd[1].matches("name")) {
-                client.update(cmd[3], null);
-                log.cmd("edit >> Changed name from \"" + log.italic(cmd[2]) + "\" to \"" + log.italic(cmd[3]) + "\"");
-            } else if (cmd[1].matches("passw")) {
-                client.update(null, cmd[3]);
-                log.cmd("edit >> Changed password from \"" + log.italic(cmd[2]) + "\" to \"" + log.italic(cmd[3]) + "\"");
-            } else
-                log.error("CMD >> Wrong Format: edit name/passw [name] [string]");
-        } else
-            log.error("CMD >> Wrong Format: edit name/passw [name] [string]");
     }
 
     private void newC(String input) {
@@ -200,5 +137,9 @@ public class ServerMain {
         } catch (Exception ignore) {
         }
         return false;
+    }
+
+    public ClientManager getClientManager() {
+        return cm;
     }
 }

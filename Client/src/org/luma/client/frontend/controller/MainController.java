@@ -1,5 +1,6 @@
 package org.luma.client.frontend.controller;
 
+import javafx.application.Platform;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -8,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import org.luma.client.network.ClientMain;
+
+import java.util.Optional;
 
 
 public class MainController {
@@ -53,10 +56,7 @@ public class MainController {
 
     @FXML
     private void onClickLogOut() {
-        ClientMain client = ClientGUI1.getClient();
-
-        client.disconnect("Loggout");
-        ClientGUI1.showLoginScreen();
+        logout();
     }
 
     @FXML
@@ -67,6 +67,12 @@ public class MainController {
 
     @FXML
     private void showOnlineList() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setHeaderText("Warning test:");
+        dialog.setTitle("Warn!");
+        //dialog.setContentText("Your favourite int: ");
+
+        Optional<String> result = dialog.showAndWait();
         //TODO: online liste abrufen und anzeigen
 
     }
@@ -76,7 +82,7 @@ public class MainController {
         ClientMain client = ClientGUI1.getClient();
         String msg = msgTextArea.getText();
 
-        if(!msg.isEmpty()){
+        if (!msg.isEmpty()) {
             client.send(msg);
         }
         msgTextArea.clear();
@@ -84,7 +90,39 @@ public class MainController {
         //TODO: msg an Server senden - nur in der Textliste anzeigen wenn vom Server eine Bestätigung kommt
     }
 
-    public void updateMessages(String msg){
+    public void updateMessages(String msg) {
         messagesTextArea.setText((messagesTextArea.getText() + msg + "\n"));
+    }
+
+    @FXML
+    public void showPopup(String msg, String hint) {
+        Thread thread = new Thread(() -> {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, hint, ButtonType.OK);
+                alert.setHeaderText(msg);
+                alert.showAndWait();
+            });
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void showPopup(String msg) {
+        showPopup(msg, "");
+    }
+
+    public void logout() {
+        Thread thread = new Thread(() -> {
+            Platform.runLater(() -> {
+                ClientMain client = ClientGUI1.getClient();
+                if(client.isConnected())
+                    client.disconnect("Loggout");
+
+                messagesTextArea.clear();
+                ClientGUI1.showLoginScreen();
+            });
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 }

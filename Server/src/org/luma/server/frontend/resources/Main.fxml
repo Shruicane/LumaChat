@@ -30,18 +30,17 @@
          <content>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <TableView fx:id="userTableView" prefHeight="557.0" prefWidth="380.0">
+                  <TableView fx:id="userTableView" onMouseClicked="#onClickTable" prefHeight="557.0" prefWidth="380.0">
                     <columns>
-                      <TableColumn prefWidth="197.0" text="Username" />
-                      <TableColumn prefWidth="182.0" text="Password" />
+                      <TableColumn fx:id="userTableUsername" maxWidth="190.0" minWidth="190.0" prefWidth="190.0" resizable="false" text="Username" />
+                      <TableColumn fx:id="userTablePassword" maxWidth="190.0" minWidth="190.0" prefWidth="190.0" resizable="false" text="Password" />
                     </columns>
                   </TableView>
                   <VBox prefHeight="371.0" prefWidth="252.0" spacing="15.0">
                      <children>
                         <Button fx:id="warnUserButton" mnemonicParsing="false" onAction="#onClickWarnUserButton" text="Warn user" />
-                        <Button fx:id="tempBanButton" mnemonicParsing="false" onAction="#onClickTempBanButton" text="Ban user Temporary" />
-                        <Button fx:id="permanentBanButton" mnemonicParsing="false" onAction="#onClickPermanentBanButton" text="Ban User permanent" />
-                        <Button fx:id="unbanButton" mnemonicParsing="false" onAction="#onClickUnbanButton" text="Unban User" />
+                        <Button fx:id="tempBanButton" mnemonicParsing="false" onAction="#onClickTempBanButton" text="Kick User" />
+                        <Button fx:id="permanentBanButton" mnemonicParsing="false" onAction="#onClickPermanentBanButton" text="Ban User" />
                         <ToggleButton fx:id="showPwdButton" mnemonicParsing="false" onAction="#onClickShowPwdButton" text="Show Passwords" />
                      </children>
                      <HBox.margin>

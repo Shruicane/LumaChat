@@ -1,10 +1,35 @@
 package org.luma.server.database;
 
 
+import org.luma.server.frontend.controller.Controller;
+
 import java.sql.*;
 
 public class MySQLConnection {
+    DatabaseTMP database;
 
+    private UserManagement userManager;
+    private GroupManagement groupManager;
+
+    public MySQLConnection(Controller controller){
+        database = new DatabaseTMP();
+        userManager = new UserManagement(this, controller);
+        groupManager = new GroupManagement(this, controller);
+    }
+
+    public DatabaseTMP getDatabase(){
+        return database;
+    }
+
+    public UserManagement getUserManager() {
+        return userManager;
+    }
+
+    public GroupManagement getGroupManager() {
+        return groupManager;
+    }
+
+    /*
 
     private Connection conn;
     private String JDBC_DRIVER;
@@ -99,5 +124,5 @@ public class MySQLConnection {
         this.executeQuery(messagesQuery);
         this.executeQuery(logDataQuery);
         this.executeQuery(uuidListQuery);
-    }
+    }*/
 }

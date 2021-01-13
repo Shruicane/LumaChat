@@ -1,9 +1,6 @@
 package org.luma.client.network;
 
-import Objects.AnswerObject;
-import Objects.Get;
-import Objects.SystemText;
-import Objects.Text;
+import Objects.*;
 import org.luma.client.frontend.ClientGUI1;
 import org.luma.client.frontend.GUI;
 
@@ -48,6 +45,8 @@ public class IOHandler extends Thread {
                         log.message(((Text) obj).getSender() + ": " + ((Text) obj).getMessage());
                     } else if (obj instanceof SystemText) {
                         log.system(((SystemText) obj).getMessage());
+                    } else if (obj instanceof WarnText) {
+                        gui.showPopup(((WarnText) obj).getType(), ((WarnText) obj).getMessage());
                     } else
                         log.info(obj.toString());
                 } catch (IOException | ClassNotFoundException e) {
