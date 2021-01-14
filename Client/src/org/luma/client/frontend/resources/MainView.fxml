@@ -19,7 +19,7 @@
    <left>
       <TabPane fx:id="chatTabs" prefHeight="497.0" prefWidth="273.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab text="Private Chats">
+          <Tab disable="true" text="Private Chats">
                <content>
                   <ListView fx:id="privateChats" prefHeight="200.0" prefWidth="200.0" visible="false" />
                </content>
@@ -28,7 +28,7 @@
                <content>
                   <VBox prefHeight="497.0" prefWidth="273.0">
                      <children>
-                        <ListView fx:id="groupChats" prefHeight="285.0" prefWidth="244.0" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="groupChats" onMouseClicked="#updateUserList" prefHeight="285.0" prefWidth="244.0" VBox.vgrow="ALWAYS" />
                         <Separator prefWidth="200.0" />
                         <ListView fx:id="groupChatMembers" prefHeight="300.0" prefWidth="244.0" VBox.vgrow="ALWAYS" />
                      </children></VBox>

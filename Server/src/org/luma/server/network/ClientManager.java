@@ -50,7 +50,7 @@ public class ClientManager {
 
     public Client findClient(String name) {
         for (Client client : connectedClients) {
-            if (client.checkName(name))
+            if (client != null && client.checkName(name))
                 return client;
         }
         return null;
@@ -182,6 +182,6 @@ public class ClientManager {
     }
 
     public Object getAllGroupsWithUsers(String username){
-        return userManager.getAllGroups(username);
+        return userManager.getAllGroupsWithUsers(username);
     }
 }

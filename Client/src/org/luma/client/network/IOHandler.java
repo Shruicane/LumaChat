@@ -47,7 +47,7 @@ public class IOHandler extends Thread {
                     } else if (obj instanceof WarnText) {
                         gui.showPopup(((WarnText) obj).getType(), (String) ((WarnText) obj).getInformation());
                     } else if (obj instanceof Update) {
-                        System.out.println(obj);
+                        gui.updateGroupView(((Update) obj).getInformation());
                     } else
                         log.info(obj.toString());
                 } catch (IOException | ClassNotFoundException e) {

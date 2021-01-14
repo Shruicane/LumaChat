@@ -14,6 +14,8 @@ import org.luma.client.frontend.controller.MainController;
 import org.luma.client.network.ClientMain;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -97,5 +99,10 @@ public class ClientGUI1 extends Application implements GUI{
     public void logout() {
         if(primaryStage.getScene() == ClientGUI1.mainViewScene)
             controller.logout();
+    }
+
+    @Override
+    public void updateGroupView(Object information) {
+        controller.updateGroupView((Map<String, ArrayList<String>>) information);
     }
 }

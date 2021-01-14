@@ -1,6 +1,7 @@
 package org.luma.client.frontend.controller;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -10,6 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import org.luma.client.network.ClientMain;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -127,5 +130,37 @@ public class MainController {
         });
         thread.setDaemon(true);
         thread.start();
+    }
+
+    Map<String, ArrayList<String>> groupData;
+
+    public void updateGroupView(Map<String, ArrayList<String>> data){
+        Thread thread = new Thread(() -> {
+            Platform.runLater(() -> {
+                groupData = data;
+                ObservableList<String> groups = groupChats.getItems();
+                groups.clear();
+                groups.addAll(groupData.keySet());
+
+                groupChats.setItems(groups);
+            });
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    private void updateUserList(){
+        if(getSelectedGroup() != null){
+            ObservableList<String> users = groupChatMembers.getItems();
+            users.clear();
+            users.addAll(groupData.get(getSelectedGroup()));
+
+            groupChatMembers.setItems(users);
+        }
+    }
+
+    private String getSelectedGroup() {
+        return groupChats.getSelectionModel().getSelectedItems().get(0);
     }
 }

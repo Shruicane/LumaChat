@@ -6,4 +6,6 @@ public interface GUI {
     void showPopup(String msg);
 
     void logout();
+
+    void updateGroupView(Object information);
 }
