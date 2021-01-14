@@ -6,25 +6,32 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="522.0" prefWidth="1016.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.luma.client.frontend.controller.MainController">
    <left>
       <TabPane fx:id="chatTabs" prefHeight="497.0" prefWidth="273.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab disable="true" text="Private Chats">
+          <Tab text="Private Chats">
                <content>
                   <ListView fx:id="privateChats" prefHeight="200.0" prefWidth="200.0" visible="false" />
                </content>
             </Tab>
           <Tab text="Group Chats">
                <content>
-                  <ListView fx:id="groupChats" prefHeight="497.0" prefWidth="262.0" />
+                  <VBox prefHeight="497.0" prefWidth="273.0">
+                     <children>
+                        <ListView fx:id="groupChats" prefHeight="285.0" prefWidth="244.0" VBox.vgrow="ALWAYS" />
+                        <Separator prefWidth="200.0" />
+                        <ListView fx:id="groupChatMembers" prefHeight="300.0" prefWidth="244.0" VBox.vgrow="ALWAYS" />
+                     </children></VBox>
                </content>
             </Tab>
         </tabs>
@@ -33,7 +40,7 @@
    <center>
       <BorderPane prefHeight="400.0" prefWidth="297.0" BorderPane.alignment="CENTER">
          <bottom>
-            <HBox prefHeight="50.0" prefWidth="608.0" BorderPane.alignment="CENTER">
+            <HBox prefHeight="50.0" prefWidth="781.0" BorderPane.alignment="CENTER">
                <children>
                   <TextField fx:id="msgTextArea" onAction="#onClickSendMsg" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                   <Button fx:id="sendMsgBtn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#onClickSendMsg" prefHeight="50.0" prefWidth="60.0" HBox.hgrow="NEVER">
@@ -45,7 +52,7 @@
             </HBox>
          </bottom>
          <center>
-            <TextArea fx:id="messagesTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <TextArea fx:id="messagesTextArea" editable="false" prefHeight="447.0" prefWidth="728.0" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </center>

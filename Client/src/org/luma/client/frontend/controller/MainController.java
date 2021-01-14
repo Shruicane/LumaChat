@@ -22,6 +22,9 @@ public class MainController {
     private ListView<String> groupChats;
 
     @FXML
+    private ListView<String> groupChatMembers;
+
+    @FXML
     private TextField msgTextArea;
 
     @FXML
