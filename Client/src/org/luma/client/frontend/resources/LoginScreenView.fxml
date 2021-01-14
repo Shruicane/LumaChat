@@ -37,7 +37,7 @@
          </VBox.margin>
       </Label>
       <PasswordField fx:id="passWordTextField" onAction="#onClickLogin" />
-      <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onClickLogin" prefHeight="25.0" prefWidth="289.0" text="Login">
+      <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onClickLogin" prefHeight="25.0" prefWidth="289.0" text="Login" VBox.vgrow="ALWAYS">
          <VBox.margin>
             <Insets top="70.0" />
          </VBox.margin>
