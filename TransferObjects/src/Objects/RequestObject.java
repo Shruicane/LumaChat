@@ -5,20 +5,20 @@ import java.io.Serializable;
 public class RequestObject implements Serializable {
     private final String type;
     private final String sender;
-    private final String message;
+    private final Object information;
 
-    public RequestObject(String type, String sender, String message) {
+    public RequestObject(String type, String sender, Object information) {
         this.type = type;
         this.sender = sender;
-        this.message = message;
+        this.information = information;
     }
 
     public String getSender() {
         return sender;
     }
 
-    public String getMessage() {
-        return message;
+    public Object getInformation() {
+        return information;
     }
 
     public String getType() {
@@ -30,7 +30,7 @@ public class RequestObject implements Serializable {
         return "RequestObject{" +
                 "type='" + type + '\'' +
                 ", sender='" + sender + '\'' +
-                ", message='" + message + '\'' +
+                ", information='" + information + '\'' +
                 '}';
     }
 }

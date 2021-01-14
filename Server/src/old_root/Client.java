@@ -26,7 +26,7 @@ public class Client {
 
     public void login(Login login) throws IOException {
         name = login.getSender();
-        password = login.getMessage();
+        password = (String) login.getInformation();
         System.out.println("[Login] " + name + ":" + password);
 
         //send(new Success("Login", "Welcome!"));
@@ -37,7 +37,7 @@ public class Client {
     public void text(Text text) throws IOException {
         System.out.println("[Text]");
         System.out.println("Sender: " + text.getSender());
-        System.out.println("Text: " + text.getMessage());
+        System.out.println("Text: " + text.getInformation());
         //send(new Success("Text", text.getMessage()));
 
         ml.message(text);

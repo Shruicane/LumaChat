@@ -2,10 +2,7 @@ package org.luma.server.database;
 
 import org.luma.server.frontend.controller.Controller;
 
-import javax.xml.crypto.Data;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
+import java.util.*;
 
 public class UserManagement {
 
@@ -20,12 +17,12 @@ public class UserManagement {
         this.database = mySQLConnection.getDatabase();
     }
 
-    public boolean userExists(String username){
+    public boolean exists(String username){
         return database.existsUser(username);
     }
 
     public boolean createUser(String username, String password){
-        if(!userExists(username)){
+        if(!exists(username)){
             database.addUser(username, password);
             controller.updateUser(username, password, false);
             return true;
@@ -34,8 +31,8 @@ public class UserManagement {
     }
 
     public boolean deleteUser(String username){
-        if(userExists(username)) {
-            database.deleteUser(username);
+        if(exists(username)) {
+            database.removeUser(username);
             return true;
         }
         return false;
@@ -46,7 +43,7 @@ public class UserManagement {
     }
 
     public boolean banUser(String username){
-        if(userExists(username)){
+        if(exists(username)){
             database.banUser(username);
             return true;
         }
@@ -54,7 +51,7 @@ public class UserManagement {
     }
 
     public boolean unbanUser(String username){
-        if(userExists(username)){
+        if(exists(username)){
             database.unbanUser(username);
             return true;
         }
@@ -63,6 +60,23 @@ public class UserManagement {
 
     public boolean isBanned(String username){
         return database.isBanned(username);
+    }
+
+    public ArrayList<Integer> getAllGroups(String username){
+        ArrayList<Integer> result = new ArrayList<>();
+        for(int groupID:database.getAllGroups())
+            if(database.getAllUsers(groupID).contains(username))
+                result.add(groupID);
+        return result;
+    }
+
+    public Map<String, ArrayList<String>> getAllGroupsWithUsers(String username) {
+        Map<String, ArrayList<String>> result = new HashMap<>();
+        ArrayList<Integer> groups = getAllGroups(username);
+        for(Integer groupID:groups){
+            result.put(database.getName(groupID), database.getAllUsers(groupID));
+        }
+        return result;
     }
 
 

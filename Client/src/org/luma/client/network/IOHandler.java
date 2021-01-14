@@ -1,7 +1,6 @@
 package org.luma.client.network;
 
 import Objects.*;
-import org.luma.client.frontend.ClientGUI1;
 import org.luma.client.frontend.GUI;
 
 import java.io.IOException;
@@ -42,11 +41,13 @@ public class IOHandler extends Thread {
                     if (obj == null) {
                         // Free InputStream from reading in this synchronized Block
                     } else if (obj instanceof Text) {
-                        log.message(((Text) obj).getSender() + ": " + ((Text) obj).getMessage());
+                        log.message(((Text) obj).getSender() + ": " + ((Text) obj).getInformation());
                     } else if (obj instanceof SystemText) {
-                        log.system(((SystemText) obj).getMessage());
+                        log.system((String) ((SystemText) obj).getInformation());
                     } else if (obj instanceof WarnText) {
-                        gui.showPopup(((WarnText) obj).getType(), ((WarnText) obj).getMessage());
+                        gui.showPopup(((WarnText) obj).getType(), (String) ((WarnText) obj).getInformation());
+                    } else if (obj instanceof Update) {
+                        System.out.println(obj);
                     } else
                         log.info(obj.toString());
                 } catch (IOException | ClassNotFoundException e) {

@@ -2,6 +2,8 @@ package org.luma.server.database;
 
 import org.luma.server.frontend.controller.Controller;
 
+import java.util.ArrayList;
+
 public class GroupManagement {
 
     private MySQLConnection mySQLConnection;
@@ -15,12 +17,28 @@ public class GroupManagement {
         this.database = mySQLConnection.getDatabase();
     }
 
-    public int createGroup(){
-        return database.addGroup();
+    public int createGroup(String name){
+        return database.addGroup(name);
     }
 
     public void deleteGroup(Group group){
         database.removeGroup(group);
+    }
+
+    public void addUser(Group group, String username){
+        database.addUserToGroup(group, username);
+    }
+
+    public void removeUser(Group group, String username){
+        database.removeUserFromGroup(group, username);
+    }
+
+    public ArrayList<String> getAllUsers(Group group){
+        return database.getAllUsers(group.getId());
+    }
+
+    public void changeName(int id, String name) {
+        database.changeGroupName(id, name);
     }
 
     /*public void createGroup(int groupID){

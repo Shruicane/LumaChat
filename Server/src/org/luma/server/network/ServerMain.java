@@ -43,11 +43,6 @@ public class ServerMain {
         }
     }
 
-    private void restart() {
-        stop();
-        start();
-    }
-
     public void stop() {
         close();
         log.network("Server >> Stopping");
@@ -141,5 +136,9 @@ public class ServerMain {
 
     public ClientManager getClientManager() {
         return cm;
+    }
+
+    public Logger getLogger(){
+        return log;
     }
 }

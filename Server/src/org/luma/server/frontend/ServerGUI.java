@@ -31,7 +31,7 @@ public class ServerGUI extends Application {
             public void handle(WindowEvent event) {
                 // TODO: stop the server
                 System.err.println("Stopped the Server... in a really gorgeous way.....");
-                System.exit(-1);
+                System.exit(0);
             }
         });
     }

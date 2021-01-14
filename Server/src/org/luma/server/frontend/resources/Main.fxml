@@ -30,7 +30,7 @@
          <content>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <TableView fx:id="userTableView" onMouseClicked="#onClickTable" prefHeight="557.0" prefWidth="380.0">
+                  <TableView fx:id="userTableView" onMouseClicked="#onClickUserTable" prefHeight="557.0" prefWidth="380.0">
                     <columns>
                       <TableColumn fx:id="userTableUsername" maxWidth="190.0" minWidth="190.0" prefWidth="190.0" resizable="false" text="Username" />
                       <TableColumn fx:id="userTablePassword" maxWidth="190.0" minWidth="190.0" prefWidth="190.0" resizable="false" text="Password" />
@@ -40,7 +40,7 @@
                      <children>
                         <Button fx:id="warnUserButton" mnemonicParsing="false" onAction="#onClickWarnUserButton" text="Warn user" />
                         <Button fx:id="tempBanButton" mnemonicParsing="false" onAction="#onClickTempBanButton" text="Kick User" />
-                        <Button fx:id="permanentBanButton" mnemonicParsing="false" onAction="#onClickPermanentBanButton" text="Ban User" />
+                        <ToggleButton fx:id="permanentBanButton" mnemonicParsing="false" onAction="#onClickPermanentBanButton" text="Ban User" />
                         <ToggleButton fx:id="showPwdButton" mnemonicParsing="false" onAction="#onClickShowPwdButton" text="Show Passwords" />
                      </children>
                      <HBox.margin>
@@ -58,14 +58,21 @@
          <content>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <ListView fx:id="groupList" prefHeight="200.0" prefWidth="200.0" />
-                  <ListView fx:id="userList" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="groupList" onMouseClicked="#updateListGroup" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="userList" onMouseClicked="#updateListUser" prefHeight="200.0" prefWidth="200.0" />
                   <VBox prefHeight="371.0" prefWidth="209.0" spacing="15.0">
                      <children>
-                        <Button fx:id="removeUserButton" mnemonicParsing="false" onAction="#onClickRemoveUserButton" text="Remove User" />
-                        <Button fx:id="addUserButton" mnemonicParsing="false" onAction="#onClickAddUserButton" text="Add User" />
+                        <Button fx:id="createGroupButton" mnemonicParsing="false" onAction="#onClickCreateGroupButton" text="Create Group">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></Button>
+                        <Button fx:id="editGroupButton" mnemonicParsing="false" onAction="#onClickEditGroupButton" text="Edit Group" />
                         <Button fx:id="deleteGroupButton" mnemonicParsing="false" onAction="#onClickDeleteGroupButton" text="Delete Group" />
-                        <Button fx:id="createGroupButton" mnemonicParsing="false" onAction="#onClickCreateGroupButton" text="Create Group" />
+                        <Button fx:id="addUserButton" mnemonicParsing="false" onAction="#onClickAddUserButton" text="Add User" visible="false">
+                           <VBox.margin>
+                              <Insets top="50.0" />
+                           </VBox.margin></Button>
+                        <Button fx:id="removeUserButton" mnemonicParsing="false" onAction="#onClickRemoveUserButton" text="Remove User" visible="false" />
                      </children>
                      <HBox.margin>
                         <Insets />

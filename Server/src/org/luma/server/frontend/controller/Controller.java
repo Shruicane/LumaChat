@@ -1,40 +1,24 @@
 package org.luma.server.frontend.controller;
 
-import javafx.application.Platform;
-import javafx.beans.property.SimpleSetProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.MapValueFactory;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.util.Callback;
-import javafx.util.converter.IntegerStringConverter;
 import org.luma.server.database.*;
 import org.luma.server.network.ClientManager;
+import org.luma.server.network.Logger;
 import org.luma.server.network.ServerMain;
 import org.luma.server.settings.ServerSettings;
 import org.luma.server.settings.Settings;
 
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Controller {
 
@@ -58,10 +42,7 @@ public class Controller {
     private Button tempBanButton;
 
     @FXML
-    private Button permanentBanButton;
-
-    @FXML
-    private Button unbanButton;
+    private ToggleButton permanentBanButton;
 
     @FXML
     private ToggleButton showPwdButton;
@@ -77,6 +58,9 @@ public class Controller {
 
     @FXML
     private Button addUserButton;
+
+    @FXML
+    private Button editGroupButton;
 
     @FXML
     private Button deleteGroupButton;
@@ -111,14 +95,20 @@ public class Controller {
     @FXML
     private void onClickWarnUserButton() {
         if (getSelectedUser() != null) {
-            showPopup("Warn!", "Warning User: " + getSelectedUser().getName(), r -> cm.warn(getSelectedUser().getName(), r));
+            showPopup("Warn!", "Warning User: " + getSelectedUser().getName(), r -> {
+                cm.warn(getSelectedUser().getName(), r);
+                log.administration("Warned >> " + getSelectedUser().getName() + ": " + r);
+            });
         }
     }
 
     @FXML
     private void onClickTempBanButton() {
         if (getSelectedUser() != null) {
-            showPopup("Kick!", "Kicking User: " + getSelectedUser().getName(), r -> cm.kick(getSelectedUser().getName(), r, "You were Kicked!"));
+            showPopup("Kick!", "Kicking User: " + getSelectedUser().getName(), r -> {
+                if(cm.kick(getSelectedUser().getName(), r, "You were Kicked!"))
+                    log.administration("Kicked >> " + getSelectedUser().getName() + ": " + r);
+            });
         }
     }
 
@@ -128,15 +118,13 @@ public class Controller {
             if (cm.isBanned(getSelectedUser().getName())) {
                 cm.unban(getSelectedUser().getName());
             } else {
-                showPopup("Ban!", "Banning User: " + getSelectedUser().getName(), r -> cm.ban(getSelectedUser().getName(), r));
+                showPopup("Ban!", "Banning User: " + getSelectedUser().getName(), r -> {
+                    cm.ban(getSelectedUser().getName(), r);
+                    log.administration("Banned >> " + getSelectedUser().getName() + ": " + r);
+                });
             }
-            onClickTable();
+            onClickUserTable();
         }
-    }
-
-    @FXML
-    private void onClickUnbanButton() {
-
     }
 
     @FXML
@@ -154,60 +142,159 @@ public class Controller {
     }
 
     @FXML
-    private void onClickTable() {
+    private void onClickUserTable() {
         if (getSelectedUser() != null) {
             boolean isBanned = cm.isBanned(getSelectedUser().getName());
-            permanentBanButton.setText(isBanned ? "Unban User" : "Ban User");
+            permanentBanButton.setSelected(isBanned);
         }
     }
 
     private User getSelectedUser() {
         return userTableView.getSelectionModel().getSelectedItems().get(0);
     }
-
-    private void showPopup(String title, String msg, Consumer<? super String> consumer) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText(msg);
-        dialog.setTitle(title);
-
-        Optional<String> result = dialog.showAndWait();
-
-        result.ifPresent(consumer);
-    }
     //</editor-fold>
 
     //<editor-fold desc="Group Management Tab">
     @FXML
     private void onClickRemoveUserButton() {
+        if (getSelectedGroup() != null && getSelectedGroupUser() != null) {
+            String username = getSelectedGroupUser();
+            Group group = getSelectedGroup();
 
+            groupManager.removeUser(group, username);
+            ObservableList<String> user = userList.getItems();
+            user.remove(username);
+
+            userList.setItems(user);
+            log.administration("Removed User >> " + group + " -> " + username);
+
+            updateListUser();
+            sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
+        }
     }
 
     @FXML
     private void onClickAddUserButton() {
+        if (getSelectedGroup() != null) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setHeaderText("Please Enter Username:");
+            dialog.setTitle("Add User");
 
+            Optional<String> result = dialog.showAndWait();
+
+            result.ifPresent(username -> {
+                if (userManager.exists(username) && !groupManager.getAllUsers(getSelectedGroup()).contains(username)) {
+                    groupManager.addUser(getSelectedGroup(), username);
+                    ObservableList<String> user = userList.getItems();
+                    user.add(username);
+
+                    userList.setItems(user);
+                    log.administration("Added User >> " + getSelectedGroup() + " <- " + username);
+
+                    updateListUser();
+                    sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
+                }
+            });
+        }
+
+        // TODO: maybe add drop down menu to dialog
     }
 
     @FXML
     private void onClickDeleteGroupButton() {
-        if(getSelectedGroup() != null){
-            groupManager.deleteGroup(getSelectedGroup());
-            ObservableList<Group> groups = groupList.getItems();
-            groups.remove(getSelectedGroup());
-            groupList.setItems(groups);
+        if (getSelectedGroup() != null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you really want to delete this Group?", ButtonType.YES, ButtonType.NO);
+
+            ButtonType result = alert.showAndWait().orElse(ButtonType.NO);
+
+            if (ButtonType.YES.equals(result)) {
+                Group group = getSelectedGroup();
+                ArrayList<String> affectedUsers = groupManager.getAllUsers(group);
+                groupManager.deleteGroup(group);
+                ObservableList<Group> groups = groupList.getItems();
+                groups.remove(group);
+
+                groupList.setItems(groups);
+                log.administration("Deleted Group >> " + group);
+
+                updateListGroup();
+                for(String user:affectedUsers)
+                    sendUpdateInfo(user, "group", userManager.getAllGroupsWithUsers(user));
+            }
         }
     }
 
     @FXML
     private void onClickCreateGroupButton() {
-        ObservableList<Group> groups = groupList.getItems();
-        Group group = new Group(groupManager.createGroup());
-        groups.add(group);
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setHeaderText("Please neter Group Name:");
+        dialog.setTitle("Create Group");
 
-        groupList.setItems(groups);
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(r -> {
+            if (groupList.getItems().filtered(group -> group.getName().equals(r)).size() == 0) {
+                ObservableList<Group> groups = groupList.getItems();
+                Group group = new Group(groupManager.createGroup(r), r);
+                groups.add(group);
+
+                groupList.setItems(groups);
+
+                log.administration("Created Group >> " + r);
+            } else {
+                dialog.close();
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setHeaderText("This Name already exists!");
+                alert.showAndWait();
+            }
+        });
+    }
+
+    @FXML
+    private void onClickEditGroupButton() {
+        if(getSelectedGroup() != null){
+            showPopup("Change Name", "Please Enter new Name:", name -> {
+                log.administration("Edited Group >> " + getSelectedGroup() + " -> " + name);
+                groupManager.changeName(getSelectedGroup().getId(), name);
+                getSelectedGroup().setName(name);
+                groupList.refresh();
+            });
+        }
+    }
+
+    @FXML
+    private void updateListGroup() {
+        if (getSelectedGroup() != null) {
+            ObservableList<String> user = userList.getItems();
+            if (user == null) {
+                user = emptyDummyList;
+            }
+            user.clear();
+            user.addAll(groupManager.getAllUsers(getSelectedGroup()));
+            userList.setItems(user);
+
+            addUserButton.setVisible(true);
+            removeUserButton.setVisible(getSelectedGroupUser() != null);
+        } else {
+            ObservableList<String> user = null;
+            userList.setItems(user);
+
+            addUserButton.setVisible(false);
+            removeUserButton.setVisible(false);
+        }
+    }
+
+    @FXML
+    private void updateListUser() {
+        removeUserButton.setVisible(getSelectedGroupUser() != null);
     }
 
     private Group getSelectedGroup() {
         return groupList.getSelectionModel().getSelectedItems().get(0);
+    }
+
+    private String getSelectedGroupUser() {
+        return userList.getSelectionModel().getSelectedItems().get(0);
     }
     //</editor-fold>
 
@@ -239,6 +326,8 @@ public class Controller {
         alert.setContentText(contentText);
         alert.setHeaderText("Settings saved.");
         alert.showAndWait();
+
+        log.administration("Settings >> Saved");
     }
 
     @FXML
@@ -264,11 +353,14 @@ public class Controller {
         groupManager = mySQLConnection.getGroupManager();
         server = new ServerMain(this, mySQLConnection);
         cm = server.getClientManager();
+        log = server.getLogger();
 
         logArea.setFont(Font.font("Monospaced", FontWeight.MEDIUM, FontPosture.REGULAR, 15));
 
         userTableUsername.setCellValueFactory(features -> features.getValue().usernameProperty());
         userTablePassword.setCellValueFactory(features -> features.getValue().passwordProperty());
+
+        emptyDummyList = userList.getItems();
     }
 
     MySQLConnection mySQLConnection;
@@ -276,10 +368,23 @@ public class Controller {
     GroupManagement groupManager;
     ServerMain server;
     ClientManager cm;
+    Logger log;
+
+    private ObservableList<String> emptyDummyList;
+
+    private void showPopup(String title, String msg, Consumer<? super String> consumer) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setHeaderText(msg);
+        dialog.setTitle(title);
+
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(consumer);
+    }
 
     public void updateLogArea(String log) {
         try {
-            logArea.setText(logArea.getText() + log + "\n");
+            logArea.appendText(log + "\n");
         } catch (Exception e) {
             System.out.println("ERROR: org/luma/server/frontend/controller/Controller.java -> updateLogArea()");
             e.printStackTrace();
@@ -290,5 +395,9 @@ public class Controller {
         ObservableList<User> items = userTableView.getItems();
         items.add(new User(username, password, online, showPwdButton.isSelected()));
         userTableView.setItems(items);
+    }
+
+    public void sendUpdateInfo(String username, String type, Object data){
+        cm.sendUpdateInfo(username, type, data);
     }
 }

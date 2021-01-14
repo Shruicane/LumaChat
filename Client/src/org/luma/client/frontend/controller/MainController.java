@@ -91,7 +91,7 @@ public class MainController {
     }
 
     public void updateMessages(String msg) {
-        messagesTextArea.setText((messagesTextArea.getText() + msg + "\n"));
+        messagesTextArea.appendText(msg + "\n");
     }
 
     @FXML

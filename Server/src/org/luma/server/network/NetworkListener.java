@@ -5,6 +5,7 @@ import Objects.Register;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 
 public class NetworkListener extends Thread {
     private final ServerSocket serverSocket;
@@ -46,6 +47,10 @@ public class NetworkListener extends Thread {
 
     public boolean register(Register register, Client client){
         return cm.register(register, client);
+    }
+
+    public Object getAllGroupsWithUsers(String username){
+        return cm.getAllGroupsWithUsers(username);
     }
 
     public void close() {

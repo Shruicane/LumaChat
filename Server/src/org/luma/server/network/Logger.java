@@ -83,6 +83,12 @@ public class Logger {
         controller.updateLogArea(prefix + str);
     }
 
+    public void administration(String str){
+        String prefix = formatPrefix("[ADM]");
+        System.out.println(colorize(prefix + str, 0));
+        controller.updateLogArea(prefix + str);
+    }
+
     public void print(String str) {
         System.out.println(str);
     }

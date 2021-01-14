@@ -7,6 +7,7 @@ import Objects.Text;
 import Objects.SystemText;
 import Objects.Get;
 import Objects.Register;
+import Objects.Update;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -34,7 +35,7 @@ public class Client {
 
     public Client(Login login) {
         this.name = login.getSender();
-        this.password = login.getMessage();
+        this.password = (String) login.getInformation();
     }
 
     public Client(Socket socket, Logger log) throws IOException {
@@ -57,11 +58,11 @@ public class Client {
                                 send(new Success((RequestObject) obj, "Login Successful", true));
 
                                 name = ((Login) obj).getSender();
-                                password = ((Login) obj).getMessage();
+                                password = (String) ((Login) obj).getInformation();
 
                                 ml.shout(new SystemText("[+] " + name));
 
-                                send(new SystemText("Online Users: " + ml.getOnlineClients(this)));
+                                send(new Update("group", "System", nl.getAllGroupsWithUsers(name)));
                             } else {
                                 send(new Success((RequestObject) obj, "Login Failed", false));
                             }
@@ -71,7 +72,7 @@ public class Client {
                                 send(new Success((RequestObject) obj, "Register Successful", true));
 
                                 name = ((Register) obj).getSender();
-                                password = ((Register) obj).getMessage();
+                                password = (String) ((Register) obj).getInformation();
                             } else{
                                 send(new Success((RequestObject) obj, "Name already exists!", false));
                             }
@@ -84,7 +85,7 @@ public class Client {
                     } else {
                         if (obj instanceof Text) {
                             send(new Success((RequestObject) obj, "Message Received", true));
-                            ml.shout(new Text(name, ((Text) obj).getMessage()));
+                            ml.shout(new Text(name, (String) ((Text) obj).getInformation()));
                         }
                     }
                 } catch (IOException | ClassNotFoundException e) {

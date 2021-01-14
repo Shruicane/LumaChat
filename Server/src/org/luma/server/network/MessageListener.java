@@ -16,7 +16,7 @@ public class MessageListener {
     }
 
     public void shout(Text text) {
-        log.message(text.getSender() + " >> All: " + text.getMessage());
+        log.message(text.getSender() + " >> All: " + text.getInformation());
         LinkedList<Client> clients = cm.getOnlineClients();
         for(Client client:clients) {
             client.send(text);
