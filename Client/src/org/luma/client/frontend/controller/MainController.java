@@ -5,7 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import org.luma.client.frontend.ClientGUI1;
+import org.luma.client.frontend.ClientGUI;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -44,7 +44,7 @@ public class MainController {
         //Chats laden
         privateChats.getItems().addAll("Chat1", "Chat2", "Chat3");
 
-        ImageView btnImg = new ImageView(ClientGUI1.sendImage);
+        ImageView btnImg = new ImageView(ClientGUI.sendImage);
         btnImg.setFitWidth(50);
         btnImg.setFitHeight(50);
 
@@ -57,7 +57,7 @@ public class MainController {
                     //TODO: Load Chats
                 }
         );
-        ClientGUI1.setMainController(this);
+        ClientGUI.setMainController(this);
     }
 
     @FXML
@@ -85,7 +85,7 @@ public class MainController {
 
     @FXML
     private void onClickSendMsg() {
-        ClientMain client = ClientGUI1.getClient();
+        ClientMain client = ClientGUI.getClient();
         String msg = msgTextArea.getText();
 
         if (!msg.isEmpty()) {
@@ -120,12 +120,12 @@ public class MainController {
     public void logout() {
         Thread thread = new Thread(() -> {
             Platform.runLater(() -> {
-                ClientMain client = ClientGUI1.getClient();
+                ClientMain client = ClientGUI.getClient();
                 if(client.isConnected())
                     client.disconnect("Loggout");
 
                 messagesTextArea.clear();
-                ClientGUI1.showLoginScreen();
+                ClientGUI.showLoginScreen();
             });
         });
         thread.setDaemon(true);

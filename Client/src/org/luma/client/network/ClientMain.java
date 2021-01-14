@@ -4,7 +4,6 @@ import Objects.Get;
 import Objects.Login;
 import Objects.Register;
 import Objects.Text;
-import org.luma.client.frontend.ClientGUI1;
 import org.luma.client.frontend.GUI;
 
 import java.io.IOException;

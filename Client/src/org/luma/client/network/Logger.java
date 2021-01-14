@@ -1,7 +1,6 @@
 package org.luma.client.network;
 
 
-import org.luma.client.frontend.ClientGUI1;
 import org.luma.client.frontend.GUI;
 
 import java.time.LocalDateTime;

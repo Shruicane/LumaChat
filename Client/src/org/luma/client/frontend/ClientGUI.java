@@ -14,12 +14,10 @@ import org.luma.client.frontend.controller.MainController;
 import org.luma.client.network.ClientMain;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ClientGUI1 extends Application implements GUI{
+public class ClientGUI extends Application implements GUI{
 
     private static Stage primaryStage;
     private static Scene loginScene;
@@ -43,13 +41,14 @@ public class ClientGUI1 extends Application implements GUI{
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        ClientGUI1.sendImage = new Image("https://www.iconfinder.com/icons/1564528/download/png/48");
-        ClientGUI1.mainViewScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/MainView.fxml")));
-        ClientGUI1.loginScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/LoginScreenView.fxml")));
-        ClientGUI1.createAccountScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/CreateAccountView.fxml")));
-        ClientGUI1.primaryStage = primaryStage;
-        ClientGUI1.primaryStage.setScene(ClientGUI1.loginScene);
-        ClientGUI1.primaryStage.show();
+        ClientGUI.sendImage = new Image("https://www.iconfinder.com/icons/1564528/download/png/48");
+        ClientGUI.mainViewScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/MainView.fxml")));
+        ClientGUI.loginScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/LoginScreenView.fxml")));
+        ClientGUI.createAccountScene = new Scene(FXMLLoader.load(getClass().getResource("/org/luma/client/frontend/resources/CreateAccountView.fxml")));
+        ClientGUI.primaryStage = primaryStage;
+        ClientGUI.primaryStage.setScene(ClientGUI.loginScene);
+        ClientGUI.primaryStage.setResizable(false);
+        ClientGUI.primaryStage.show();
 
         client = new ClientMain("localhost", 54321, this);
 
@@ -62,15 +61,18 @@ public class ClientGUI1 extends Application implements GUI{
     }
 
     public static void showMainScreen(ClientMain client){
-        ClientGUI1.primaryStage.setScene(ClientGUI1.mainViewScene);
+        ClientGUI.primaryStage.setResizable(true);
+        ClientGUI.primaryStage.setScene(ClientGUI.mainViewScene);
     }
 
     public static void showLoginScreen(){
-        ClientGUI1.primaryStage.setScene(ClientGUI1.loginScene);
+        ClientGUI.primaryStage.setResizable(false);
+        ClientGUI.primaryStage.setScene(ClientGUI.loginScene);
     }
 
     public static void showCreateAccountScreen(){
-        ClientGUI1.primaryStage.setScene(ClientGUI1.createAccountScene);
+        ClientGUI.primaryStage.setResizable(false);
+        ClientGUI.primaryStage.setScene(ClientGUI.createAccountScene);
     }
 
     public static ClientMain getClient() {
@@ -97,7 +99,7 @@ public class ClientGUI1 extends Application implements GUI{
 
     @Override
     public void logout() {
-        if(primaryStage.getScene() == ClientGUI1.mainViewScene)
+        if(primaryStage.getScene() == ClientGUI.mainViewScene)
             controller.logout();
     }
 
