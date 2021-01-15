@@ -2,7 +2,7 @@ package org.luma.server.database;
 
 import java.lang.reflect.Array;
 import java.util.*;
-
+/*
 public class DatabaseTMP {
 
     private Map<String, String> user;
@@ -87,7 +87,7 @@ public class DatabaseTMP {
         return -1;
     }
 
-    public ArrayList<String> getAllUsers(int id){
+    public ArrayList<String> getAllUsers(String groupName){
         return groups.get(id);
     }
 
@@ -132,3 +132,4 @@ public class DatabaseTMP {
         this.bannedUser = bannedUser;
     }
 }
+*/

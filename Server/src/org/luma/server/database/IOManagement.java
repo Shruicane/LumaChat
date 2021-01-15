@@ -6,13 +6,11 @@ import java.util.*;
 
 public class IOManagement {
 
-    private final DatabaseTMP database;
 
     private final String logPath = "logs/";
     private final String dataPath = "data/";
 
-    public IOManagement(DatabaseTMP database) {
-        this.database = database;
+    public IOManagement() {
         if (!fileExists(logPath + "latest.txt"))
             createFile(logPath + "latest.txt");
         else {
@@ -21,128 +19,11 @@ public class IOManagement {
         }
     }
 
-    public void saveUser() {
-        try {
-            ArrayList<String> out = new ArrayList<>();
-            createFile(dataPath + "user.dat");
-            Map<String, String> user = database.getUser();
-            for (Map.Entry<String, String> entry : user.entrySet())
-                out.add(entry.getKey() + ":" + entry.getValue());
-            write(out, dataPath + "user.dat");
-        } catch (Exception e) {
-            System.err.println("Failed Saving User List!");
-        }
-    }
 
-    public void saveGroups() {
-        try {
-            ArrayList<String> out = new ArrayList<>();
-            createFile(dataPath + "groups.dat");
-            Map<Integer, ArrayList<String>> groups = database.getGroups();
-            for (Map.Entry<Integer, ArrayList<String>> entry : groups.entrySet()) {
-                StringBuilder str = new StringBuilder();
-                for (String item : entry.getValue())
-                    str.append(",").append(item);
-                out.add("" + entry.getKey() + ":" + (str.length() > 0 ? str.deleteCharAt(0).toString() : ""));
-            }
-            write(out, dataPath + "groups.dat");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed Saving Groups List!");
-        }
-    }
 
-    public void saveGroupNames() {
-        try {
-            ArrayList<String> out = new ArrayList<>();
-            createFile(dataPath + "groupNames.dat");
-            Map<Integer, String> groupNames = database.getGroupNames();
-            for (Map.Entry<Integer, String> entry : groupNames.entrySet())
-                out.add(entry.getKey() + ":" + entry.getValue());
-            write(out, dataPath + "groupNames.dat");
-        } catch (Exception e) {
-            System.err.println("Failed Saving GroupNames List!");
-        }
-    }
 
-    public void saveBannedUser() {
-        try {
-            ArrayList<String> out = new ArrayList<>();
-            createFile(dataPath + "bannedUser.dat");
-            Set<String> bannedUser = database.getBannedUser();
-            out = new ArrayList<String>(bannedUser);
-            write(out, dataPath + "bannedUser.dat");
-        } catch (Exception e) {
-            System.err.println("Failed Saving BannedUser List!");
-        }
-    }
 
-    public void saveAll() {
-        saveUser();
-        saveGroups();
-        saveGroupNames();
-        saveBannedUser();
-    }
 
-    public void loadUser() {
-        try {
-            ArrayList<String> in = read(dataPath + "user.dat");
-            Map<String, String> out = new HashMap<>();
-            for (String line : in) {
-                String[] str = line.split(":");
-                out.put(str[0], str[1]);
-            }
-            database.setUser(out);
-        } catch (Exception e) {
-            System.err.println("Failed Loading User List!");
-        }
-    }
-
-    public void loadGroups() {
-        try {
-            ArrayList<String> in = read(dataPath + "groups.dat");
-            Map<Integer, ArrayList<String>> out = new HashMap<>();
-            for (String line : in) {
-                String[] str = line.split(":");
-                System.out.println(str[0]);
-                out.put(Integer.parseInt(str[0]), str.length > 1 ? new ArrayList<>(Arrays.asList(str[1].split(","))) : new ArrayList<>());
-            }
-            database.setGroups(out);
-        } catch (Exception e) {
-            System.err.println("Failed Loading Groups List!");
-        }
-    }
-
-    public void loadGroupNames() {
-        try {
-            ArrayList<String> in = read(dataPath + "groupNames.dat");
-            Map<Integer, String> out = new HashMap<>();
-            for (String line : in) {
-                String[] str = line.split(":");
-                out.put(Integer.parseInt(str[0]), str[1]);
-            }
-            database.setGroupNames(out);
-        } catch (Exception e) {
-            System.err.println("Failed Loading GroupNames List!");
-        }
-    }
-
-    public void loadBannedUser() {
-        try {
-            ArrayList<String> in = read(dataPath + "bannedUser.dat");
-            Set<String> out = new HashSet<>(in);
-            database.setBannedUser(out);
-        } catch (Exception e) {
-            System.err.println("Failed Loading BannedUser List!");
-        }
-    }
-
-    public void loadAll() {
-        loadUser();
-        loadGroups();
-        loadGroupNames();
-        loadBannedUser();
-    }
 
     public void writeLog(String log) {
         if (!fileExists(logPath + "latest.txt"))

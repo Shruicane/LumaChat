@@ -49,7 +49,7 @@ public class Controller {
     private ToggleButton showPwdButton;
 
     @FXML
-    private ListView<Group> groupList;
+    private ListView<String> groupList;
 
     @FXML
     private ListView<String> userList;
@@ -126,7 +126,6 @@ public class Controller {
             }
             onClickUserTable();
 
-            ioManager.saveBannedUser();
         }
     }
 
@@ -175,7 +174,6 @@ public class Controller {
             sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
             cm.message(group.getName(), username, username + " has left the Room!");
 
-            ioManager.saveGroups();
         }
     }
 
@@ -189,7 +187,7 @@ public class Controller {
             Optional<String> result = dialog.showAndWait();
 
             result.ifPresent(username -> {
-                if (userManager.exists(username) && !groupManager.getAllUsers(getSelectedGroup().getId()).contains(username)) {
+                if (userManager.userExists(username) && !groupManager.getAllUsers(getSelectedGroup().getName()).contains(username)) {
                     groupManager.addUser(getSelectedGroup(), username);
                     ObservableList<String> user = userList.getItems();
                     user.add(username);
@@ -201,7 +199,9 @@ public class Controller {
                     sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
                     cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
 
-                    ioManager.saveGroups();
+                }else{
+                    Alert alert = new Alert(AlertType.WARNING, "User ist schon Mitglied der Gruppe!");
+                    alert.showAndWait();
                 }
             });
         }
@@ -218,10 +218,10 @@ public class Controller {
 
             if (ButtonType.YES.equals(result)) {
                 Group group = getSelectedGroup();
-                ArrayList<String> affectedUsers = groupManager.getAllUsers(group.getId());
+                ArrayList<String> affectedUsers = groupManager.getAllUsers(group.getName());
                 groupManager.deleteGroup(group);
-                ObservableList<Group> groups = groupList.getItems();
-                groups.remove(group);
+                ObservableList<String> groups = groupList.getItems();
+                groups.remove(group.getName());
 
                 groupList.setItems(groups);
                 log.administration("Deleted Group >> " + group);
@@ -230,8 +230,6 @@ public class Controller {
                 for(String user:affectedUsers)
                     sendUpdateInfo(user, "group", userManager.getAllGroupsWithUsers(user));
 
-                ioManager.saveGroups();
-                ioManager.saveGroupNames();
             }
         }
     }
@@ -245,10 +243,10 @@ public class Controller {
         Optional<String> result = dialog.showAndWait();
 
         result.ifPresent(r -> {
-            if (groupList.getItems().filtered(group -> group.getName().equals(r)).size() == 0) {
-                ObservableList<Group> groups = groupList.getItems();
-                Group group = new Group(groupManager.createGroup(r), r);
-                groups.add(group);
+            if (groupList.getItems().filtered(group -> group.equals(r)).size() == 0) {
+                ObservableList<String> groups = groupList.getItems();
+                Group group = new Group(groupManager.createGroup(r));
+                groups.add(group.getName());
 
                 groupList.setItems(groups);
 
@@ -260,8 +258,6 @@ public class Controller {
                 alert.showAndWait();
             }
 
-            ioManager.saveGroups();
-            ioManager.saveGroupNames();
         });
     }
 
@@ -270,12 +266,11 @@ public class Controller {
         if(getSelectedGroup() != null){
             showPopup("Change Name", "Please Enter new Name:", name -> {
                 log.administration("Edited Group >> " + getSelectedGroup() + " -> " + name);
-                groupManager.changeName(getSelectedGroup().getId(), name);
+                groupManager.changeName(getSelectedGroup().getName(), name);
                 getSelectedGroup().setName(name);
                 groupList.refresh();
             });
 
-            ioManager.saveGroupNames();
         }
     }
 
@@ -287,7 +282,7 @@ public class Controller {
                 user = emptyDummyList;
             }
             user.clear();
-            user.addAll(groupManager.getAllUsers(getSelectedGroup().getId()));
+            user.addAll(groupManager.getAllUsers(getSelectedGroup().getName()));
             userList.setItems(user);
 
             addUserButton.setVisible(true);
@@ -307,7 +302,7 @@ public class Controller {
     }
 
     private Group getSelectedGroup() {
-        return groupList.getSelectionModel().getSelectedItems().get(0);
+        return new Group(groupList.getSelectionModel().getSelectedItems().get(0));
     }
 
     private String getSelectedGroupUser() {
@@ -371,12 +366,10 @@ public class Controller {
         mySQLConnection = new MySQLConnection(this);
         userManager = mySQLConnection.getUserManager();
         groupManager = mySQLConnection.getGroupManager();
-        ioManager = new IOManagement(groupManager.getDatabase());
+        ioManager = new IOManagement();
         server = new ServerMain(this, ioManager, mySQLConnection);
         cm = server.getClientManager();
         log = server.getLogger();
-
-        ioManager.loadAll();
 
         logArea.setFont(Font.font("Monospaced", FontWeight.MEDIUM, FontPosture.REGULAR, 15));
 
@@ -391,16 +384,15 @@ public class Controller {
     private void initComponents(){
         //User Tableview
         ObservableList<User> userList = userTableView.getItems();
-        Map<String, String> user = groupManager.getDatabase().getUser();
+        Map<String, String> user = groupManager.getUsers();
         for(Map.Entry<String, String> entry:user.entrySet())
             userList.add(new User(entry.getKey(), entry.getValue(), false, false));
         userTableView.setItems(userList);
 
-        //Group Tableview
-        ObservableList<Group> groupTableView = groupList.getItems();
-        Map<Integer, String> groups = groupManager.getDatabase().getGroupNames();
-        for(Map.Entry<Integer, String> entry:groups.entrySet())
-            groupTableView.add(new Group(entry.getKey(), entry.getValue()));
+        //Group Listview
+        ObservableList<String> groupTableView = groupList.getItems();
+        ArrayList<String> groups = groupManager.getAllGroups();
+        groupTableView.addAll(groups);
         groupList.setItems(groupTableView);
     }
 

@@ -10,6 +10,7 @@ public class MySQLDataBase {
     private String user;
     private String password;
     private String database;
+    private boolean open;
 
     public MySQLDataBase(String IP, String port, String user, String password, String database) {
         this.JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -22,23 +23,30 @@ public class MySQLDataBase {
     }
 
     public void openConnection()  {
+        if(open)
+            return;
         try {
             Class.forName("com.mysql.jdbc.Driver");
             this.conn = DriverManager.getConnection(this.DB_URL, this.user, this.password);
+            this.open = true;
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void closeConnection(){
+        if(!open)
+            return;
         try {
             this.conn.close();
+            this.open = false;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
 
     public ResultSet executeQuery(String query){
+        //this.closeConnection();
         ResultSet rs = null;
         try {
             this.openConnection();

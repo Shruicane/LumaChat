@@ -13,13 +13,11 @@ public class UserManagement {
     private Controller controller;
     private MySQLDataBase mySQLDataBase;
 
-    private DatabaseTMP database;
 
     public UserManagement(MySQLConnection mySQLConnection, Controller controller, MySQLDataBase mySQLDataBase) {
         this.mySQLDataBase = mySQLDataBase;
         this.mySQLConnection = mySQLConnection;
         this.controller = controller;
-        this.database = mySQLConnection.getDatabase();
     }
 
     public boolean createUser(String username, String password){
@@ -83,10 +81,6 @@ public class UserManagement {
         mySQLDataBase.executeUpdate(query);
     }
 
-    public boolean exists(String username){
-        return database.existsUser(username);
-    }
-
     public boolean deleteUser(String username){
         if(userExists(username)){
             String query = "DELETE FROM userdata WHERE Username='" + username + "'";
@@ -120,22 +114,6 @@ public class UserManagement {
         return database.checkPassword(username, password) && !database.isBanned(username);
     }*/
 
-    public boolean banUser(String username){
-        if(exists(username)){
-            database.banUser(username);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean unbanUser(String username){
-        if(exists(username)){
-            database.unbanUser(username);
-            return true;
-        }
-        return false;
-    }
-
     public BanStatus isBanned(String username){
         String query = "SELECT * FROM `userdata` WHERE Username=\"" + username + "\"";
         ResultSet rs = mySQLDataBase.executeQuery(query);
@@ -157,19 +135,39 @@ public class UserManagement {
         return BanStatus.NONE;
     }
 
-    public ArrayList<Integer> getAllGroups(String username){
-        ArrayList<Integer> result = new ArrayList<>();
-        for(int groupID:database.getAllGroups())
-            if(database.getAllUsers(groupID).contains(username))
-                result.add(groupID);
-        return result;
+    public ArrayList<String> getAllGroups(String username){
+        ArrayList<String> res = new ArrayList<>();
+        String query = "SELECT * FROM `chatdata` WHERE Username=\"" + username + "\"";
+        ResultSet rs = mySQLDataBase.executeQuery(query);
+        try {
+            while (rs.next()){
+                res.add(rs.getString("Groupname"));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return res;
+    }
+
+    public ArrayList<String> getAllUsers(String groupName){
+        ArrayList<String> res = new ArrayList<>();
+        String query = "SELECT * FROM `chatdata` WHERE Groupname=\"" + groupName + "\"";
+        ResultSet rs = mySQLDataBase.executeQuery(query);
+        try {
+            while (rs.next()){
+                res.add(rs.getString("Username"));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return res;
     }
 
     public Map<String, ArrayList<String>> getAllGroupsWithUsers(String username) {
         Map<String, ArrayList<String>> result = new HashMap<>();
-        ArrayList<Integer> groups = getAllGroups(username);
-        for(Integer groupID:groups){
-            result.put(database.getName(groupID), database.getAllUsers(groupID));
+        ArrayList<String> groups = getAllGroups(username);
+        for(String groupName : groups){
+            result.put(groupName, getAllUsers(groupName));
         }
         return result;
     }

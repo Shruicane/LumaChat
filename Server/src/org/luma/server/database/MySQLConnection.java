@@ -7,21 +7,17 @@ import org.luma.server.settings.Settings;
 import java.sql.*;
 
 public class MySQLConnection {
-    DatabaseTMP database;
 
     private UserManagement userManager;
     private GroupManagement groupManager;
 
     public MySQLConnection(Controller controller){
-        database = new DatabaseTMP();
         userManager = new UserManagement(this, controller,
                 new MySQLDataBase(Settings.getIpAddress(), Settings.getPort(), Settings.getDatabaseUser(), Settings.getDatabasePassword(), Settings.getDatabase()));
-        groupManager = new GroupManagement(this, controller);
+        groupManager = new GroupManagement(this, controller,
+                new MySQLDataBase(Settings.getIpAddress(), Settings.getPort(), Settings.getDatabaseUser(), Settings.getDatabasePassword(), Settings.getDatabase()));
     }
 
-    public DatabaseTMP getDatabase(){
-        return database;
-    }
 
     public UserManagement getUserManager() {
         return userManager;

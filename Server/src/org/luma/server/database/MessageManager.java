@@ -8,17 +8,11 @@ import java.util.ArrayList;
 
 public class MessageManager {
 
-    private MySQLConnection mySQLConnection;
-    private Controller controller;
     private MySQLDataBase mySQLDataBase;
 
-    private DatabaseTMP database;
 
-    public MessageManager(MySQLConnection mySQLConnection, Controller controller, MySQLDataBase mySQLDataBase) {
+    public MessageManager(MySQLDataBase mySQLDataBase) {
         this.mySQLDataBase = mySQLDataBase;
-        this.mySQLConnection = mySQLConnection;
-        this.controller = controller;
-        this.database = mySQLConnection.getDatabase();
     }
 
     public void saveMessage(String message, String groupUUID, String date, String time, String senderName){

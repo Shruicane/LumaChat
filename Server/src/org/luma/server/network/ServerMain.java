@@ -1,8 +1,11 @@
 package org.luma.server.network;
 
 import org.luma.server.database.IOManagement;
+import org.luma.server.database.MessageManager;
 import org.luma.server.database.MySQLConnection;
+import org.luma.server.database.MySQLDataBase;
 import org.luma.server.frontend.controller.Controller;
+import org.luma.server.settings.Settings;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -20,7 +23,8 @@ public class ServerMain {
     public ServerMain(Controller controller, IOManagement ioManager, MySQLConnection mySQLConnection) {
         long startTime = System.currentTimeMillis();
         log = new Logger(controller, ioManager);
-        cm = new ClientManager(log, ioManager, mySQLConnection);
+        cm = new ClientManager(log, ioManager, mySQLConnection,
+                new MessageManager(new MySQLDataBase(Settings.getIpAddress(), Settings.getPort(), Settings.getDatabaseUser(), Settings.getDatabasePassword(), Settings.getDatabase())));
         start();
         log.network("Server >> Done! (" + (System.currentTimeMillis() - startTime) + "ms)");
     }

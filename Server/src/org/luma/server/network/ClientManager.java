@@ -3,7 +3,9 @@ package org.luma.server.network;
 import Objects.*;
 import org.luma.server.database.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 public class ClientManager {
@@ -14,10 +16,12 @@ public class ClientManager {
     UserManagement userManager;
     GroupManagement groupManager;
     IOManagement ioManager;
+    MessageManager messageManager;
 
 
-    public ClientManager(Logger log, IOManagement ioManager, MySQLConnection mySQLConnection) {
+    public ClientManager(Logger log, IOManagement ioManager, MySQLConnection mySQLConnection, MessageManager messageManager) {
         this.log = log;
+        this.messageManager = messageManager;
         userManager = mySQLConnection.getUserManager();
         groupManager = mySQLConnection.getGroupManager();
         this.ioManager = ioManager;
@@ -87,7 +91,6 @@ public class ClientManager {
         //    return true;
         //}
         if (userManager.createUser(register.getSender(), (String) register.getInformation())) {
-            ioManager.saveUser();
             return true;
         }
         return false;
@@ -153,24 +156,29 @@ public class ClientManager {
     }
 
     public void shout(String sender, String message) {
-        ArrayList<Integer> groups = userManager.getAllGroups(sender);
-        for (Integer groupID : groups) {
-            ArrayList<String> users = groupManager.getAllUsers(groupID);
+        ArrayList<String> groups = userManager.getAllGroups(sender);
+        for (String groupName : groups) {
+            ArrayList<String> users = groupManager.getAllUsers(groupName);
             for (String user : users) {
                 Client client = findClient(user);
                 if (client != null) {
-                    client.send(new SystemText(groupManager.getName(groupID), message));
+                    client.send(new SystemText(groupName, message));
+                    Date date = new Date();
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                    String datum = formatter.format(date).split(" ")[0];
+                    String time = formatter.format(date).split(" ")[1];
+                    messageManager.saveMessage(message, "", datum, time, sender);
                 }
             }
         }
     }
 
-    public void message(String group, String sender, String message) {
-        ArrayList<String> users = groupManager.getAllUsers(groupManager.getID(group));
+    public void message(String groupName, String sender, String message) {
+        ArrayList<String> users = groupManager.getAllUsers(groupName);
         for (String user : users) {
             Client client = findClient(user);
             if (client != null) {
-                client.send(new Text(group, sender, message));
+                client.send(new Text(groupName, sender, message));
             }
         }
     }
