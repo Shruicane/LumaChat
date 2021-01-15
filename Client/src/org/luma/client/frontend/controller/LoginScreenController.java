@@ -30,8 +30,8 @@ public class LoginScreenController {
             clear();
         } else {
             // Login Failed
-            ClientGUI.getController().showPopup("Wrong Password or Username! (or you are banned)");
-            System.out.println("Wrong pwd or something");
+            ClientGUI.getController().showPopup("Wrong Password or Username! (or you are banned)", "Is your Device connected to the Internet?");
+            //System.out.println("Wrong pwd or something");
         }
     }
 

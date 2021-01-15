@@ -44,7 +44,7 @@ public class CreateAccountController {
                 clear();
             } else {
                 //Register failed
-                ClientGUI.getController().showPopup("This Name is already taken!");
+                ClientGUI.getController().showPopup("This Name is already taken!", "Is your device connected to the Internet?");
             }
         }
     }

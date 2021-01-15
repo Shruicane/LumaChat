@@ -6,6 +6,7 @@ import Objects.Register;
 import Objects.Text;
 import org.luma.client.frontend.GUI;
 
+import javax.security.auth.login.CredentialException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -95,6 +96,9 @@ public class ClientMain {
         System.out.println("register " + name + ":" + password);
         if (!isConnected())
             connect();
+        if(ioHandler == null){
+            return false;
+        }
         return ioHandler.send(new Register(name, password));
     }
 

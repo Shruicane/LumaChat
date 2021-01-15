@@ -135,11 +135,16 @@ public class Controller {
         for (int i = 0; i < items.size(); i++) {
             User user = items.get(i);
             user.passwordProperty().getValue().show(showPwdButton.isSelected());
-            System.out.println(user.passwordProperty().getValue().toString());
+            //System.out.println(user.passwordProperty().getValue().toString());
             items.set(i, user);
         }
 
         userTableView.setItems(items);
+        if(showPwdButton.getText().equals("Show Passwords")){
+            this.showPwdButton.setText("Hide Passwords");
+        }else{
+            this.showPwdButton.setText("Show Passwords");
+        }
     }
 
     @FXML
@@ -190,7 +195,11 @@ public class Controller {
             Optional<String> result = dialog.showAndWait();
 
             result.ifPresent(username -> {
-                if (userManager.userExists(username) && !groupManager.getAllUsers(getSelectedGroup().getName()).contains(username)) {
+                ArrayList<String> allUsersLowerCase = new ArrayList<>();
+                for(String s : groupManager.getAllUsers(getSelectedGroup().getName())){
+                    allUsersLowerCase.add(s.toLowerCase());
+                }
+                if (userManager.userExists(username) && !allUsersLowerCase.contains(username.toLowerCase())) {
                     groupManager.addUser(getSelectedGroup(), username);
                     ObservableList<String> user = userList.getItems();
                     user.add(username);
