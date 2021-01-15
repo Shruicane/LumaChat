@@ -1,6 +1,5 @@
 package org.luma.server.frontend.controller;
 
-import com.sun.xml.internal.bind.marshaller.NioEscapeHandler;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -352,8 +351,6 @@ public class Controller {
 
     @FXML
     private void onClickDiscardBtn() {
-
-        System.out.println(this.mySQLConnection.getUserManager().deleteUser("NAME"));
 
         this.ipAddressTextField.setText(Settings.getIpAddress());
         this.portTextField.setText(Settings.getPort());
