@@ -200,7 +200,7 @@ public class Controller {
                     cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
 
                 }else{
-                    Alert alert = new Alert(AlertType.WARNING, "User ist schon Mitglied der Gruppe!");
+                    Alert alert = new Alert(AlertType.WARNING, "User ist schon Mitglied der Gruppe oder existiert nicht!");
                     alert.showAndWait();
                 }
             });
@@ -267,6 +267,13 @@ public class Controller {
             showPopup("Change Name", "Please Enter new Name:", name -> {
                 log.administration("Edited Group >> " + getSelectedGroup() + " -> " + name);
                 groupManager.changeName(getSelectedGroup().getName(), name);
+
+                groupList.getItems().clear();
+                ObservableList<String> groupTableView = groupList.getItems();
+                ArrayList<String> groups = groupManager.getAllGroups();
+                groupTableView.addAll(groups);
+                groupList.setItems(groupTableView);
+
                 getSelectedGroup().setName(name);
                 groupList.refresh();
             });
@@ -282,7 +289,8 @@ public class Controller {
                 user = emptyDummyList;
             }
             user.clear();
-            user.addAll(groupManager.getAllUsers(getSelectedGroup().getName()));
+            String name = getSelectedGroup().getName();
+            user.addAll(groupManager.getAllUsers(name));
             userList.setItems(user);
 
             addUserButton.setVisible(true);

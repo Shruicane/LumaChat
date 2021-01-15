@@ -118,6 +118,7 @@ public class UserManagement {
         String query = "SELECT * FROM `userdata` WHERE Username=\"" + username + "\"";
         ResultSet rs = mySQLDataBase.executeQuery(query);
         try {
+            rs.next();
             int status = rs.getInt("BanStatus");
             switch (status){
                 case 0:
