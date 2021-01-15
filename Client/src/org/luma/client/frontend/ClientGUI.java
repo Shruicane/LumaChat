@@ -88,8 +88,8 @@ public class ClientGUI extends Application implements GUI{
     }
 
     @Override
-    public void updateMessages(String msg) {
-        controller.updateMessages(msg);
+    public void updateMessages(String group, String msg) {
+        controller.updateMessages(group, msg);
     }
 
     public void showPopup(String msg, String hint) {

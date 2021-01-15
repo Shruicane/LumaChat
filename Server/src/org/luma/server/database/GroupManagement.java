@@ -33,12 +33,20 @@ public class GroupManagement {
         database.removeUserFromGroup(group, username);
     }
 
-    public ArrayList<String> getAllUsers(Group group){
-        return database.getAllUsers(group.getId());
+    public ArrayList<String> getAllUsers(int groupID){
+        return database.getAllUsers(groupID);
     }
 
     public void changeName(int id, String name) {
         database.changeGroupName(id, name);
+    }
+
+    public String getName(int groupID){
+        return database.getName(groupID);
+    }
+
+    public int getID(String name){
+        return database.getID(name);
     }
 
     /*public void createGroup(int groupID){

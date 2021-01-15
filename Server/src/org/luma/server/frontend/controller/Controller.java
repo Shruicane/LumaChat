@@ -183,7 +183,7 @@ public class Controller {
             Optional<String> result = dialog.showAndWait();
 
             result.ifPresent(username -> {
-                if (userManager.exists(username) && !groupManager.getAllUsers(getSelectedGroup()).contains(username)) {
+                if (userManager.exists(username) && !groupManager.getAllUsers(getSelectedGroup().getId()).contains(username)) {
                     groupManager.addUser(getSelectedGroup(), username);
                     ObservableList<String> user = userList.getItems();
                     user.add(username);
@@ -209,7 +209,7 @@ public class Controller {
 
             if (ButtonType.YES.equals(result)) {
                 Group group = getSelectedGroup();
-                ArrayList<String> affectedUsers = groupManager.getAllUsers(group);
+                ArrayList<String> affectedUsers = groupManager.getAllUsers(group.getId());
                 groupManager.deleteGroup(group);
                 ObservableList<Group> groups = groupList.getItems();
                 groups.remove(group);
@@ -270,7 +270,7 @@ public class Controller {
                 user = emptyDummyList;
             }
             user.clear();
-            user.addAll(groupManager.getAllUsers(getSelectedGroup()));
+            user.addAll(groupManager.getAllUsers(getSelectedGroup().getId()));
             userList.setItems(user);
 
             addUserButton.setVisible(true);

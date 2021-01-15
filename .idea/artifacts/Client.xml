@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="javafx" build-on-make="true" name="Client">
+  <artifact type="javafx" name="Client">
     <output-path>$PROJECT_DIR$/out/artifacts/Client</output-path>
     <properties id="javafx-properties">
       <options>
@@ -15,6 +15,7 @@
       <element id="archive" name="Client.jar">
         <element id="module-output" name="Client" />
       </element>
+      <element id="module-output" name="TransferObjects" />
     </root>
   </artifact>
 </component>

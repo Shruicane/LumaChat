@@ -80,15 +80,15 @@ public class ClientMain {
                             log.error("CMD >> Unknown Command: \"" + input + "\" try help for more information");
                         }
                     } else if (!input.isEmpty()) {
-                        boolean success = send(input);
+                        //boolean success = send(input);
                     }
                 }
             }
         };
     }
 
-    public boolean send(String msg) {
-        return ioHandler.send(new Text(name, msg));
+    public boolean send(String group, String msg) {
+        return ioHandler.send(new Text(group, name, msg));
     }
 
     public boolean register(String name, String password) {

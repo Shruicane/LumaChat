@@ -85,7 +85,7 @@ public class Client {
                     } else {
                         if (obj instanceof Text) {
                             send(new Success((RequestObject) obj, "Message Received", true));
-                            ml.shout(new Text(name, (String) ((Text) obj).getInformation()));
+                            ml.message(((Text) obj).getType(), name, (String) ((Text) obj).getInformation());
                         }
                     }
                 } catch (IOException | ClassNotFoundException e) {

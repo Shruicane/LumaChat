@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import org.luma.client.network.ClientMain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -88,16 +89,21 @@ public class MainController {
         ClientMain client = ClientGUI.getClient();
         String msg = msgTextArea.getText();
 
-        if (!msg.isEmpty()) {
-            client.send(msg);
+        if (!msg.isEmpty() && getSelectedGroup() != null) {
+            client.send(getSelectedGroup(), msg);
         }
         msgTextArea.clear();
 
         //TODO: msg an Server senden - nur in der Textliste anzeigen wenn vom Server eine Bestätigung kommt
     }
 
-    public void updateMessages(String msg) {
-        messagesTextArea.appendText(msg + "\n");
+    public void updateMessages(String group, String msg) {
+        if(!groupMessages.containsKey(group))
+            groupMessages.put(group, new ArrayList<String>());
+        groupMessages.get(group).add(msg);
+
+        if(getSelectedGroup() != null && group.matches(getSelectedGroup()))
+            messagesTextArea.appendText(msg + "\n");
     }
 
     @FXML
@@ -133,6 +139,7 @@ public class MainController {
     }
 
     Map<String, ArrayList<String>> groupData;
+    Map<String, ArrayList<String>> groupMessages = new HashMap<>();
 
     public void updateGroupView(Map<String, ArrayList<String>> data){
         Thread thread = new Thread(() -> {
@@ -157,6 +164,10 @@ public class MainController {
             users.addAll(groupData.get(getSelectedGroup()));
 
             groupChatMembers.setItems(users);
+
+            messagesTextArea.clear();
+            for(String msg:groupMessages.get(getSelectedGroup()))
+                messagesTextArea.appendText(msg + "\n");
         }
     }
 

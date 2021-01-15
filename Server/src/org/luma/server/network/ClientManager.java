@@ -1,6 +1,7 @@
 package org.luma.server.network;
 
 import Objects.*;
+import org.luma.server.database.GroupManagement;
 import org.luma.server.database.MySQLConnection;
 import org.luma.server.database.UserManagement;
 
@@ -13,11 +14,13 @@ public class ClientManager {
     private final LinkedList<Client> connectedClients = new LinkedList<>();
     private final LinkedList<Client> onlineClients = new LinkedList<>();
     UserManagement userManager;
+    GroupManagement groupManager;
 
 
     public ClientManager(Logger log, MySQLConnection mySQLConnection) {
         this.log = log;
         userManager = mySQLConnection.getUserManager();
+        groupManager = mySQLConnection.getGroupManager();
     }
 
     public void addClient(Client client) {
@@ -152,6 +155,16 @@ public class ClientManager {
         }
     }
 
+    public void message(String group, String sender, String message) {
+        ArrayList<String> users = groupManager.getAllUsers(groupManager.getID(group));
+        for(String user:users){
+            Client client = findClient(user);
+            if(client != null){
+                client.send(new Text(group, sender, message));
+            }
+        }
+    }
+
     public String formatList(LinkedList<Client> list) {
         StringBuilder sb = new StringBuilder();
         if (!list.isEmpty())
@@ -164,7 +177,7 @@ public class ClientManager {
 
     public void sendUpdateInfo(String username, String type, Object data){
         Client client = findClient(username);
-        if(client != null){
+        if(client != null) {
             client.send(new Update(type, "System", data));
         }
     }

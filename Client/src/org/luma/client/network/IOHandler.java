@@ -41,9 +41,9 @@ public class IOHandler extends Thread {
                     if (obj == null) {
                         // Free InputStream from reading in this synchronized Block
                     } else if (obj instanceof Text) {
-                        log.message(((Text) obj).getSender() + ": " + ((Text) obj).getInformation());
+                        log.message(((Text) obj).getType(), ((Text) obj).getSender() + ": " + ((Text) obj).getInformation());
                     } else if (obj instanceof SystemText) {
-                        log.system((String) ((SystemText) obj).getInformation());
+                        log.system(((SystemText) obj).getType(), (String) ((SystemText) obj).getInformation());
                     } else if (obj instanceof WarnText) {
                         gui.showPopup(((WarnText) obj).getType(), (String) ((WarnText) obj).getInformation());
                     } else if (obj instanceof Update) {

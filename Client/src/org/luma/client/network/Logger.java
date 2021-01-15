@@ -72,18 +72,18 @@ public class Logger {
         System.out.println(colorize(prefix + str, 37));
     }
 
-    public void message(String str) {
+    public void message(String group, String str) {
         //white
         String prefix = formatPrefix("[MSG]");
         System.out.println(colorize(prefix + str, 0));
-        gui.updateMessages(prefix + str);
+        gui.updateMessages(group, prefix + str);
     }
 
-    public void system(String str){
+    public void system(String group, String str){
         //bright red
         String prefix = formatPrefix("[SYS]");
         System.out.println(colorize(prefix + str, 91));
-        gui.updateMessages(prefix + str);
+        gui.updateMessages(group, prefix + str);
     }
 
     public void print(String str) {

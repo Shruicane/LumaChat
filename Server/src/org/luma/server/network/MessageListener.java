@@ -23,6 +23,10 @@ public class MessageListener {
         }
     }
 
+    public void message(String group, String sender, String message){
+        cm.message(group, sender, message);
+    }
+
     public void shout(SystemText text) {
         cm.shout(text);
     }

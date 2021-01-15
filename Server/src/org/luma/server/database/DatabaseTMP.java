@@ -78,6 +78,14 @@ public class DatabaseTMP {
         return groupNames.get(groupID);
     }
 
+    public int getID(String name){
+        for(int groupID:groups.keySet()){
+            if(getName(groupID).matches(name))
+                return groupID;
+        }
+        return -1;
+    }
+
     public ArrayList<String> getAllUsers(int id){
         return groups.get(id);
     }
