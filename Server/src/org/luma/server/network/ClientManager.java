@@ -163,6 +163,7 @@ public class ClientManager {
                 Client client = findClient(user);
                 if (client != null) {
                     client.send(new SystemText(groupName, message));
+
                 }
             }
             Date date = new Date();
