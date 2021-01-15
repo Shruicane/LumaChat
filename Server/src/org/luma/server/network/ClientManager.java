@@ -2,6 +2,7 @@ package org.luma.server.network;
 
 import Objects.*;
 import org.luma.server.database.GroupManagement;
+import org.luma.server.database.IOManagement;
 import org.luma.server.database.MySQLConnection;
 import org.luma.server.database.UserManagement;
 
@@ -15,12 +16,14 @@ public class ClientManager {
     private final LinkedList<Client> onlineClients = new LinkedList<>();
     UserManagement userManager;
     GroupManagement groupManager;
+    IOManagement ioManager;
 
 
-    public ClientManager(Logger log, MySQLConnection mySQLConnection) {
+    public ClientManager(Logger log, IOManagement ioManager, MySQLConnection mySQLConnection) {
         this.log = log;
         userManager = mySQLConnection.getUserManager();
         groupManager = mySQLConnection.getGroupManager();
+        this.ioManager = ioManager;
     }
 
     public void addClient(Client client) {
@@ -54,7 +57,7 @@ public class ClientManager {
     public Client findClient(String name) {
         for (Client client : connectedClients) {
             if (client != null && name != null)
-                if(client.checkName(name))
+                if (client.checkName(name))
                     return client;
         }
         return null;
@@ -65,7 +68,7 @@ public class ClientManager {
         if (connectedClients.contains(new Client(login))) {
             return false;
         }
-        if(!userManager.exists(login.getSender())){
+        if (!userManager.exists(login.getSender())) {
             return false;
         }
         if (userManager.loginUser(login.getSender(), (String) login.getInformation())) {
@@ -76,7 +79,7 @@ public class ClientManager {
     }
 
     public boolean register(Register register, Client client) {
-        if(userManager.exists((register.getSender()))){
+        if (userManager.exists((register.getSender()))) {
             return false;
         }
         //int index = allClients.indexOf(new Client(new Login(register.getSender(), register.getMessage())));
@@ -86,7 +89,11 @@ public class ClientManager {
         //    userManager.createUser(register.getSender(), register.getMessage());
         //    return true;
         //}
-        return userManager.createUser(register.getSender(), (String) register.getInformation());
+        if (userManager.createUser(register.getSender(), (String) register.getInformation())) {
+            ioManager.saveUser();
+            return true;
+        }
+        return false;
     }
 
     public void disconnectClient(Client client) {
@@ -100,9 +107,9 @@ public class ClientManager {
         log.network("NetworkListener >> Client <" + client.getName() + "> disconnected");
     }
 
-    public void warn(String username, String msg){
+    public void warn(String username, String msg) {
         Client client = findClient(username);
-        if(client != null){
+        if (client != null) {
             client.send(new WarnText("You were Warned!", msg));
         }
 
@@ -120,21 +127,21 @@ public class ClientManager {
         return false;
     }
 
-    public void ban(String username, String msg){
-        if(isOnline(username))
+    public void ban(String username, String msg) {
+        if (isOnline(username))
             kick(username, msg, "You were Banned!");
         userManager.banUser(username);
     }
 
-    public void unban(String username){
+    public void unban(String username) {
         userManager.unbanUser(username);
     }
 
-    public boolean isBanned(String username){
+    public boolean isBanned(String username) {
         return userManager.isBanned(username);
     }
 
-    private boolean isOnline(String username){
+    private boolean isOnline(String username) {
         for (Client client : onlineClients) {
             if (client.checkName(username))
                 return true;
@@ -150,11 +157,11 @@ public class ClientManager {
 
     public void shout(String sender, String message) {
         ArrayList<Integer> groups = userManager.getAllGroups(sender);
-        for(Integer groupID:groups){
+        for (Integer groupID : groups) {
             ArrayList<String> users = groupManager.getAllUsers(groupID);
-            for(String user:users){
+            for (String user : users) {
                 Client client = findClient(user);
-                if(client != null){
+                if (client != null) {
                     client.send(new SystemText(groupManager.getName(groupID), message));
                 }
             }
@@ -163,9 +170,9 @@ public class ClientManager {
 
     public void message(String group, String sender, String message) {
         ArrayList<String> users = groupManager.getAllUsers(groupManager.getID(group));
-        for(String user:users){
+        for (String user : users) {
             Client client = findClient(user);
-            if(client != null){
+            if (client != null) {
                 client.send(new Text(group, sender, message));
             }
         }
@@ -181,9 +188,9 @@ public class ClientManager {
         return sb.toString();
     }
 
-    public void sendUpdateInfo(String username, String type, Object data){
+    public void sendUpdateInfo(String username, String type, Object data) {
         Client client = findClient(username);
-        if(client != null) {
+        if (client != null) {
             client.send(new Update(type, "System", data));
         }
     }
@@ -193,14 +200,14 @@ public class ClientManager {
     }
 
     //public LinkedList<Client> getAllClients() {
-        //return allClients;
+    //return allClients;
     //}
 
     public LinkedList<Client> getConnectedClients() {
         return connectedClients;
     }
 
-    public Object getAllGroupsWithUsers(String username){
+    public Object getAllGroupsWithUsers(String username) {
         return userManager.getAllGroupsWithUsers(username);
     }
 }

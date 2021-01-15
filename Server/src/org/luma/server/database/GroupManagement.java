@@ -49,6 +49,10 @@ public class GroupManagement {
         return database.getID(name);
     }
 
+    public DatabaseTMP getDatabase() {
+        return database;
+    }
+
     /*public void createGroup(int groupID){
 
     }

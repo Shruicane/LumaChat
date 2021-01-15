@@ -1,5 +1,6 @@
 package org.luma.server.network;
 
+import org.luma.server.database.IOManagement;
 import org.luma.server.frontend.controller.Controller;
 
 import java.time.LocalDateTime;
@@ -7,9 +8,11 @@ import java.time.format.DateTimeFormatter;
 
 public class Logger {
     Controller controller;
+    IOManagement ioManager;
 
-    public Logger(Controller controller){
+    public Logger(Controller controller, IOManagement ioManager){
         this.controller = controller;
+        this.ioManager = ioManager;
     }
 
     public String colorize(String str, int color) {
@@ -46,6 +49,7 @@ public class Logger {
         String prefix = formatPrefix("[NET]");
         System.out.println(colorize(prefix + str, 32));
         controller.updateLogArea(prefix + str);
+        ioManager.writeLog(prefix + str);
     }
 
     public void info(String str) {
@@ -60,6 +64,7 @@ public class Logger {
         String prefix = formatPrefix("[ERR]");
         System.out.println(colorize(prefix + str, 31));
         controller.updateLogArea(prefix + str);
+        ioManager.writeLog(prefix + str);
     }
 
     public void warning(String str) {
@@ -67,6 +72,7 @@ public class Logger {
         String prefix = formatPrefix("[WAR]");
         System.out.println(colorize(prefix + str, 33));
         controller.updateLogArea(prefix + str);
+        ioManager.writeLog(prefix + str);
     }
 
     public void cmd(String str) {
@@ -74,6 +80,7 @@ public class Logger {
         String prefix = formatPrefix("[CMD]");
         System.out.println(colorize(prefix + str, 37));
         controller.updateLogArea(prefix + str);
+        ioManager.writeLog(prefix + str);
     }
 
     public void message(String str) {
@@ -81,12 +88,14 @@ public class Logger {
         String prefix = formatPrefix("[MSG]");
         System.out.println(colorize(prefix + str, 0));
         controller.updateLogArea(prefix + str);
+        ioManager.writeLog(prefix + str);
     }
 
     public void administration(String str){
         String prefix = formatPrefix("[ADM]");
         System.out.println(colorize(prefix + str, 0));
         controller.updateLogArea(prefix + str);
+        ioManager.writeLog(prefix + str);
     }
 
     public void print(String str) {

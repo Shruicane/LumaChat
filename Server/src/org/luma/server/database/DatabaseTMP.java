@@ -5,10 +5,11 @@ import java.util.*;
 
 public class DatabaseTMP {
 
-    private final Map<String, String> user;
-    private final Map<Integer, ArrayList<String>> groups;
-    private final Set<String> bannedUser;
-    private final Map<Integer, String> groupNames;
+    private Map<String, String> user;
+    private Map<Integer, ArrayList<String>> groups;
+    private Map<Integer, String> groupNames;
+    private Set<String> bannedUser;
+
 
     public DatabaseTMP() {
         user = new HashMap<>();
@@ -97,5 +98,37 @@ public class DatabaseTMP {
     public void changeGroupName(int id, String name) {
         groupNames.put(id, name);
         System.out.println(groupNames.get(id));
+    }
+
+    public Map<String, String> getUser() {
+        return user;
+    }
+
+    public Map<Integer, ArrayList<String>> getGroups() {
+        return groups;
+    }
+
+    public Map<Integer, String> getGroupNames() {
+        return groupNames;
+    }
+
+    public Set<String> getBannedUser() {
+        return bannedUser;
+    }
+
+    public void setUser(Map<String, String> user) {
+        this.user = user;
+    }
+
+    public void setGroups(Map<Integer, ArrayList<String>> groups) {
+        this.groups = groups;
+    }
+
+    public void setGroupNames(Map<Integer, String> groupNames) {
+        this.groupNames = groupNames;
+    }
+
+    public void setBannedUser(Set<String> bannedUser) {
+        this.bannedUser = bannedUser;
     }
 }

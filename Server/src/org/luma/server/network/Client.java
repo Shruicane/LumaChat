@@ -94,6 +94,7 @@ public class Client {
                 }
             }
         });
+        ioHandler.setDaemon(true);
     }
 
     public void start() {

@@ -1,5 +1,6 @@
 package org.luma.server.frontend.controller;
 
+import com.sun.xml.internal.bind.marshaller.NioEscapeHandler;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -124,6 +125,8 @@ public class Controller {
                 });
             }
             onClickUserTable();
+
+            ioManager.saveBannedUser();
         }
     }
 
@@ -171,6 +174,8 @@ public class Controller {
             updateListUser();
             sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
             cm.message(group.getName(), username, username + " has left the Room!");
+
+            ioManager.saveGroups();
         }
     }
 
@@ -195,6 +200,8 @@ public class Controller {
                     updateListUser();
                     sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
                     cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
+
+                    ioManager.saveGroups();
                 }
             });
         }
@@ -222,6 +229,9 @@ public class Controller {
                 updateListGroup();
                 for(String user:affectedUsers)
                     sendUpdateInfo(user, "group", userManager.getAllGroupsWithUsers(user));
+
+                ioManager.saveGroups();
+                ioManager.saveGroupNames();
             }
         }
     }
@@ -249,6 +259,9 @@ public class Controller {
                 alert.setHeaderText("This Name already exists!");
                 alert.showAndWait();
             }
+
+            ioManager.saveGroups();
+            ioManager.saveGroupNames();
         });
     }
 
@@ -261,6 +274,8 @@ public class Controller {
                 getSelectedGroup().setName(name);
                 groupList.refresh();
             });
+
+            ioManager.saveGroupNames();
         }
     }
 
@@ -353,9 +368,12 @@ public class Controller {
         mySQLConnection = new MySQLConnection(this);
         userManager = mySQLConnection.getUserManager();
         groupManager = mySQLConnection.getGroupManager();
-        server = new ServerMain(this, mySQLConnection);
+        ioManager = new IOManagement(groupManager.getDatabase());
+        server = new ServerMain(this, ioManager, mySQLConnection);
         cm = server.getClientManager();
         log = server.getLogger();
+
+        ioManager.loadAll();
 
         logArea.setFont(Font.font("Monospaced", FontWeight.MEDIUM, FontPosture.REGULAR, 15));
 
@@ -363,14 +381,35 @@ public class Controller {
         userTablePassword.setCellValueFactory(features -> features.getValue().passwordProperty());
 
         emptyDummyList = userList.getItems();
+
+        initComponents();
     }
+
+    private void initComponents(){
+        //User Tableview
+        ObservableList<User> userList = userTableView.getItems();
+        Map<String, String> user = groupManager.getDatabase().getUser();
+        for(Map.Entry<String, String> entry:user.entrySet())
+            userList.add(new User(entry.getKey(), entry.getValue(), false, false));
+        userTableView.setItems(userList);
+
+        //Group Tableview
+        ObservableList<Group> groupTableView = groupList.getItems();
+        Map<Integer, String> groups = groupManager.getDatabase().getGroupNames();
+        for(Map.Entry<Integer, String> entry:groups.entrySet())
+            groupTableView.add(new Group(entry.getKey(), entry.getValue()));
+        groupList.setItems(groupTableView);
+    }
+
 
     MySQLConnection mySQLConnection;
     UserManagement userManager;
     GroupManagement groupManager;
+    IOManagement ioManager;
     ServerMain server;
     ClientManager cm;
     Logger log;
+
 
     private ObservableList<String> emptyDummyList;
 

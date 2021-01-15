@@ -1,5 +1,6 @@
 package org.luma.server.network;
 
+import org.luma.server.database.IOManagement;
 import org.luma.server.database.MySQLConnection;
 import org.luma.server.frontend.controller.Controller;
 
@@ -16,10 +17,10 @@ public class ServerMain {
 
     private boolean running = true;
 
-    public ServerMain(Controller controller, MySQLConnection mySQLConnection) {
+    public ServerMain(Controller controller, IOManagement ioManager, MySQLConnection mySQLConnection) {
         long startTime = System.currentTimeMillis();
-        log = new Logger(controller);
-        cm = new ClientManager(log, mySQLConnection);
+        log = new Logger(controller, ioManager);
+        cm = new ClientManager(log, ioManager, mySQLConnection);
         start();
         log.network("Server >> Done! (" + (System.currentTimeMillis() - startTime) + "ms)");
     }

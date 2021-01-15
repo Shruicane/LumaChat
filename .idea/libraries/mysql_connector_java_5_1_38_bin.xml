@@ -2,6 +2,7 @@
   <library name="mysql-connector-java-5.1.38-bin">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/../../APIs/mysql-connector-java-5.1.38-bin.jar!/" />
+      <root url="jar://$PROJECT_DIR$/resources/jackson-databind-2.12.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
