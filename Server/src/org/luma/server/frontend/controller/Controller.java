@@ -163,6 +163,7 @@ public class Controller {
             String username = getSelectedGroupUser();
             Group group = getSelectedGroup();
 
+            ArrayList<String> affectedUsers = groupManager.getAllUsers(getSelectedGroup().getName());
             groupManager.removeUser(group, username);
             ObservableList<String> user = userList.getItems();
             user.remove(username);
@@ -171,7 +172,10 @@ public class Controller {
             log.administration("Removed User >> " + group + " -> " + username);
 
             updateListUser();
-            sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
+
+
+            for(String aUser:affectedUsers)
+                sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUsers(aUser));
             cm.message(group.getName(), username, username + " has left the Room!");
 
         }
@@ -196,7 +200,10 @@ public class Controller {
                     log.administration("Added User >> " + getSelectedGroup() + " <- " + username);
 
                     updateListUser();
-                    sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
+
+                    ArrayList<String> affectedUsers = groupManager.getAllUsers(getSelectedGroup().getName());
+                    for(String aUser:affectedUsers)
+                        sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUsers(aUser));
                     cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
 
                 }else{

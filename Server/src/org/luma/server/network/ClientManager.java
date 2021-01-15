@@ -163,13 +163,13 @@ public class ClientManager {
                 Client client = findClient(user);
                 if (client != null) {
                     client.send(new SystemText(groupName, message));
-                    Date date = new Date();
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                    String datum = formatter.format(date).split(" ")[0];
-                    String time = formatter.format(date).split(" ")[1];
-                    messageManager.saveMessage(message, "", datum, time, sender);
                 }
             }
+            Date date = new Date();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+            String datum = formatter.format(date).split(" ")[0];
+            String time = formatter.format(date).split(" ")[1];
+            messageManager.saveMessage(message, groupName, datum, time, sender);
         }
     }
 
@@ -181,6 +181,11 @@ public class ClientManager {
                 client.send(new Text(groupName, sender, message));
             }
         }
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        String datum = formatter.format(date).split(" ")[0];
+        String time = formatter.format(date).split(" ")[1];
+        messageManager.saveMessage(message, groupName, datum, time, sender);
     }
 
     public String formatList(LinkedList<Client> list) {
