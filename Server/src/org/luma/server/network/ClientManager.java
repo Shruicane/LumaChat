@@ -31,7 +31,7 @@ public class ClientManager {
     }
 
     public boolean addSilentClient(String name, String password) {
-        if (userManager.exists(name))
+        if (userManager.userExists(name))
             return false;
         Client client = new Client(new Login(name, password));
         if (userManager.createUser(name, password)) {
@@ -42,7 +42,7 @@ public class ClientManager {
     }
 
     public void deleteClient(String name, String msg) {
-        if (userManager.exists(name)) {
+        if (userManager.userExists(name)) {
             if (findClient(name) != null)
                 kick(name, msg, "Your Account was Deleted!");
             userManager.deleteUser(name);
@@ -65,7 +65,7 @@ public class ClientManager {
         if (connectedClients.contains(new Client(login))) {
             return false;
         }
-        if (!userManager.exists(login.getSender())) {
+        if (!userManager.userExists(login.getSender())) {
             return false;
         }
         if (userManager.loginUser(login.getSender(), (String) login.getInformation())) {
@@ -76,7 +76,7 @@ public class ClientManager {
     }
 
     public boolean register(Register register, Client client) {
-        if (userManager.exists((register.getSender()))) {
+        if (userManager.userExists((register.getSender()))) {
             return false;
         }
         //int index = allClients.indexOf(new Client(new Login(register.getSender(), register.getMessage())));
@@ -127,11 +127,11 @@ public class ClientManager {
     public void ban(String username, String msg) {
         if (isOnline(username))
             kick(username, msg, "You were Banned!");
-        userManager.banUser(username);
+        userManager.permaBanUser(username);
     }
 
     public void unban(String username) {
-        userManager.unbanUser(username);
+        userManager.removeBan(username);
     }
 
     public boolean isBanned(String username) {
