@@ -15,20 +15,12 @@ public class MessageListener {
         this.log = log;
     }
 
-    public void shout(Text text) {
-        log.message(text.getSender() + " >> All: " + text.getInformation());
-        LinkedList<Client> clients = cm.getOnlineClients();
-        for(Client client:clients) {
-            client.send(text);
-        }
-    }
-
     public void message(String group, String sender, String message){
         cm.message(group, sender, message);
     }
 
-    public void shout(SystemText text) {
-        cm.shout(text);
+    public void shout(String sender, String message) {
+        cm.shout(sender, message);
     }
 
     public String getOnlineClients(Client client){

@@ -60,7 +60,7 @@ public class Client {
                                 name = ((Login) obj).getSender();
                                 password = (String) ((Login) obj).getInformation();
 
-                                ml.shout(new SystemText("[+] " + name));
+                                ml.shout(name, "[+] " + name);
 
                                 send(new Update("group", "System", nl.getAllGroupsWithUsers(name)));
                             } else {
@@ -130,6 +130,8 @@ public class Client {
     }
 
     public boolean checkName(String name) {
+        if(this.name==null)
+            return false;
         return this.name.equals(name);
     }
 

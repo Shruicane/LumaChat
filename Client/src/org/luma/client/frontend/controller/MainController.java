@@ -150,6 +150,8 @@ public class MainController {
                 groups.addAll(groupData.keySet());
 
                 groupChats.setItems(groups);
+
+                updateUserList();
             });
         });
         thread.setDaemon(true);
@@ -166,8 +168,15 @@ public class MainController {
             groupChatMembers.setItems(users);
 
             messagesTextArea.clear();
-            for(String msg:groupMessages.get(getSelectedGroup()))
-                messagesTextArea.appendText(msg + "\n");
+            if(groupMessages.containsKey(getSelectedGroup()))
+                for(String msg:groupMessages.get(getSelectedGroup()))
+                    messagesTextArea.appendText(msg + "\n");
+        } else{
+            ObservableList<String> users = groupChatMembers.getItems();
+            users.clear();
+            groupChatMembers.setItems(users);
+
+            messagesTextArea.clear();
         }
     }
 

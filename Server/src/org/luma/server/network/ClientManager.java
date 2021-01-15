@@ -53,8 +53,9 @@ public class ClientManager {
 
     public Client findClient(String name) {
         for (Client client : connectedClients) {
-            if (client != null && client.checkName(name))
-                return client;
+            if (client != null && name != null)
+                if(client.checkName(name))
+                    return client;
         }
         return null;
     }
@@ -93,7 +94,7 @@ public class ClientManager {
         onlineClients.remove(client);
         connectedClients.remove(client);
         if (client.isLoggedIn()) {
-            shout(new SystemText("[-] " + client.getName()));
+            shout(client.getName(), "[-] " + client.getName());
         }
         client.logout();
         log.network("NetworkListener >> Client <" + client.getName() + "> disconnected");
@@ -147,11 +148,16 @@ public class ClientManager {
         }
     }
 
-    public void shout(SystemText text) {
-        log.message(text.getSender() + " >> All: " + text.getInformation());
-        LinkedList<Client> clients = getOnlineClients();
-        for (Client client : clients) {
-            client.send(text);
+    public void shout(String sender, String message) {
+        ArrayList<Integer> groups = userManager.getAllGroups(sender);
+        for(Integer groupID:groups){
+            ArrayList<String> users = groupManager.getAllUsers(groupID);
+            for(String user:users){
+                Client client = findClient(user);
+                if(client != null){
+                    client.send(new SystemText(groupManager.getName(groupID), message));
+                }
+            }
         }
     }
 

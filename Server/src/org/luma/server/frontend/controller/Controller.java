@@ -170,6 +170,7 @@ public class Controller {
 
             updateListUser();
             sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
+            cm.message(group.getName(), username, username + " has left the Room!");
         }
     }
 
@@ -193,6 +194,7 @@ public class Controller {
 
                     updateListUser();
                     sendUpdateInfo(username, "group", userManager.getAllGroupsWithUsers(username));
+                    cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
                 }
             });
         }

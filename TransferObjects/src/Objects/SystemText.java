@@ -1,7 +1,7 @@
 package Objects;
 
 public class SystemText extends RequestObject {
-    public SystemText(String message) {
-        super("System", "System", message);
+    public SystemText(String group, String message) {
+        super(group, "System", message);
     }
 }
