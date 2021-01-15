@@ -91,8 +91,10 @@ public class GroupManagement {
     }
 
     public void changeName(String oldName, String name) {
-        String query = "UPDATE groupdata SET Name = '" + name + "' WHERE Name='" + oldName + "'";
-        mySQLDataBase.executeUpdate(query);
+        String query1 = "UPDATE groupdata SET Name = '" + name + "' WHERE Name='" + oldName + "'";
+        mySQLDataBase.executeUpdate(query1);
+        String query2 = "UPDATE chatdata SET Groupname = '" + name + "' WHERE Groupname='" + oldName + "'";
+        mySQLDataBase.executeUpdate(query2);
     }
 
     public ArrayList<String> getAllGroups(){
