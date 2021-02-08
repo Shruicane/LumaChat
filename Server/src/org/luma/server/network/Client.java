@@ -133,7 +133,7 @@ public class Client {
     public boolean checkName(String name) {
         if(this.name==null)
             return false;
-        return this.name.equals(name);
+        return this.name.equalsIgnoreCase(name);
     }
 
     public boolean checkPassword(String password) {

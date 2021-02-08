@@ -175,9 +175,12 @@ public class ClientManager {
     }
 
     public void message(String groupName, String sender, String message) {
+        System.out.println("0 " + groupName + ", " + sender + ", " + message);
         ArrayList<String> users = groupManager.getAllUsers(groupName);
+        System.out.println("1 " + users);
         for (String user : users) {
             Client client = findClient(user);
+            System.out.println("2 " + client);
             if (client != null) {
                 client.send(new Text(groupName, sender, message));
             }

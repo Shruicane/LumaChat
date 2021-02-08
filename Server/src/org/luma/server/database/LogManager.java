@@ -1,7 +1,5 @@
 package org.luma.server.database;
 
-import jdk.jfr.internal.LogLevel;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

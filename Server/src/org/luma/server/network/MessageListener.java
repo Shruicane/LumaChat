@@ -15,7 +15,7 @@ public class MessageListener {
         this.log = log;
     }
 
-    public void message(String group, String sender, String message){
+    public void message(String group, String sender, String message) {
         cm.message(group, sender, message);
     }
 

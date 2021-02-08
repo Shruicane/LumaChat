@@ -141,15 +141,20 @@ public class MainController {
     Map<String, ArrayList<String>> groupData;
     Map<String, ArrayList<String>> groupMessages = new HashMap<>();
 
+    private int selected = 0;
+
     public void updateGroupView(Map<String, ArrayList<String>> data){
         Thread thread = new Thread(() -> {
             Platform.runLater(() -> {
+                selected = groupChats.getSelectionModel().getSelectedIndex();
                 groupData = data;
                 ObservableList<String> groups = groupChats.getItems();
                 groups.clear();
                 groups.addAll(groupData.keySet());
 
                 groupChats.setItems(groups);
+
+                groupChats.getSelectionModel().select(selected);
 
                 updateUserList();
             });
