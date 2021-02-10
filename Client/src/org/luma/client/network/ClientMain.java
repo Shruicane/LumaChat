@@ -1,12 +1,8 @@
 package org.luma.client.network;
 
-import Objects.Get;
-import Objects.Login;
-import Objects.Register;
-import Objects.Text;
+import Objects.*;
 import org.luma.client.frontend.GUI;
 
-import javax.security.auth.login.CredentialException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -88,8 +84,12 @@ public class ClientMain {
         };
     }
 
-    public boolean send(String group, String msg) {
-        return ioHandler.send(new Text(group, name, msg));
+    public boolean sendGroup(String group, String msg) {
+        return ioHandler.send(new GroupText(group, name, msg));
+    }
+
+    public boolean sendPrivate(String receiver, String msg) {
+        return ioHandler.send(new PrivateText(receiver, name, msg));
     }
 
     public boolean register(String name, String password) {
@@ -170,5 +170,13 @@ public class ClientMain {
         log.network("Client >> Stopping");
         running = false;
         System.exit(0);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public GUI getGui() {
+        return gui;
     }
 }

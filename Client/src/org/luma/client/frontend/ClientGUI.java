@@ -88,8 +88,8 @@ public class ClientGUI extends Application implements GUI{
     }
 
     @Override
-    public void updateMessages(String group, String msg) {
-        controller.updateMessages(group, msg);
+    public void updateMessages(String type, String group, String msg) {
+        controller.updateMessages(type, group, msg);
     }
 
     public void showPopup(String msg, String hint) {
@@ -108,5 +108,10 @@ public class ClientGUI extends Application implements GUI{
     @Override
     public void updateGroupView(Object information) {
         controller.updateGroupView((Map<String, ArrayList<String>>) information);
+    }
+
+    @Override
+    public void updatePrivateView(Object information) {
+        controller.updatePrivateView((Map<String, ArrayList<String>>) information);
     }
 }

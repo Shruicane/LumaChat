@@ -40,14 +40,19 @@ public class IOHandler extends Thread {
 
                     if (obj == null) {
                         // Free InputStream from reading in this synchronized Block
-                    } else if (obj instanceof Text) {
-                        log.message(((Text) obj).getType(), ((Text) obj).getSender() + ": " + ((Text) obj).getInformation());
+                    } else if (obj instanceof GroupText) {
+                        log.message("group", ((GroupText) obj).getType(), ((GroupText) obj).getSender() + ": " + ((GroupText) obj).getInformation());
+                    } else if (obj instanceof PrivateText) {
+                        log.message("private", ((PrivateText) obj).getType(), ((PrivateText) obj).getType() + ": " + ((PrivateText) obj).getInformation());
                     } else if (obj instanceof SystemText) {
-                        log.system(((SystemText) obj).getType(), (String) ((SystemText) obj).getInformation());
+                        log.system("group", ((SystemText) obj).getType(), (String) ((SystemText) obj).getInformation());
                     } else if (obj instanceof WarnText) {
                         gui.showPopup(((WarnText) obj).getType(), (String) ((WarnText) obj).getInformation());
                     } else if (obj instanceof Update) {
-                        gui.updateGroupView(((Update) obj).getInformation());
+                        if(((Update) obj).getType().equals("group"))
+                            gui.updateGroupView(((Update) obj).getInformation());
+                        else if(((Update) obj).getType().equals("private"))
+                            gui.updatePrivateView(((Update) obj).getInformation());
                     } else
                         log.info(obj.toString());
                 } catch (IOException | ClassNotFoundException e) {

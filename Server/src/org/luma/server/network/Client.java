@@ -3,9 +3,9 @@ package org.luma.server.network;
 import Objects.Login;
 import Objects.RequestObject;
 import Objects.Success;
-import Objects.Text;
-import Objects.SystemText;
+import Objects.GroupText;
 import Objects.Get;
+import Objects.PrivateText;
 import Objects.Register;
 import Objects.Update;
 
@@ -62,18 +62,19 @@ public class Client {
 
                                 ml.shout(name, "[+] " + name);
 
-                                send(new Update("group", "System", nl.getAllGroupsWithUsers(name)));
+                                send(new Update("group", "System", nl.getAllGroupsWithUser(name)));
+                                send(new Update("private", "System", nl.getAllChatsFromUser(name)));
                             } else {
                                 send(new Success((RequestObject) obj, "Login Failed", false));
                             }
                         } else if (obj instanceof Register) {
                             boolean register = nl.register((Register) obj, this);
-                            if(register){
+                            if (register) {
                                 send(new Success((RequestObject) obj, "Register Successful", true));
 
                                 name = ((Register) obj).getSender();
                                 password = (String) ((Register) obj).getInformation();
-                            } else{
+                            } else {
                                 send(new Success((RequestObject) obj, "Name already exists!", false));
                             }
                         } else {
@@ -82,11 +83,12 @@ public class Client {
                     } else if (obj instanceof Get) {
                         if (((Get) obj).getType().matches("onlineClients"))
                             send(new Success((Get) obj, ml.getOnlineClients(this), true));
-                    } else {
-                        if (obj instanceof Text) {
-                            send(new Success((RequestObject) obj, "Message Received", true));
-                            ml.message(((Text) obj).getType(), name, (String) ((Text) obj).getInformation());
-                        }
+                    } else if (obj instanceof GroupText) {
+                        send(new Success((RequestObject) obj, "GroupMessage Received", true));
+                        ml.message(((GroupText) obj).getType(), name, (String) ((GroupText) obj).getInformation());
+                    } else if (obj instanceof PrivateText) {
+                        send(new Success((RequestObject) obj, "PrivateMessage Received", true));
+                        ml.messagePrivate(((PrivateText) obj).getType(), name, (String) ((PrivateText) obj).getInformation());
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     if (!socket.isClosed())
@@ -131,7 +133,7 @@ public class Client {
     }
 
     public boolean checkName(String name) {
-        if(this.name==null)
+        if (this.name == null)
             return false;
         return this.name.equalsIgnoreCase(name);
     }

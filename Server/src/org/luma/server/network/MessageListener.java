@@ -1,10 +1,5 @@
 package org.luma.server.network;
 
-import Objects.SystemText;
-import Objects.Text;
-
-import java.util.LinkedList;
-
 public class MessageListener {
     private final ClientManager cm;
     private Logger log;
@@ -17,6 +12,10 @@ public class MessageListener {
 
     public void message(String group, String sender, String message) {
         cm.message(group, sender, message);
+    }
+
+    public void messagePrivate(String receiver, String sender, String message) {
+        cm.messagePrivate(receiver, sender, message);
     }
 
     public void shout(String sender, String message) {

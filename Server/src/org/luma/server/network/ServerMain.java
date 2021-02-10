@@ -23,8 +23,7 @@ public class ServerMain {
     public ServerMain(Controller controller, IOManagement ioManager, MySQLConnection mySQLConnection) {
         long startTime = System.currentTimeMillis();
         log = new Logger(controller, ioManager);
-        cm = new ClientManager(log, ioManager, mySQLConnection,
-                new MessageManager(new MySQLDataBase(Settings.getIpAddress(), Settings.getPort(), Settings.getDatabaseUser(), Settings.getDatabasePassword(), Settings.getDatabase())));
+        cm = new ClientManager(log, ioManager, mySQLConnection);
         start();
         log.network("Server >> Done! (" + (System.currentTimeMillis() - startTime) + "ms)");
     }

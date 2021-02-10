@@ -18,8 +18,6 @@ public class MySQLDataBase {
         this.user = user;
         this.password = password;
         this.database = database;
-        //Einmaliges Initialisieren der Datenbank
-        this.initDatabase();
     }
 
     public void openConnection()  {
@@ -68,12 +66,6 @@ public class MySQLDataBase {
             throwables.printStackTrace();
         }
         this.closeConnection();
-    }
-
-    private void initDatabase(){
-        /*if(! this.tablesExist()){
-            this.createTables();
-        }*/
     }
 
     private boolean tablesExist(){

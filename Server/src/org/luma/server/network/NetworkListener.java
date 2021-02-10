@@ -49,8 +49,12 @@ public class NetworkListener extends Thread {
         return cm.register(register, client);
     }
 
-    public Object getAllGroupsWithUsers(String username){
-        return cm.getAllGroupsWithUsers(username);
+    public Object getAllGroupsWithUser(String username){
+        return cm.getAllGroupsWithUser(username);
+    }
+
+    public Object getAllChatsFromUser(String username){
+        return cm.getAllChatsFromUser(username);
     }
 
     public void close() {

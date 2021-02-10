@@ -5,11 +5,13 @@ import javafx.collections.ObservableList;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.luma.client.frontend.ClientGUI;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import org.luma.client.network.ClientMain;
+import org.luma.client.network.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,21 +91,38 @@ public class MainController {
         ClientMain client = ClientGUI.getClient();
         String msg = msgTextArea.getText();
 
-        if (!msg.isEmpty() && getSelectedGroup() != null) {
-            client.send(getSelectedGroup(), msg);
+        if (chatTabs.getSelectionModel().getSelectedIndex() == 0) {
+            if (!msg.isEmpty() && getSelectedChat() != null) {
+                if(client.sendPrivate(getSelectedChat(), msg)) {
+                    new Logger(ClientGUI.getClient().getGui()).message("private", getSelectedChat(), "Du: " + msg);
+                }
+            }
+        } else {
+            if (!msg.isEmpty() && getSelectedGroup() != null) {
+                client.sendGroup(getSelectedGroup(), msg);
+            }
         }
         msgTextArea.clear();
 
         //TODO: msg an Server senden - nur in der Textliste anzeigen wenn vom Server eine Bestätigung kommt
     }
 
-    public void updateMessages(String group, String msg) {
-        if(!groupMessages.containsKey(group))
-            groupMessages.put(group, new ArrayList<String>());
-        groupMessages.get(group).add(msg);
+    public void updateMessages(String type, String receiver, String msg) {
+        if (type.equals("group")) {
+            if (!groupMessages.containsKey(receiver))
+                groupMessages.put(receiver, new ArrayList<>());
+            groupMessages.get(receiver).add(msg);
 
-        if(getSelectedGroup() != null && group.matches(getSelectedGroup()))
-            messagesTextArea.appendText(msg + "\n");
+            if (getSelectedGroup() != null && receiver.matches(getSelectedGroup()) && chatTabs.getSelectionModel().getSelectedIndex() == 1)
+                messagesTextArea.appendText(msg + "\n");
+        } else if (type.equals("private")) {
+            if (!chatData.containsKey(receiver))
+                chatData.put(receiver, new ArrayList<>());
+            chatData.get(receiver).add(msg);
+
+            if (getSelectedChat() != null && receiver.matches(getSelectedChat()) && chatTabs.getSelectionModel().getSelectedIndex() == 0)
+                messagesTextArea.appendText(msg + "\n");
+        }
     }
 
     @FXML
@@ -127,7 +146,7 @@ public class MainController {
         Thread thread = new Thread(() -> {
             Platform.runLater(() -> {
                 ClientMain client = ClientGUI.getClient();
-                if(client.isConnected())
+                if (client.isConnected())
                     client.disconnect("Loggout");
 
                 messagesTextArea.clear();
@@ -141,12 +160,12 @@ public class MainController {
     Map<String, ArrayList<String>> groupData;
     Map<String, ArrayList<String>> groupMessages = new HashMap<>();
 
-    private int selected = 0;
+    private String selectedGroup;
 
-    public void updateGroupView(Map<String, ArrayList<String>> data){
+    public void updateGroupView(Map<String, ArrayList<String>> data) {
         Thread thread = new Thread(() -> {
             Platform.runLater(() -> {
-                selected = groupChats.getSelectionModel().getSelectedIndex();
+                selectedGroup = groupChats.getSelectionModel().getSelectedItem();
                 groupData = data;
                 ObservableList<String> groups = groupChats.getItems();
                 groups.clear();
@@ -154,7 +173,8 @@ public class MainController {
 
                 groupChats.setItems(groups);
 
-                groupChats.getSelectionModel().select(selected);
+                groupChats.getSelectionModel().select(selectedGroup);
+                selectedGroup = "";
 
                 updateUserList();
             });
@@ -163,20 +183,48 @@ public class MainController {
         thread.start();
     }
 
+    Map<String, ArrayList<String>> chatData;
+
+    private String selectedChat;
+
+    public void updatePrivateView(Map<String, ArrayList<String>> data) {
+        Thread thread = new Thread(() -> {
+            Platform.runLater(() -> {
+                selectedChat = privateChats.getSelectionModel().getSelectedItem();
+                chatData = data;
+                ObservableList<String> chats = privateChats.getItems();
+                chats.clear();
+                chats.addAll(chatData.keySet());
+
+                privateChats.setItems(chats);
+
+                privateChats.getSelectionModel().select(selectedChat);
+                selectedChat = "";
+
+                updateChat();
+            });
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
     @FXML
-    private void updateUserList(){
-        if(getSelectedGroup() != null){
+    private void updateUserList() {
+        try {
+            messagesTextArea.clear();
+        } catch (Exception ignored) {
+        }
+        if (getSelectedGroup() != null) {
             ObservableList<String> users = groupChatMembers.getItems();
             users.clear();
             users.addAll(groupData.get(getSelectedGroup()));
 
             groupChatMembers.setItems(users);
 
-            messagesTextArea.clear();
-            if(groupMessages.containsKey(getSelectedGroup()))
-                for(String msg:groupMessages.get(getSelectedGroup()))
+            if (groupMessages.containsKey(getSelectedGroup()))
+                for (String msg : groupMessages.get(getSelectedGroup()))
                     messagesTextArea.appendText(msg + "\n");
-        } else{
+        } else {
             ObservableList<String> users = groupChatMembers.getItems();
             users.clear();
             groupChatMembers.setItems(users);
@@ -185,7 +233,34 @@ public class MainController {
         }
     }
 
+    @FXML
+    private void updateChat() {
+        try {
+            messagesTextArea.clear();
+        } catch (Exception ignored) {
+        }
+        if (getSelectedChat() != null) {
+            if (chatData.containsKey(getSelectedChat()))
+                for (String msg : chatData.get(getSelectedChat()))
+                    messagesTextArea.appendText(msg + "\n");
+        }
+    }
+
+    @FXML
+    private void onSelectedPrivateChats() {
+        updateChat();
+    }
+
+    @FXML
+    private void onSelectedGroupChats() {
+        updateUserList();
+    }
+
     private String getSelectedGroup() {
         return groupChats.getSelectionModel().getSelectedItems().get(0);
+    }
+
+    private String getSelectedChat() {
+        return privateChats.getSelectionModel().getSelectedItems().get(0);
     }
 }

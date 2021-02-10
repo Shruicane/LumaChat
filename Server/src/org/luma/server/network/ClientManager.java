@@ -19,11 +19,12 @@ public class ClientManager {
     MessageManager messageManager;
 
 
-    public ClientManager(Logger log, IOManagement ioManager, MySQLConnection mySQLConnection, MessageManager messageManager) {
+    public ClientManager(Logger log, IOManagement ioManager, MySQLConnection mySQLConnection) {
         this.log = log;
         this.messageManager = messageManager;
         userManager = mySQLConnection.getUserManager();
         groupManager = mySQLConnection.getGroupManager();
+        messageManager = mySQLConnection.getMessageManager();
         this.ioManager = ioManager;
     }
 
@@ -175,14 +176,11 @@ public class ClientManager {
     }
 
     public void message(String groupName, String sender, String message) {
-        System.out.println("0 " + groupName + ", " + sender + ", " + message);
         ArrayList<String> users = groupManager.getAllUsers(groupName);
-        System.out.println("1 " + users);
         for (String user : users) {
             Client client = findClient(user);
-            System.out.println("2 " + client);
             if (client != null) {
-                client.send(new Text(groupName, sender, message));
+                client.send(new GroupText(groupName, sender, message));
             }
         }
         Date date = new Date();
@@ -190,6 +188,18 @@ public class ClientManager {
         String datum = formatter.format(date).split(" ")[0];
         String time = formatter.format(date).split(" ")[1];
         messageManager.saveMessage(message, groupName, datum, time, sender);
+    }
+
+    public void messagePrivate(String receiver, String sender, String message){
+        Client client = findClient(receiver);
+        if (client != null) {
+            client.send(new PrivateText(sender, receiver, message));
+        }
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        String datum = formatter.format(date).split(" ")[0];
+        String time = formatter.format(date).split(" ")[1];
+        messageManager.saveMessage(message, receiver, datum, time, sender);
     }
 
     public String formatList(LinkedList<Client> list) {
@@ -221,7 +231,11 @@ public class ClientManager {
         return connectedClients;
     }
 
-    public Object getAllGroupsWithUsers(String username) {
-        return userManager.getAllGroupsWithUsers(username);
+    public Object getAllGroupsWithUser(String username) {
+        return userManager.getAllGroupsWithUser(username);
+    }
+
+    public Object getAllChatsFromUser(String username) {
+        return userManager.getAllChatsFromUser(username);
     }
 }

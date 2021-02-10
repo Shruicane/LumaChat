@@ -179,7 +179,7 @@ public class Controller {
 
 
             for(String aUser:affectedUsers)
-                sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUsers(aUser));
+                sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUser(aUser));
             cm.message(group.getName(), username, username + " has left the Room!");
 
         }
@@ -211,7 +211,7 @@ public class Controller {
 
                     ArrayList<String> affectedUsers = groupManager.getAllUsers(getSelectedGroup().getName());
                     for(String aUser:affectedUsers)
-                        sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUsers(aUser));
+                        sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUser(aUser));
                     cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
 
                 }else{
@@ -243,7 +243,7 @@ public class Controller {
 
                 updateListGroup();
                 for(String user:affectedUsers)
-                    sendUpdateInfo(user, "group", userManager.getAllGroupsWithUsers(user));
+                    sendUpdateInfo(user, "group", userManager.getAllGroupsWithUser(user));
 
             }
         }
