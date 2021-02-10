@@ -150,6 +150,12 @@ public class MainController {
                     client.disconnect("Loggout");
 
                 messagesTextArea.clear();
+                chatData.clear();
+                groupData.clear();
+                groupMessages.clear();
+                groupChats.getSelectionModel().clearSelection();
+                privateChats.getSelectionModel().clearSelection();
+                chatTabs.getSelectionModel().select(0);
                 ClientGUI.showLoginScreen();
             });
         });

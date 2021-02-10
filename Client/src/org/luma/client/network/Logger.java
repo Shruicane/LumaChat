@@ -30,7 +30,7 @@ public class Logger {
     }
 
     private String getTime(){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
         return dtf.format(LocalDateTime.now());
     }
 

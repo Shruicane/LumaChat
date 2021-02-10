@@ -85,10 +85,14 @@ public class Client {
                             send(new Success((Get) obj, ml.getOnlineClients(this), true));
                     } else if (obj instanceof GroupText) {
                         send(new Success((RequestObject) obj, "GroupMessage Received", true));
-                        ml.message(((GroupText) obj).getType(), name, (String) ((GroupText) obj).getInformation());
+                        String group = ((GroupText) obj).getType();
+                        ml.message(group, name, (String) ((GroupText) obj).getInformation());
+                        log.message(name + " -> " + group + " >> " + (String) ((GroupText) obj).getInformation());
                     } else if (obj instanceof PrivateText) {
                         send(new Success((RequestObject) obj, "PrivateMessage Received", true));
-                        ml.messagePrivate(((PrivateText) obj).getType(), name, (String) ((PrivateText) obj).getInformation());
+                        String receiver = ((PrivateText) obj).getType();
+                        ml.messagePrivate(receiver, name, (String) ((PrivateText) obj).getInformation());
+                        log.message(name + " -> " + receiver + " >> " + (String) ((PrivateText) obj).getInformation());
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     if (!socket.isClosed())
