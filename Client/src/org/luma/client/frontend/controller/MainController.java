@@ -142,13 +142,28 @@ public class MainController {
 
     @FXML
     private void showOnlineList() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText("Warning test:");
-        dialog.setTitle("Warn!");
-        //dialog.setContentText("Your favourite int: ");
 
-        Optional<String> result = dialog.showAndWait();
-        //TODO: online liste abrufen und anzeigen
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("List Dialog");
+        alert.setHeaderText("See who's online!");
+
+
+        ListView<String> onlineList = new ListView<>();
+        onlineList.getItems().addAll("123", "123", "123");
+
+
+        onlineList.setMaxWidth(Double.MAX_VALUE);
+        onlineList.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(onlineList, Priority.ALWAYS);
+        GridPane.setHgrow(onlineList, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(onlineList, 0, 1);
+
+        // Set expandable Exception into the dialog pane.
+        alert.getDialogPane().setContent(expContent);
+        alert.showAndWait();
 
     }
 
