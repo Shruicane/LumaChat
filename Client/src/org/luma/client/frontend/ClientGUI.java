@@ -106,4 +106,9 @@ public class ClientGUI extends Application implements GUI{
     public void updatePrivateView(Object information) {
         controller.updatePrivateView((Map<String, ArrayList<String>>) information);
     }
+
+    @Override
+    public void updateOnlineClients(Object onlineClients){
+        controller.updateOnlineClients((ArrayList<String>) onlineClients);
+    }
 }

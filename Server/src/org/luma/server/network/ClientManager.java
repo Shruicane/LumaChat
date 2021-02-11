@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ClientManager {
     Logger log;
@@ -104,6 +105,7 @@ public class ClientManager {
         if (client.isLoggedIn()) {
             shout(client.getName(), "[-] " + client.getName());
         }
+        sendAll(new Update("online", "System", getAllOnlineClients()));
         client.logout();
         log.network("NetworkListener >> Client <" + client.getName() + "> disconnected");
     }
@@ -190,7 +192,7 @@ public class ClientManager {
         messageManager.saveMessage(message, groupName, datum, time, sender);
     }
 
-    public void messagePrivate(String receiver, String sender, String message){
+    public void messagePrivate(String receiver, String sender, String message) {
         Client client = findClient(receiver);
         if (client != null) {
             client.send(new PrivateText(sender, receiver, message));
@@ -227,6 +229,12 @@ public class ClientManager {
     //return allClients;
     //}
 
+    public void sendAll(RequestObject request) {
+        for(Client client:onlineClients){
+            client.send(request);
+        }
+    }
+
     public LinkedList<Client> getConnectedClients() {
         return connectedClients;
     }
@@ -237,5 +245,13 @@ public class ClientManager {
 
     public Object getAllChatsFromUser(String username) {
         return userManager.getAllChatsFromUser(username);
+    }
+
+    public Object getAllOnlineClients() {
+        ArrayList<String> clients = new ArrayList<>();
+        for (Client client : onlineClients) {
+            clients.add(client.getName());
+        }
+        return clients;
     }
 }

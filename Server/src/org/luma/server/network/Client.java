@@ -64,6 +64,7 @@ public class Client {
 
                                 send(new Update("group", "System", nl.getAllGroupsWithUser(name)));
                                 send(new Update("private", "System", nl.getAllChatsFromUser(name)));
+                                nl.sendAll(new Update("online", "System", nl.getAllOnlineClients()));
                             } else {
                                 send(new Success((RequestObject) obj, "Login Failed", false));
                             }
