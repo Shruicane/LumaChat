@@ -104,7 +104,7 @@ public class MainController {
 
 
         ListView<String> onlineList = new ListView<>();
-        onlineList.getItems().addAll("Lucaa", "Lucaaaaaa", "lucaaaaaaaa");
+        onlineList.getItems().addAll(onlineClients);
         //TODO: online liste laden, aber nicht den eigenen namen anzeigen
 
         onlineList.setMaxWidth(Double.MAX_VALUE);
@@ -278,6 +278,12 @@ public class MainController {
         });
         thread.setDaemon(true);
         thread.start();
+    }
+
+    ArrayList<String> onlineClients = new ArrayList<>();
+
+    public void updateOnlineClients(ArrayList<String> onlineClients){
+        this.onlineClients = onlineClients;
     }
 
     @FXML

@@ -10,4 +10,6 @@ public interface GUI {
     void updateGroupView(Object information);
 
     void updatePrivateView(Object information);
+
+    void updateOnlineClients(Object information);
 }

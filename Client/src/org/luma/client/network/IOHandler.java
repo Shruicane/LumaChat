@@ -53,6 +53,8 @@ public class IOHandler extends Thread {
                             gui.updateGroupView(((Update) obj).getInformation());
                         else if(((Update) obj).getType().equals("private"))
                             gui.updatePrivateView(((Update) obj).getInformation());
+                        else if(((Update) obj).getType().equals("online"))
+                            gui.updateOnlineClients(((Update) obj).getInformation());
                     } else
                         log.info(obj.toString());
                 } catch (IOException | ClassNotFoundException e) {

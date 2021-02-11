@@ -2,6 +2,7 @@ package org.luma.server.network;
 
 import Objects.Login;
 import Objects.Register;
+import Objects.RequestObject;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -49,12 +50,20 @@ public class NetworkListener extends Thread {
         return cm.register(register, client);
     }
 
+    public void sendAll(RequestObject request){
+        cm.sendAll(request);
+    }
+
     public Object getAllGroupsWithUser(String username){
         return cm.getAllGroupsWithUser(username);
     }
 
     public Object getAllChatsFromUser(String username){
         return cm.getAllChatsFromUser(username);
+    }
+
+    public Object getAllOnlineClients() {
+        return cm.getAllOnlineClients();
     }
 
     public void close() {
