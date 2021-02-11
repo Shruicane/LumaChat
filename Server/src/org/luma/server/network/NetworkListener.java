@@ -46,24 +46,36 @@ public class NetworkListener extends Thread {
         return cm.login(login, client);
     }
 
-    public boolean register(Register register, Client client){
+    public boolean register(Register register, Client client) {
         return cm.register(register, client);
     }
 
-    public void sendAll(RequestObject request){
+    public void createPrivateChat(String name1, String name2) {
+        cm.createPrivateChat(name1, name2);
+    }
+
+    public void deletePrivateChat(String name1, String name2) {
+        cm.deletePrivateChat(name1, name2);
+    }
+
+    public void sendAll(RequestObject request) {
         cm.sendAll(request);
     }
 
-    public Object getAllGroupsWithUser(String username){
+    public Object getAllGroupsWithUser(String username) {
         return cm.getAllGroupsWithUser(username);
     }
 
-    public Object getAllChatsFromUser(String username){
+    public Object getAllChatsFromUser(String username) {
         return cm.getAllChatsFromUser(username);
     }
 
     public Object getAllOnlineClients() {
         return cm.getAllOnlineClients();
+    }
+
+    public void updatePrivate(String name){
+        cm.updatePrivate(name);
     }
 
     public void close() {

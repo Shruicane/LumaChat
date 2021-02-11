@@ -49,11 +49,11 @@ public class IOHandler extends Thread {
                     } else if (obj instanceof WarnText) {
                         gui.showPopup(((WarnText) obj).getType(), (String) ((WarnText) obj).getInformation());
                     } else if (obj instanceof Update) {
-                        if(((Update) obj).getType().equals("group"))
+                        if(((Update) obj).getType().equals(Update.GROUP))
                             gui.updateGroupView(((Update) obj).getInformation());
-                        else if(((Update) obj).getType().equals("private"))
+                        else if(((Update) obj).getType().equals(Update.PRIVATE))
                             gui.updatePrivateView(((Update) obj).getInformation());
-                        else if(((Update) obj).getType().equals("online"))
+                        else if(((Update) obj).getType().equals(Update.ONLINE))
                             gui.updateOnlineClients(((Update) obj).getInformation());
                     } else
                         log.info(obj.toString());
@@ -82,7 +82,10 @@ public class IOHandler extends Thread {
             synchronized (in) {
                 try {
                     AnswerObject answer;
-                    while ((answer = (AnswerObject) in.readObject()) == null) ;
+                    Object i = in.readObject();
+                    System.out.println(i);
+                    System.out.println(i.getClass());
+                    while ((answer = (AnswerObject) i) == null) ;
 
                     log.info(answer.getType() + " Request was Successful. Server responded with: " +
                             answer.getMessage() + " (" + answer.isSuccess() + ")");
@@ -98,29 +101,5 @@ public class IOHandler extends Thread {
                 main.disconnect("IOHandler >> Not connected");
         }
         return false;
-    }
-
-    public Object send(Get request) {
-        try {
-            out.writeObject(request);
-            synchronized (in) {
-                try {
-                    AnswerObject answer;
-                    while ((answer = (AnswerObject) in.readObject()) == null) ;
-
-                    log.info(answer.getType() + " Request was Successful. Server responded with: " +
-                            answer.getMessage() + " (" + answer.isSuccess() + ")");
-
-                    return answer.getMessage();
-                } catch (IOException | ClassNotFoundException e) {
-                    if (main.isConnected())
-                        main.disconnect("IOHandler >> Server closed");
-                }
-            }
-        } catch (IOException e) {
-            if (main.isConnected())
-                main.disconnect("IOHandler >> Not connected");
-        }
-        return null;
     }
 }

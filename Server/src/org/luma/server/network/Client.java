@@ -62,9 +62,9 @@ public class Client {
 
                                 ml.shout(name, "[+] " + name);
 
-                                send(new Update("group", "System", nl.getAllGroupsWithUser(name)));
-                                send(new Update("private", "System", nl.getAllChatsFromUser(name)));
-                                nl.sendAll(new Update("online", "System", nl.getAllOnlineClients()));
+                                send(new Update(Update.GROUP, "System", nl.getAllGroupsWithUser(name)));
+                                nl.updatePrivate(name);
+                                nl.sendAll(new Update(Update.ONLINE, "System", nl.getAllOnlineClients()));
                             } else {
                                 send(new Success((RequestObject) obj, "Login Failed", false));
                             }
@@ -84,6 +84,18 @@ public class Client {
                     } else if (obj instanceof Get) {
                         if (((Get) obj).getType().matches("onlineClients"))
                             send(new Success((Get) obj, ml.getOnlineClients(this), true));
+                    } else if (obj instanceof Update) {
+                        if (((Update) obj).getType().equals(Update.PRIVATE_CREATE)) {
+                            nl.createPrivateChat(name, (String)((Update) obj).getInformation());
+                            send(new Success((RequestObject) obj, "Private Chat Creation Successful", true));
+                            nl.updatePrivate(name);
+                            nl.updatePrivate((String)((Update) obj).getInformation());
+                        } else if (((Update) obj).getType().equals(Update.PRIVATE_DELETE)) {
+                            nl.deletePrivateChat(name, (String)((Update) obj).getInformation());
+                            send(new Success((RequestObject) obj, "Private Chat Deletion Successful", true));
+                            nl.updatePrivate(name);
+                            nl.updatePrivate((String)((Update) obj).getInformation());
+                        }
                     } else if (obj instanceof GroupText) {
                         send(new Success((RequestObject) obj, "GroupMessage Received", true));
                         String group = ((GroupText) obj).getType();

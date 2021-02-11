@@ -1,5 +1,6 @@
 package org.luma.client.frontend.controller;
 
+import Objects.Update;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.GridPane;
@@ -106,9 +107,9 @@ public class MainController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
             //Remove Item from list
+            ClientGUI.getClient().send(new Update(Update.PRIVATE_DELETE, ClientGUI.getClient().getName(), privateChats.getSelectionModel().getSelectedItem()));
             this.privateChats.getItems().remove(this.privateChats.getSelectionModel().getSelectedItem());
             this.messagesTextArea.clear();
-            //TODO: Server Anfrage für Datenbankeintraglöschung
         }
     }
 
@@ -142,8 +143,6 @@ public class MainController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
-            //TODO: Chat eröffnen
-
             if(onlineList.getSelectionModel().getSelectedItem() == null){
                 Alert alreadyAdded = new Alert(Alert.AlertType.WARNING, "No Person selected!");
                 alreadyAdded.showAndWait();
@@ -152,7 +151,7 @@ public class MainController {
 
             if(! this.privateChats.getItems().contains(onlineList.getSelectionModel().getSelectedItem())){
                 this.privateChats.getItems().add(onlineList.getSelectionModel().getSelectedItem());
-
+                ClientGUI.getClient().send(new Update(Update.PRIVATE_CREATE, ClientGUI.getClient().getName(), onlineList.getSelectionModel().getSelectedItem()));
             }else{
                 Alert alreadyAdded = new Alert(Alert.AlertType.ERROR, "This Person is already in your list of private Chats!");
                 alreadyAdded.showAndWait();
@@ -170,7 +169,7 @@ public class MainController {
 
 
         ListView<String> onlineList = new ListView<>();
-        onlineList.getItems().addAll("123", "123", "123");
+        onlineList.getItems().addAll(onlineClients);
 
 
         onlineList.setMaxWidth(Double.MAX_VALUE);
@@ -296,6 +295,7 @@ public class MainController {
     private String selectedChat;
 
     public void updatePrivateView(Map<String, ArrayList<String>> data) {
+        System.out.println("Update -- wohoo");
         Thread thread = new Thread(() -> {
             Platform.runLater(() -> {
                 selectedChat = privateChats.getSelectionModel().getSelectedItem();

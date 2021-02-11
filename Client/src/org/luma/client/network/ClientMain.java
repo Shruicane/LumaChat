@@ -33,9 +33,6 @@ public class ClientMain {
 
         log.network("Client >> Started");
         connect();
-
-        console = initConsole();
-        console.start();
     }
 
     public boolean changeIp(String hostname) {
@@ -44,52 +41,16 @@ public class ClientMain {
         return connect();
     }
 
-    private Thread initConsole(){
-        return new Thread() {
-            @Override
-            public void run() {
-                while (running) {
-                    Scanner scanner = new Scanner(System.in);
-
-                    String input = scanner.nextLine();
-
-                    if (input.startsWith(".")) {
-                        input = input.replaceFirst(".", "");
-                        if (input.matches("stop")) {
-                            stop();
-                        } else if (input.matches("exit")) {
-                            disconnect("Client >> Disconnected");
-                        } else if (input.split(" ")[0].matches("login")) {
-                            if (!loggedIn)
-                                login(input);
-                            else
-                                log.error("login >> You are already logged in");
-                        } else if (input.matches("help")) {
-                            log.cmd("help >> login [name]:[password]");
-                            log.cmd("help >> stop");
-                            log.cmd("help >> exit");
-                            log.cmd("help >> list");
-                        } else if (!isConnected()) {
-                            log.error("Client >> Not connected");
-                        } else if (input.matches("list")) {
-                            log.cmd("list >> Online Users: " + ioHandler.send(new Get("onlineClients")));
-                        } else if (!input.isEmpty()) {
-                            log.error("CMD >> Unknown Command: \"" + input + "\" try help for more information");
-                        }
-                    } else if (!input.isEmpty()) {
-                        //boolean success = send(input);
-                    }
-                }
-            }
-        };
-    }
-
     public boolean sendGroup(String group, String msg) {
         return ioHandler.send(new GroupText(group, name, msg));
     }
 
     public boolean sendPrivate(String receiver, String msg) {
         return ioHandler.send(new PrivateText(receiver, name, msg));
+    }
+
+    public boolean send(RequestObject request) {
+        return ioHandler.send(request);
     }
 
     public boolean register(String name, String password) {

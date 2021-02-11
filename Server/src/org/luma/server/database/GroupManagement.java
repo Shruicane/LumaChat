@@ -31,6 +31,18 @@ public class GroupManagement {
         return groupName;
     }
 
+    public void createPrivate(String name1, String name2) {
+        String query = "INSERT INTO chatdata (Groupname, Username) VALUES ('" + name1 + "', '" + name2 + "');\n";
+        mySQLDataBase.executeUpdate(query);
+        query = "INSERT INTO chatdata (Groupname, Username) VALUES ('" + name2 + "', '" + name1 + "');\n";
+        mySQLDataBase.executeUpdate(query);
+    }
+
+    public void deletePrivate(String name1, String name2) {
+        String query = "DELETE FROM chatdata WHERE Username='" + name1 + "' AND Groupname='" + name2 + "';\n";
+        mySQLDataBase.executeUpdate(query);
+    }
+
     public Map<String, String> getUsers(){
         HashMap<String, String> res = new HashMap<>();
         String query = "SELECT * FROM `userdata`";

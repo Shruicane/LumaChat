@@ -105,7 +105,7 @@ public class ClientManager {
         if (client.isLoggedIn()) {
             shout(client.getName(), "[-] " + client.getName());
         }
-        sendAll(new Update("online", "System", getAllOnlineClients()));
+        sendAll(new Update(Update.ONLINE, "System", getAllOnlineClients()));
         client.logout();
         log.network("NetworkListener >> Client <" + client.getName() + "> disconnected");
     }
@@ -134,6 +134,20 @@ public class ClientManager {
         if (isOnline(username))
             kick(username, msg, "You were Banned!");
         userManager.permaBanUser(username);
+    }
+
+    public void createPrivateChat(String name1, String name2) {
+        groupManager.createPrivate(name1, name2);
+    }
+
+    public void deletePrivateChat(String name1, String name2) {
+        groupManager.deletePrivate(name1, name2);
+    }
+
+    public void updatePrivate(String name) {
+        Client client = findClient(name);
+        if(client != null)
+            client.send(new Update(Update.PRIVATE, "System", getAllChatsFromUser(name)));
     }
 
     public void unban(String username) {
@@ -225,12 +239,8 @@ public class ClientManager {
         return onlineClients;
     }
 
-    //public LinkedList<Client> getAllClients() {
-    //return allClients;
-    //}
-
     public void sendAll(RequestObject request) {
-        for(Client client:onlineClients){
+        for (Client client : onlineClients) {
             client.send(request);
         }
     }
