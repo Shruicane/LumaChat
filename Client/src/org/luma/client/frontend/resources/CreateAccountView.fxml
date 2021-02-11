@@ -56,6 +56,11 @@
             <Insets top="141.0" />
          </VBox.margin>
       </Label>
+      <TextField fx:id="ipTextField" onAction="#changeIp" text="localhost">
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </TextField>
    </children>
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

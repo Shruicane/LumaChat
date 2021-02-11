@@ -25,6 +25,7 @@ public class ServerGUI extends Application {
         Scene home = new Scene(root);
         primaryStage.setScene(home);
         primaryStage.show();
+        //TODO: mysql datenbank nicht erreichbar -> warnung
 
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override

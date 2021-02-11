@@ -2,6 +2,8 @@ package org.luma.client.frontend.controller;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -13,6 +15,7 @@ import javafx.scene.image.ImageView;
 import org.luma.client.network.ClientMain;
 import org.luma.client.network.Logger;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +48,6 @@ public class MainController {
     @FXML
     private void initialize() {
         //Chats laden
-        privateChats.getItems().addAll("Chat1", "Chat2", "Chat3");
 
         ImageView btnImg = new ImageView(ClientGUI.sendImage);
         btnImg.setFitWidth(50);
@@ -69,9 +71,73 @@ public class MainController {
     }
 
     @FXML
-    private void onClickChangePwd() {
-        //TODO: Dialog zum Pwd ändern öffnen
-        //TODO: in der Datenbank Pwd ändern
+    private Button deleteChatBtn;
+
+    @FXML
+    private Button openChatBtn;
+
+
+    @FXML
+    private void onClickDeleteChat(){
+
+        String selectedChat = this.privateChats.getSelectionModel().getSelectedItem();
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText("You are about to delete chat with " + selectedChat);
+        alert.setContentText("Are you sure you want to continue?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            //Remove Item from list
+            this.privateChats.getItems().remove(this.privateChats.getSelectionModel().getSelectedItem());
+            //TODO: Server Anfrage für Datenbankeintraglöschung
+        }
+    }
+
+    @FXML
+    private void onClickOpenChat(){
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Selection Dialog");
+        alert.setHeaderText("Please select someone to chat with!");
+
+
+        ListView<String> onlineList = new ListView<>();
+        onlineList.getItems().addAll("Lucaa", "Lucaaaaaa", "lucaaaaaaaa");
+        //TODO: online liste laden, aber nicht den eigenen namen anzeigen
+
+        onlineList.setMaxWidth(Double.MAX_VALUE);
+        onlineList.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(onlineList, Priority.ALWAYS);
+        GridPane.setHgrow(onlineList, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(onlineList, 0, 1);
+
+        // Set expandable Exception into the dialog pane.
+        alert.getDialogPane().setContent(expContent);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            //TODO: Chat eröffnen
+
+            if(onlineList.getSelectionModel().getSelectedItem() == null){
+                Alert alreadyAdded = new Alert(Alert.AlertType.WARNING, "No Person selected!");
+                alreadyAdded.showAndWait();
+                return;
+            }
+
+            if(! this.privateChats.getItems().contains(onlineList.getSelectionModel().getSelectedItem())){
+                this.privateChats.getItems().add(onlineList.getSelectionModel().getSelectedItem());
+
+            }else{
+                Alert alreadyAdded = new Alert(Alert.AlertType.ERROR, "This Person is already in your list of private Chats!");
+                alreadyAdded.showAndWait();
+            }
+        }
+
     }
 
     @FXML

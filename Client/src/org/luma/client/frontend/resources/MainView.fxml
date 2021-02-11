@@ -15,16 +15,24 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="522.0" prefWidth="1016.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.luma.client.frontend.controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="522.0" prefWidth="1016.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.luma.client.frontend.controller.MainController">
    <left>
-      <TabPane fx:id="chatTabs" prefHeight="497.0" prefWidth="273.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane fx:id="chatTabs" prefHeight="472.0" prefWidth="273.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab onSelectionChanged="#onSelectedPrivateChats" text="Private Chats">
+          <Tab text="Private Chats">
                <content>
-                  <ListView fx:id="privateChats" onMouseClicked="#updateChat" prefHeight="200.0" prefWidth="200.0" />
-               </content>
-            </Tab>
-          <Tab onSelectionChanged="#onSelectedGroupChats" text="Group Chats">
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                     <children>
+                        <Button fx:id="openChatBtn" mnemonicParsing="false" onAction="#onClickOpenChat" prefHeight="25.0" prefWidth="246.0" text="Open Private Chat" />
+                        <Button fx:id="deleteChatBtn" mnemonicParsing="false" onAction="#onClickDeleteChat" prefHeight="25.0" prefWidth="246.0" text="Delete Private Chat" />
+                        <Separator prefWidth="200.0" />
+                        <ListView fx:id="privateChats" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding></VBox>
+               </content></Tab>
+          <Tab text="Group Chats">
                <content>
                   <VBox prefHeight="497.0" prefWidth="273.0">
                      <children>
@@ -66,7 +74,6 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Settings">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#onClickChangePwd" text="Change Password" />
                   <MenuItem mnemonicParsing="false" onAction="#onClickLogOut" text="Log out" />
             </items>
           </Menu>

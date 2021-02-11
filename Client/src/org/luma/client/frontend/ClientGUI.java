@@ -4,9 +4,6 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -16,8 +13,6 @@ import org.luma.client.network.ClientMain;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 public class ClientGUI extends Application implements GUI{
 
@@ -33,11 +28,6 @@ public class ClientGUI extends Application implements GUI{
     private static MainController controller;
 
     public static void main(String[] args) {
-
-        System.out.println(UUID.randomUUID());
-        System.out.println(UUID.randomUUID());
-        System.out.println(UUID.randomUUID());
-
         launch(args);
     }
 
@@ -50,6 +40,8 @@ public class ClientGUI extends Application implements GUI{
         ClientGUI.primaryStage = primaryStage;
         ClientGUI.primaryStage.setScene(ClientGUI.loginScene);
         ClientGUI.primaryStage.setResizable(false);
+
+
         ClientGUI.primaryStage.show();
 
         client = new ClientMain("localhost", 54321, this);

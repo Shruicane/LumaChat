@@ -1,7 +1,12 @@
 package org.luma.client.frontend.controller;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import org.luma.client.frontend.ClientGUI;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
@@ -18,6 +23,9 @@ public class CreateAccountController {
 
     @FXML
     private PasswordField repeatPasswordField;
+
+    @FXML
+    private TextField ipTextField;
 
 
     @FXML
@@ -46,6 +54,16 @@ public class CreateAccountController {
                 //Register failed
                 ClientGUI.getController().showPopup("This Name is already taken!", "Is your device connected to the Internet?");
             }
+        }
+    }
+
+    @FXML
+    private void changeIp() {
+        boolean success = ClientGUI.getClient().changeIp(ipTextField.getText());
+        if (success) {
+            ipTextField.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+        } else {
+            ipTextField.setBackground(new Background(new BackgroundFill(Color.INDIANRED, CornerRadii.EMPTY, Insets.EMPTY)));
         }
     }
 
