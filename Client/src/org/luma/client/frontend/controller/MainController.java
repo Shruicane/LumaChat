@@ -46,6 +46,16 @@ public class MainController {
     private TabPane chatTabs;
 
     @FXML
+    private Button deleteChatBtn;
+
+    @FXML
+    private Button openChatBtn;
+
+    ArrayList<String> onlineClients = new ArrayList<>();
+
+
+
+    @FXML
     private void initialize() {
         //Chats laden
 
@@ -70,12 +80,18 @@ public class MainController {
         logout();
     }
 
-    @FXML
-    private Button deleteChatBtn;
 
     @FXML
-    private Button openChatBtn;
+    private void onClickPrivateChats(){
+        String messages = "";
+        if(this.chatData.get(this.privateChats.getSelectionModel().getSelectedItem()) != null){
+            for(String s : this.chatData.get(this.privateChats.getSelectionModel().getSelectedItem())){
+                messages += s + "\n";
+            }
+        }
 
+        this.messagesTextArea.setText(messages);
+    }
 
     @FXML
     private void onClickDeleteChat(){
@@ -91,6 +107,7 @@ public class MainController {
         if (result.get() == ButtonType.OK){
             //Remove Item from list
             this.privateChats.getItems().remove(this.privateChats.getSelectionModel().getSelectedItem());
+            this.messagesTextArea.clear();
             //TODO: Server Anfrage für Datenbankeintraglöschung
         }
     }
@@ -105,7 +122,11 @@ public class MainController {
 
         ListView<String> onlineList = new ListView<>();
         onlineList.getItems().addAll(onlineClients);
-        //TODO: online liste laden, aber nicht den eigenen namen anzeigen
+        onlineList.getItems().remove(ClientGUI.getClient().getName());
+
+        for(String s : this.privateChats.getItems()){
+            onlineList.getItems().remove(s);
+        }
 
         onlineList.setMaxWidth(Double.MAX_VALUE);
         onlineList.setMaxHeight(Double.MAX_VALUE);
@@ -295,7 +316,6 @@ public class MainController {
         thread.start();
     }
 
-    ArrayList<String> onlineClients = new ArrayList<>();
 
     public void updateOnlineClients(ArrayList<String> onlineClients){
         this.onlineClients = onlineClients;
@@ -356,4 +376,5 @@ public class MainController {
     private String getSelectedChat() {
         return privateChats.getSelectionModel().getSelectedItems().get(0);
     }
+
 }

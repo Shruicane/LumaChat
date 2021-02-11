@@ -90,6 +90,25 @@ public class Controller {
     @FXML
     private Button discardSettingsBtn;
 
+    @FXML
+    private Button createChatBtn;
+
+    @FXML
+    private Button deleteChatBtn;
+
+    @FXML
+    private TableView<User> privateChatsTableView;
+
+    @FXML
+    private TableColumn<User, String> leftColumnChatsTableview;
+
+    @FXML
+    private TableColumn<User, Password> rightColumnChatsTableview;
+
+    //</editor-fold>
+
+    //<editor-fold desc="Private Chats Tab">
+
     //</editor-fold>
 
     //<editor-fold desc="User Management Tab">
@@ -397,6 +416,7 @@ public class Controller {
 
         userTableUsername.setCellValueFactory(features -> features.getValue().usernameProperty());
         userTablePassword.setCellValueFactory(features -> features.getValue().passwordProperty());
+
 
         emptyDummyList = userList.getItems();
 

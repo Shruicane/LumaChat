@@ -26,7 +26,7 @@
                         <Button fx:id="openChatBtn" mnemonicParsing="false" onAction="#onClickOpenChat" prefHeight="25.0" prefWidth="246.0" text="Open Private Chat" />
                         <Button fx:id="deleteChatBtn" mnemonicParsing="false" onAction="#onClickDeleteChat" prefHeight="25.0" prefWidth="246.0" text="Delete Private Chat" />
                         <Separator prefWidth="200.0" />
-                        <ListView fx:id="privateChats" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="privateChats" onMouseClicked="#onClickPrivateChats" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                      </children>
                      <padding>
                         <Insets top="10.0" />
