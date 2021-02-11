@@ -13,7 +13,7 @@ public class GroupManagement {
 
     private MySQLConnection mySQLConnection;
     private Controller controller;
-    private MySQLDataBase mySQLDataBase;
+    public MySQLDataBase mySQLDataBase;
 
 
     public GroupManagement(MySQLConnection mySQLConnection, Controller controller, MySQLDataBase mySQLDataBase) {

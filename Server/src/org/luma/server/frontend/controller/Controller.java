@@ -11,6 +11,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.luma.server.database.*;
+import org.luma.server.frontend.ServerGUI;
 import org.luma.server.network.ClientManager;
 import org.luma.server.network.Logger;
 import org.luma.server.network.ServerMain;
@@ -403,6 +404,13 @@ public class Controller {
     }
 
     private void initComponents(){
+        //Test Connection
+        if(! groupManager.mySQLDataBase.openConnection()) {
+            System.out.println("Database not reachable! Application shutting down.");
+            System.exit(0);
+        }
+
+
         //User Tableview
         ObservableList<User> userList = userTableView.getItems();
         Map<String, String> user = groupManager.getUsers();

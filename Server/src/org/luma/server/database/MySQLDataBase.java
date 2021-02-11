@@ -1,5 +1,6 @@
 package org.luma.server.database;
 
+import java.net.ConnectException;
 import java.sql.*;
 
 public class MySQLDataBase {
@@ -20,16 +21,21 @@ public class MySQLDataBase {
         this.database = database;
     }
 
-    public void openConnection()  {
+    public boolean openConnection()  {
         if(open)
-            return;
+            return false;
         try {
             Class.forName("com.mysql.jdbc.Driver");
             this.conn = DriverManager.getConnection(this.DB_URL, this.user, this.password);
             this.open = true;
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            return false;
+        } catch (SQLException sqlException){
+            sqlException.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public void closeConnection(){
