@@ -194,4 +194,19 @@ public class UserManagement {
 
         return result;
     }
+
+    public ArrayList<String> getAllUsers(){
+        ArrayList<String> res = new ArrayList<>();
+        String query = "SELECT * FROM `userdata`";
+        ResultSet rs = mySQLDataBase.executeQuery(query);
+        try {
+            while (rs.next()) {
+                res.add(rs.getString("Username"));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return res;
+
+    }
 }

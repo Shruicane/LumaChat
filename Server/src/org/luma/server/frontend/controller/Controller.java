@@ -96,18 +96,44 @@ public class Controller {
     @FXML
     private Button deleteChatBtn;
 
-    @FXML
-    private TableView<User> privateChatsTableView;
+   @FXML
+   private ListView<String> privateChatsUser;
 
     @FXML
-    private TableColumn<User, String> leftColumnChatsTableview;
-
-    @FXML
-    private TableColumn<User, Password> rightColumnChatsTableview;
+    private ListView<String> privateChatsUsersChats;
 
     //</editor-fold>
 
     //<editor-fold desc="Private Chats Tab">
+
+    private String selectedUser;
+    private String selectedChat;
+
+    @FXML
+    private void onClickDeleteChat(){
+
+    }
+
+    @FXML
+    private void onClickCreateChat(){
+
+    }
+
+    @FXML
+    private void onClickChats(){
+        this.selectedChat = this.privateChatsUsersChats.getSelectionModel().getSelectedItem();
+    }
+
+    @FXML
+    private void onClickUsers(){
+        this.selectedUser = this.privateChatsUser.getSelectionModel().getSelectedItem();
+        this.privateChatsUsersChats.getItems().clear();
+        if(this.selectedUser != null) {
+            for (Map.Entry<String, ArrayList<String>> entry : userManager.getAllChatsFromUser(this.selectedUser).entrySet()) {
+                this.privateChatsUsersChats.getItems().add(entry.getKey());
+            }
+        }
+    }
 
     //</editor-fold>
 
@@ -397,6 +423,21 @@ public class Controller {
     //</editor-fold>
 
     @FXML
+    private void reloadTabs(){
+
+        userTableView.getItems().clear();
+        userTablePassword.getColumns().clear();
+        userTableUsername.getColumns().clear();
+
+        emptyDummyList = userList.getItems();
+        privateChatsUser.getItems().clear();
+        privateChatsUsersChats.getItems().clear();
+        groupList.getItems().clear();
+        userList.getItems().clear();
+        initComponents();
+    }
+
+    @FXML
     private void initialize() {
         this.ipAddressTextField.setText(Settings.getIpAddress());
         this.portTextField.setText(Settings.getPort());
@@ -417,7 +458,6 @@ public class Controller {
         userTableUsername.setCellValueFactory(features -> features.getValue().usernameProperty());
         userTablePassword.setCellValueFactory(features -> features.getValue().passwordProperty());
 
-
         emptyDummyList = userList.getItems();
 
         initComponents();
@@ -429,6 +469,7 @@ public class Controller {
             System.out.println("Database not reachable! Application shutting down.");
             System.exit(0);
         }
+        groupManager.mySQLDataBase.closeConnection();
 
 
         //User Tableview
@@ -443,6 +484,9 @@ public class Controller {
         ArrayList<String> groups = groupManager.getAllGroups();
         groupTableView.addAll(groups);
         groupList.setItems(groupTableView);
+
+        //Private Chats
+        this.privateChatsUser.getItems().addAll(userManager.getAllUsers());
     }
 
 
@@ -485,4 +529,6 @@ public class Controller {
     public void sendUpdateInfo(String username, String type, Object data){
         cm.sendUpdateInfo(username, type, data);
     }
+
+
 }

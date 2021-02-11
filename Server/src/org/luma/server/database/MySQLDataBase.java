@@ -23,7 +23,7 @@ public class MySQLDataBase {
 
     public boolean openConnection()  {
         if(open)
-            return false;
+            return true;
         try {
             Class.forName("com.mysql.jdbc.Driver");
             this.conn = DriverManager.getConnection(this.DB_URL, this.user, this.password);

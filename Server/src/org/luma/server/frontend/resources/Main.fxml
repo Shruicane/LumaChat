@@ -26,7 +26,7 @@
                   <TextArea fx:id="logArea" editable="false" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                </children></HBox>
          </content></Tab>
-      <Tab text="User Management">
+      <Tab onSelectionChanged="#reloadTabs" text="User Management">
          <content>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
@@ -54,7 +54,7 @@
             </HBox>
          </content>
       </Tab>
-      <Tab text="Group Management">
+      <Tab onSelectionChanged="#reloadTabs" text="Group Management">
          <content>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
@@ -85,16 +85,12 @@
             </HBox>
          </content>
       </Tab>
-      <Tab text="Pirvate Chats">
+      <Tab onSelectionChanged="#reloadTabs" text="Pirvate Chats">
          <content>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <TableView prefHeight="557.0" prefWidth="380.0">
-                    <columns>
-                      <TableColumn fx:id="leftColumnChatsTableview" prefWidth="190.0" text="User 1" />
-                      <TableColumn fx:id="rightColumnChatsTableview" prefWidth="190.0" text="User 2" />
-                    </columns>
-                  </TableView>
+                  <ListView fx:id="privateChatsUser" onMouseClicked="#onClickUsers" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="privateChatsUsersChats" onMouseClicked="#onClickChats" prefHeight="200.0" prefWidth="200.0" />
                   <VBox prefHeight="371.0" prefWidth="209.0" spacing="15.0">
                      <children>
                         <Button fx:id="createChatBtn" mnemonicParsing="false" text="Create Chat">
@@ -103,12 +99,6 @@
                            </VBox.margin>
                         </Button>
                         <Button fx:id="deleteChatBtn" mnemonicParsing="false" text="Delete Chat" />
-                        <Button fx:id="addUserButton1" mnemonicParsing="false" onAction="#onClickAddUserButton" text="Add User" visible="false">
-                           <VBox.margin>
-                              <Insets top="50.0" />
-                           </VBox.margin>
-                        </Button>
-                        <Button fx:id="removeUserButton1" mnemonicParsing="false" onAction="#onClickRemoveUserButton" text="Remove User" visible="false" />
                      </children>
                      <HBox.margin>
                         <Insets />
@@ -121,7 +111,7 @@
             </HBox>
          </content>
       </Tab>
-      <Tab text="Settings">
+      <Tab onSelectionChanged="#reloadTabs" text="Settings">
          <content>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
