@@ -8,7 +8,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.luma.client.frontend.ClientGUI;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -16,7 +15,6 @@ import javafx.scene.image.ImageView;
 import org.luma.client.network.ClientMain;
 import org.luma.client.network.Logger;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,9 +50,18 @@ public class MainController {
     @FXML
     private Button openChatBtn;
 
-    ArrayList<String> onlineClients = new ArrayList<>();
+    private ArrayList<String> onlineClients = new ArrayList<>();
 
+    //Group Data
+    private Map<String, ArrayList<String>> groupData;
+    private final Map<String, ArrayList<String>> groupMessages = new HashMap<>();
 
+    private String selectedGroup;
+
+    //Private Chat Data
+    private Map<String, ArrayList<String>> chatData;
+
+    private String selectedChat;
 
     @FXML
     private void initialize() {
@@ -184,7 +191,6 @@ public class MainController {
         // Set expandable Exception into the dialog pane.
         alert.getDialogPane().setContent(expContent);
         alert.showAndWait();
-
     }
 
     @FXML
@@ -204,8 +210,6 @@ public class MainController {
             }
         }
         msgTextArea.clear();
-
-        //TODO: msg an Server senden - nur in der Textliste anzeigen wenn vom Server eine Bestätigung kommt
     }
 
     public void updateMessages(String type, String receiver, String msg) {
@@ -239,10 +243,6 @@ public class MainController {
         thread.start();
     }
 
-    public void showPopup(String msg) {
-        showPopup(msg, "");
-    }
-
     public void logout() {
         Thread thread = new Thread(() -> {
             Platform.runLater(() -> {
@@ -263,11 +263,6 @@ public class MainController {
         thread.setDaemon(true);
         thread.start();
     }
-
-    Map<String, ArrayList<String>> groupData;
-    Map<String, ArrayList<String>> groupMessages = new HashMap<>();
-
-    private String selectedGroup;
 
     public void updateGroupView(Map<String, ArrayList<String>> data) {
         Thread thread = new Thread(() -> {
@@ -295,10 +290,6 @@ public class MainController {
         thread.start();
     }
 
-    Map<String, ArrayList<String>> chatData;
-
-    private String selectedChat;
-
     public void updatePrivateView(Map<String, ArrayList<String>> data) {
         Thread thread = new Thread(() -> {
             Platform.runLater(() -> {
@@ -319,7 +310,6 @@ public class MainController {
         thread.setDaemon(true);
         thread.start();
     }
-
 
     public void updateOnlineClients(ArrayList<String> onlineClients){
         this.onlineClients = onlineClients;
@@ -361,16 +351,6 @@ public class MainController {
                 for (String msg : chatData.get(getSelectedChat()))
                     messagesTextArea.appendText(msg + "\n");
         }
-    }
-
-    @FXML
-    private void onSelectedPrivateChats() {
-        updateChat();
-    }
-
-    @FXML
-    private void onSelectedGroupChats() {
-        updateUserList();
     }
 
     private String getSelectedGroup() {

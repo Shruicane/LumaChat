@@ -6,9 +6,9 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class User {
 
-    private String username;
-    private String password;
-    private boolean online;
+    private final String username;
+    private final String password;
+    private final boolean online;
 
     private final SimpleStringProperty usernameProperty;
     private final SimpleObjectProperty<Password> passwordProperty;

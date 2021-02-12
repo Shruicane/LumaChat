@@ -13,7 +13,7 @@ public class GroupManagement {
 
     private MySQLConnection mySQLConnection;
     private Controller controller;
-    public MySQLDataBase mySQLDataBase;
+    private MySQLDataBase mySQLDataBase;
 
 
     public GroupManagement(MySQLConnection mySQLConnection, Controller controller, MySQLDataBase mySQLDataBase) {
@@ -128,23 +128,7 @@ public class GroupManagement {
         return res;
     }
 
-
-
-
-
-    /*public void createGroup(int groupID){
-
+    public MySQLDataBase getMySQLDataBase() {
+        return mySQLDataBase;
     }
-
-    public void deleteGroup(int groupID){
-
-    }
-
-    public void addUserToGroup(int groupID, String userName){
-
-    }
-
-    public void removeUserFromGroup(int groupID, String userName){
-
-    }*/
 }

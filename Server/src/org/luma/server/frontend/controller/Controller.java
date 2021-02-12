@@ -108,10 +108,23 @@ public class Controller {
 
     //</editor-fold>
 
-    //<editor-fold desc="Private Chats Tab">
+    //Saved Instances
+    private MySQLConnection mySQLConnection;
+    private UserManagement userManager;
+    private GroupManagement groupManager;
+    private IOManagement ioManager;
+    private ServerMain server;
+    private ClientManager cm;
+    private Logger log;
+    private LogManager logManager;
+
+
+    private ObservableList<String> emptyDummyList;
 
     private String selectedUser;
     private String selectedChat;
+
+    //<editor-fold desc="Private Chats Tab">
 
     @FXML
     private void onClickDeleteChat(){
@@ -598,11 +611,11 @@ public class Controller {
 
     private void initComponents(){
         //Test Connection
-        if(! groupManager.mySQLDataBase.openConnection()) {
+        if(! groupManager.getMySQLDataBase().openConnection()) {
             System.out.println("Database not reachable! Application shutting down.");
             System.exit(0);
         }
-        groupManager.mySQLDataBase.closeConnection();
+        groupManager.getMySQLDataBase().closeConnection();
 
 
         //User Tableview
@@ -622,19 +635,6 @@ public class Controller {
         this.privateChatsUser.getItems().addAll(userManager.getAllUsers());
     }
 
-
-    MySQLConnection mySQLConnection;
-    UserManagement userManager;
-    GroupManagement groupManager;
-    IOManagement ioManager;
-    ServerMain server;
-    ClientManager cm;
-    Logger log;
-    LogManager logManager;
-
-
-    private ObservableList<String> emptyDummyList;
-
     private void showPopup(String title, String msg, Consumer<? super String> consumer) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setHeaderText(msg);
@@ -652,12 +652,6 @@ public class Controller {
             System.out.println("ERROR: org/luma/server/frontend/controller/Controller.java -> updateLogArea()");
             e.printStackTrace();
         }
-    }
-
-    public void updateUser(String username, String password, boolean online) {
-        ObservableList<User> items = userTableView.getItems();
-        items.add(new User(username, password, online, showPwdButton.isSelected()));
-        userTableView.setItems(items);
     }
 
     public void sendUpdateInfo(String username, String type, Object data){

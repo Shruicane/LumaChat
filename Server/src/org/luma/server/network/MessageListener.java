@@ -2,12 +2,10 @@ package org.luma.server.network;
 
 public class MessageListener {
     private final ClientManager cm;
-    private Logger log;
 
     public MessageListener(ClientManager cm, Logger log) {
         log.network("MessageListener >> Started Listener");
         this.cm = cm;
-        this.log = log;
     }
 
     public void message(String group, String sender, String message) {
