@@ -82,10 +82,7 @@ public class IOHandler extends Thread {
             synchronized (in) {
                 try {
                     AnswerObject answer;
-                    Object i = in.readObject();
-                    System.out.println(i);
-                    System.out.println(i.getClass());
-                    while ((answer = (AnswerObject) i) == null) ;
+                    while ((answer = (AnswerObject) in.readObject()) == null) ;
 
                     log.info(answer.getType() + " Request was Successful. Server responded with: " +
                             answer.getMessage() + " (" + answer.isSuccess() + ")");

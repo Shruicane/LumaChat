@@ -156,7 +156,7 @@ public class ClientManager {
     }
 
     public boolean isBanned(String username) {
-        return (userManager.isBanned(username) != BanStatus.NONE);
+        return (userManager.getBanStatus(username) == BanStatus.PERMABAN);
     }
 
     private boolean isOnline(String username) {

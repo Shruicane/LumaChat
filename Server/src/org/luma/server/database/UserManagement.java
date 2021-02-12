@@ -42,7 +42,7 @@ public class UserManagement {
         String query = "SELECT * FROM `userdata` WHERE Username=\"" + username + "\" AND Password=\"" + password + "\"";
         ResultSet rs = mySQLDataBase.executeQuery(query);
         try {
-            return rs.next();
+            return rs.next() && getBanStatus(username) != BanStatus.PERMABAN;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             return false;
@@ -117,7 +117,7 @@ public class UserManagement {
         return database.checkPassword(username, password) && !database.isBanned(username);
     }*/
 
-    public BanStatus isBanned(String username) {
+    public BanStatus getBanStatus(String username) {
         String query = "SELECT * FROM `userdata` WHERE Username=\"" + username + "\"";
         ResultSet rs = mySQLDataBase.executeQuery(query);
         try {
