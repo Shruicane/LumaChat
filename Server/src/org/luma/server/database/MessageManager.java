@@ -8,8 +8,7 @@ import java.util.ArrayList;
 
 public class MessageManager {
 
-    private MySQLDataBase mySQLDataBase;
-
+    private final MySQLDataBase mySQLDataBase;
 
     public MessageManager(MySQLDataBase mySQLDataBase) {
         this.mySQLDataBase = mySQLDataBase;

@@ -10,13 +10,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Logger {
-    Controller controller;
-    IOManagement ioManager;
-    private LogManager logManager;
+    private final Controller controller;
+    private final LogManager logManager;
 
-    public Logger(Controller controller, IOManagement ioManager, MySQLDataBase mySQLDataBase){
+    public Logger(Controller controller, MySQLDataBase mySQLDataBase){
         this.controller = controller;
-        this.ioManager = ioManager;
         logManager = new LogManager(mySQLDataBase);
     }
 
