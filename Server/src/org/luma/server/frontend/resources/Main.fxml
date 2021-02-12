@@ -85,7 +85,7 @@
             </HBox>
          </content>
       </Tab>
-      <Tab onSelectionChanged="#reloadTabs" text="Pirvate Chats">
+      <Tab onSelectionChanged="#reloadTabs" text="Private Chats">
          <content>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
@@ -93,12 +93,12 @@
                   <ListView fx:id="privateChatsUsersChats" onMouseClicked="#onClickChats" prefHeight="200.0" prefWidth="200.0" />
                   <VBox prefHeight="371.0" prefWidth="209.0" spacing="15.0">
                      <children>
-                        <Button fx:id="createChatBtn" mnemonicParsing="false" text="Create Chat">
+                        <Button fx:id="createChatBtn" mnemonicParsing="false" onAction="#onClickCreateChat" text="Create Chat">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
                         </Button>
-                        <Button fx:id="deleteChatBtn" mnemonicParsing="false" text="Delete Chat" />
+                        <Button fx:id="deleteChatBtn" mnemonicParsing="false" onAction="#onClickDeleteChat" text="Delete Chat" />
                      </children>
                      <HBox.margin>
                         <Insets />

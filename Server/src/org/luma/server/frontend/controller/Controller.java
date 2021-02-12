@@ -111,12 +111,47 @@ public class Controller {
 
     @FXML
     private void onClickDeleteChat(){
+        if(selectedUser != null && selectedChat != null) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Dialog");
+            alert.setHeaderText("You are about to delete " + this.selectedUser + "'s private Chat with " + this.selectedChat);
+            alert.setContentText("Do you wish to continue?");
 
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                groupManager.deletePrivate(this.selectedUser, this.selectedChat);
+                this.reloadTabs();
+            }
+        }
     }
 
     @FXML
     private void onClickCreateChat(){
+        if(selectedUser != null) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Dialog");
+            alert.setHeaderText("You are about to create a chat for " + this.selectedUser);
+            alert.setContentText("Do you wish to continue?");
+            TextField userToAdd = new TextField();
+            alert.getDialogPane().setContent(userToAdd);
+            userToAdd.setMaxWidth(75);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                if(userToAdd.getText() != null && ! userToAdd.getText().equals("")){
 
+                    if(this.privateChatsUser.getItems().contains(userToAdd.getText())){
+                        groupManager.createPrivate(this.selectedUser, userToAdd.getText());
+                    }else{
+                        Alert warn = new Alert(AlertType.ERROR, "This user does not exist!");
+                        warn.showAndWait();
+                    }
+                }else{
+                    Alert warn = new Alert(AlertType.WARNING, "Please enter a name!");
+                    warn.showAndWait();
+                }
+
+            }
+        }
     }
 
     @FXML
