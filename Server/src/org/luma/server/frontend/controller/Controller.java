@@ -514,7 +514,9 @@ public class Controller {
         btn.setOnMouseClicked(event -> {
 
             File selectedFile = dirChooser.showDialog(this.databaseTextField.getParent().getScene().getWindow());
-            dirTextfield.setText(selectedFile.getAbsolutePath());
+            if(selectedFile != null) {
+                dirTextfield.setText(selectedFile.getAbsolutePath());
+            }
         });
 
         GridPane expContent = new GridPane();
