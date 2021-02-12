@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="586.0" prefWidth="899.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.luma.server.frontend.controller.Controller">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="586.0" prefWidth="899.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.luma.server.frontend.controller.Controller">
   <tabs>
     <Tab text="Server Log">
          <content>
@@ -132,12 +132,13 @@
                   <Label layoutX="146.0" layoutY="99.0" text=":" />
                   <TextField fx:id="dataBaseUserTextField" layoutX="425.0" layoutY="95.0" prefHeight="25.0" prefWidth="77.0" />
                   <TextField fx:id="databasePasswordTextField" layoutX="515.0" layoutY="95.0" prefHeight="25.0" prefWidth="83.0" />
-                  <ButtonBar layoutX="685.0" layoutY="503.0" prefHeight="40.0" prefWidth="210.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0">
+                  <ButtonBar layoutX="675.0" layoutY="504.0" prefHeight="40.0" prefWidth="210.0" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="14.0">
                     <buttons>
                       <Button fx:id="saveSettingsBtn" mnemonicParsing="false" onAction="#onClickSaveBtn" text="Save Settings" />
                         <Button fx:id="discardSettingsBtn" mnemonicParsing="false" onAction="#onClickDiscardBtn" text="Discard" />
                     </buttons>
                   </ButtonBar>
+                  <Button layoutX="20.0" layoutY="511.0" mnemonicParsing="false" onMouseClicked="#onClickExportLogs" prefHeight="25.0" prefWidth="84.0" text="Export Logs" />
                </children></AnchorPane>
          </content>
       </Tab>

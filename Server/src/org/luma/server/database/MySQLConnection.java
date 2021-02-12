@@ -11,9 +11,10 @@ public class MySQLConnection {
     private final UserManagement userManager;
     private final GroupManagement groupManager;
     private final MessageManager messageManager;
+    private final MySQLDataBase mysqlDatabase;
 
     public MySQLConnection(Controller controller){
-        MySQLDataBase mysqlDatabase = new MySQLDataBase(Settings.getIpAddress(), Settings.getPort(), Settings.getDatabaseUser(), Settings.getDatabasePassword(), Settings.getDatabase());
+        mysqlDatabase = new MySQLDataBase(Settings.getIpAddress(), Settings.getPort(), Settings.getDatabaseUser(), Settings.getDatabasePassword(), Settings.getDatabase());
         userManager = new UserManagement(this, controller, mysqlDatabase);
         groupManager = new GroupManagement(this, controller, mysqlDatabase);
         messageManager = new MessageManager(mysqlDatabase);
@@ -30,5 +31,9 @@ public class MySQLConnection {
 
     public MessageManager getMessageManager() {
         return messageManager;
+    }
+
+    public MySQLDataBase getMysqlDatabase() {
+        return mysqlDatabase;
     }
 }
