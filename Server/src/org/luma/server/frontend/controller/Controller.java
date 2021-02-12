@@ -7,6 +7,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -269,37 +271,64 @@ public class Controller {
     @FXML
     private void onClickAddUserButton() {
         if (getSelectedGroup() != null) {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setHeaderText("Please Enter Username:");
-            dialog.setTitle("Add User");
 
-            Optional<String> result = dialog.showAndWait();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Selection Dialog");
+            alert.setHeaderText("Please select someone to chat with!");
 
-            result.ifPresent(username -> {
-                ArrayList<String> allUsersLowerCase = new ArrayList<>();
-                for(String s : groupManager.getAllUsers(getSelectedGroup().getName())){
-                    allUsersLowerCase.add(s.toLowerCase());
-                }
-                if (userManager.userExists(username) && !allUsersLowerCase.contains(username.toLowerCase())) {
-                    groupManager.addUser(getSelectedGroup(), username);
-                    ObservableList<String> user = userList.getItems();
-                    user.add(username);
 
-                    userList.setItems(user);
-                    log.administration("Added User >> " + getSelectedGroup() + " <- " + username);
+            ListView<String> onlineList = new ListView<>();
+            onlineList.getItems().addAll(userManager.getAllUsers());
 
-                    updateListUser();
+            for(String s : this.userList.getItems()){
+                onlineList.getItems().remove(s);
+            }
 
-                    ArrayList<String> affectedUsers = groupManager.getAllUsers(getSelectedGroup().getName());
-                    for(String aUser:affectedUsers)
-                        sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUser(aUser));
-                    cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
+            onlineList.setMaxWidth(Double.MAX_VALUE);
+            onlineList.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(onlineList, Priority.ALWAYS);
+            GridPane.setHgrow(onlineList, Priority.ALWAYS);
 
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(onlineList, 0, 1);
+
+            alert.getDialogPane().setContent(expContent);
+
+            Optional<ButtonType> result1 = alert.showAndWait();
+            if (result1.get() == ButtonType.OK) {
+
+                String username = onlineList.getSelectionModel().getSelectedItem();
+
+                if(username != null && ! username.equals("")) {
+                    ArrayList<String> allUsersLowerCase = new ArrayList<>();
+                    for (String s : groupManager.getAllUsers(getSelectedGroup().getName())) {
+                        allUsersLowerCase.add(s.toLowerCase());
+                    }
+                    if (userManager.userExists(username) && !allUsersLowerCase.contains(username.toLowerCase())) {
+                        groupManager.addUser(getSelectedGroup(), username);
+                        ObservableList<String> user = userList.getItems();
+                        user.add(username);
+
+                        userList.setItems(user);
+                        log.administration("Added User >> " + getSelectedGroup() + " <- " + username);
+
+                        updateListUser();
+
+                        ArrayList<String> affectedUsers = groupManager.getAllUsers(getSelectedGroup().getName());
+                        for (String aUser : affectedUsers)
+                            sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUser(aUser));
+                        cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
+
+                    } else {
+                        Alert warn = new Alert(AlertType.WARNING, "User ist schon Mitglied der Gruppe oder existiert nicht!");
+                        warn.showAndWait();
+                    }
                 }else{
-                    Alert alert = new Alert(AlertType.WARNING, "User ist schon Mitglied der Gruppe oder existiert nicht!");
-                    alert.showAndWait();
+                    Alert warn = new Alert(AlertType.WARNING, "Kein User wurde ausgewählt!");
+                    warn.showAndWait();
                 }
-            });
+            }
         }
 
         // TODO: maybe add drop down menu to dialog
