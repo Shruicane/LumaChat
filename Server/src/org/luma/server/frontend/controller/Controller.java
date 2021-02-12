@@ -7,6 +7,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -96,8 +98,8 @@ public class Controller {
     @FXML
     private Button deleteChatBtn;
 
-    @FXML
-    private ListView<String> privateChatsUser;
+   @FXML
+   private ListView<String> privateChatsUser;
 
     @FXML
     private ListView<String> privateChatsUsersChats;
@@ -110,8 +112,8 @@ public class Controller {
     private String selectedChat;
 
     @FXML
-    private void onClickDeleteChat() {
-        if (selectedUser != null && selectedChat != null) {
+    private void onClickDeleteChat(){
+        if(selectedUser != null && selectedChat != null) {
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Dialog");
             alert.setHeaderText("You are about to delete " + this.selectedUser + "'s private Chat with " + this.selectedChat);
@@ -126,8 +128,8 @@ public class Controller {
     }
 
     @FXML
-    private void onClickCreateChat() {
-        if (selectedUser != null) {
+    private void onClickCreateChat(){
+        if(selectedUser != null) {
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Dialog");
             alert.setHeaderText("You are about to create a chat for " + this.selectedUser);
@@ -137,15 +139,15 @@ public class Controller {
             userToAdd.setMaxWidth(75);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                if (userToAdd.getText() != null && !userToAdd.getText().equals("")) {
+                if(userToAdd.getText() != null && ! userToAdd.getText().equals("")){
 
-                    if (this.privateChatsUser.getItems().contains(userToAdd.getText())) {
+                    if(this.privateChatsUser.getItems().contains(userToAdd.getText())){
                         groupManager.createPrivate(this.selectedUser, userToAdd.getText());
-                    } else {
+                    }else{
                         Alert warn = new Alert(AlertType.ERROR, "This user does not exist!");
                         warn.showAndWait();
                     }
-                } else {
+                }else{
                     Alert warn = new Alert(AlertType.WARNING, "Please enter a name!");
                     warn.showAndWait();
                 }
@@ -155,15 +157,15 @@ public class Controller {
     }
 
     @FXML
-    private void onClickChats() {
+    private void onClickChats(){
         this.selectedChat = this.privateChatsUsersChats.getSelectionModel().getSelectedItem();
     }
 
     @FXML
-    private void onClickUsers() {
+    private void onClickUsers(){
         this.selectedUser = this.privateChatsUser.getSelectionModel().getSelectedItem();
         this.privateChatsUsersChats.getItems().clear();
-        if (this.selectedUser != null) {
+        if(this.selectedUser != null) {
             for (Map.Entry<String, ArrayList<String>> entry : userManager.getAllChatsFromUser(this.selectedUser).entrySet()) {
                 this.privateChatsUsersChats.getItems().add(entry.getKey());
             }
@@ -187,7 +189,7 @@ public class Controller {
     private void onClickTempBanButton() {
         if (getSelectedUser() != null) {
             showPopup("Kick!", "Kicking User: " + getSelectedUser().getName(), r -> {
-                if (cm.kick(getSelectedUser().getName(), r, "You were Kicked!"))
+                if(cm.kick(getSelectedUser().getName(), r, "You were Kicked!"))
                     log.administration("Kicked >> " + getSelectedUser().getName() + ": " + r);
             });
         }
@@ -221,9 +223,9 @@ public class Controller {
         }
 
         userTableView.setItems(items);
-        if (showPwdButton.getText().equals("Show Passwords")) {
+        if(showPwdButton.getText().equals("Show Passwords")){
             this.showPwdButton.setText("Hide Passwords");
-        } else {
+        }else{
             this.showPwdButton.setText("Show Passwords");
         }
     }
@@ -259,7 +261,7 @@ public class Controller {
             updateListUser();
 
 
-            for (String aUser : affectedUsers)
+            for(String aUser:affectedUsers)
                 sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUser(aUser));
             cm.message(group.getName(), username, username + " has left the Room!");
 
@@ -269,37 +271,64 @@ public class Controller {
     @FXML
     private void onClickAddUserButton() {
         if (getSelectedGroup() != null) {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setHeaderText("Please Enter Username:");
-            dialog.setTitle("Add User");
 
-            Optional<String> result = dialog.showAndWait();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Selection Dialog");
+            alert.setHeaderText("Please select someone to chat with!");
 
-            result.ifPresent(username -> {
-                ArrayList<String> allUsersLowerCase = new ArrayList<>();
-                for (String s : groupManager.getAllUsers(getSelectedGroup().getName())) {
-                    allUsersLowerCase.add(s.toLowerCase());
+
+            ListView<String> onlineList = new ListView<>();
+            onlineList.getItems().addAll(userManager.getAllUsers());
+
+            for(String s : this.userList.getItems()){
+                onlineList.getItems().remove(s);
+            }
+
+            onlineList.setMaxWidth(Double.MAX_VALUE);
+            onlineList.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(onlineList, Priority.ALWAYS);
+            GridPane.setHgrow(onlineList, Priority.ALWAYS);
+
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(onlineList, 0, 1);
+
+            alert.getDialogPane().setContent(expContent);
+
+            Optional<ButtonType> result1 = alert.showAndWait();
+            if (result1.get() == ButtonType.OK) {
+
+                String username = onlineList.getSelectionModel().getSelectedItem();
+
+                if(username != null && ! username.equals("")) {
+                    ArrayList<String> allUsersLowerCase = new ArrayList<>();
+                    for (String s : groupManager.getAllUsers(getSelectedGroup().getName())) {
+                        allUsersLowerCase.add(s.toLowerCase());
+                    }
+                    if (userManager.userExists(username) && !allUsersLowerCase.contains(username.toLowerCase())) {
+                        groupManager.addUser(getSelectedGroup(), username);
+                        ObservableList<String> user = userList.getItems();
+                        user.add(username);
+
+                        userList.setItems(user);
+                        log.administration("Added User >> " + getSelectedGroup() + " <- " + username);
+
+                        updateListUser();
+
+                        ArrayList<String> affectedUsers = groupManager.getAllUsers(getSelectedGroup().getName());
+                        for (String aUser : affectedUsers)
+                            sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUser(aUser));
+                        cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
+
+                    } else {
+                        Alert warn = new Alert(AlertType.WARNING, "User ist schon Mitglied der Gruppe oder existiert nicht!");
+                        warn.showAndWait();
+                    }
+                }else{
+                    Alert warn = new Alert(AlertType.WARNING, "Kein User wurde ausgewählt!");
+                    warn.showAndWait();
                 }
-                if (userManager.userExists(username) && !allUsersLowerCase.contains(username.toLowerCase())) {
-                    groupManager.addUser(getSelectedGroup(), username);
-                    ObservableList<String> user = userList.getItems();
-                    user.add(username);
-
-                    userList.setItems(user);
-                    log.administration("Added User >> " + getSelectedGroup() + " <- " + username);
-
-                    updateListUser();
-
-                    ArrayList<String> affectedUsers = groupManager.getAllUsers(getSelectedGroup().getName());
-                    for (String aUser : affectedUsers)
-                        sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUser(aUser));
-                    cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
-
-                } else {
-                    Alert alert = new Alert(AlertType.WARNING, "User ist schon Mitglied der Gruppe oder existiert nicht!");
-                    alert.showAndWait();
-                }
-            });
+            }
         }
 
         // TODO: maybe add drop down menu to dialog
@@ -323,7 +352,7 @@ public class Controller {
                 log.administration("Deleted Group >> " + group);
 
                 updateListGroup();
-                for (String user : affectedUsers)
+                for(String user:affectedUsers)
                     sendUpdateInfo(user, "group", userManager.getAllGroupsWithUser(user));
 
             }
@@ -359,12 +388,13 @@ public class Controller {
 
     @FXML
     private void onClickEditGroupButton() {
-        if (getSelectedGroup() != null) {
+        if(getSelectedGroup() != null){
+
 
 
             showPopup("Change Name", "Please Enter new Name:", name -> {
 
-                if (groupManager.groupExists(name)) {
+                if(groupManager.groupExists(name)){
                     Alert warn = new Alert(AlertType.ERROR, "Groupname is already taken!");
                     warn.showAndWait();
                     return;
@@ -425,11 +455,6 @@ public class Controller {
 
     //<editor-fold desc="Settings Tab">
     @FXML
-    private void onClickExportLogs() {
-
-    }
-
-    @FXML
     private void onClickSaveBtn() {
 
         String contentText = "";
@@ -472,8 +497,9 @@ public class Controller {
     //</editor-fold>
 
 
+
     @FXML
-    public void reloadTabs() {
+    public void reloadTabs(){
 
         userTableView.getItems().clear();
         userTablePassword.getColumns().clear();
@@ -513,9 +539,9 @@ public class Controller {
         initComponents();
     }
 
-    private void initComponents() {
+    private void initComponents(){
         //Test Connection
-        if (!groupManager.mySQLDataBase.openConnection()) {
+        if(! groupManager.mySQLDataBase.openConnection()) {
             System.out.println("Database not reachable! Application shutting down.");
             System.exit(0);
         }
@@ -525,7 +551,7 @@ public class Controller {
         //User Tableview
         ObservableList<User> userList = userTableView.getItems();
         Map<String, String> user = groupManager.getUsers();
-        for (Map.Entry<String, String> entry : user.entrySet())
+        for(Map.Entry<String, String> entry:user.entrySet())
             userList.add(new User(entry.getKey(), entry.getValue(), false, false));
         userTableView.setItems(userList);
 
@@ -576,11 +602,9 @@ public class Controller {
         userTableView.setItems(items);
     }
 
-    public void sendUpdateInfo(String username, String type, Object data) {
+    public void sendUpdateInfo(String username, String type, Object data){
         cm.sendUpdateInfo(username, type, data);
     }
 
-    private void exportLogs(String path, String count) {
 
-    }
 }
