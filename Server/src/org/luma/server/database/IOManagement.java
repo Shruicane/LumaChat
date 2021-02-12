@@ -9,10 +9,18 @@ public class IOManagement {
     public IOManagement() {
     }
 
+    public void writeLog(String path, ArrayList<String> logs) {
+        StringBuilder content = new StringBuilder();
+        for(String log:logs){
+            content.append(log).append("\n");
+        }
+        writeLog(path, content.toString());
+    }
+
     public void writeLog(String path, String log) {
         if (!fileExists(path))
             createFile(path);
-        write(log, path, true);
+        write(log, path, false);
     }
 
     public void write(String content, String path, boolean oldContentStay) {

@@ -1,6 +1,7 @@
 package org.luma.server.network;
 
 import org.luma.server.database.IOManagement;
+import org.luma.server.database.LogLevel;
 import org.luma.server.database.LogManager;
 import org.luma.server.database.MySQLDataBase;
 import org.luma.server.frontend.controller.Controller;
@@ -53,7 +54,7 @@ public class Logger {
         String prefix = formatPrefix("[NET]");
         System.out.println(colorize(prefix + str, 32));
         controller.updateLogArea(prefix + str);
-        logManager.saveLog(str, LogManager.NETWORK);
+        logManager.saveLog(str, LogLevel.NETWORK);
     }
 
     public void info(String str) {
@@ -68,7 +69,7 @@ public class Logger {
         String prefix = formatPrefix("[ERR]");
         System.out.println(colorize(prefix + str, 31));
         controller.updateLogArea(prefix + str);
-        logManager.saveLog(str, LogManager.ERROR);
+        logManager.saveLog(str, LogLevel.ERROR);
     }
 
     public void warning(String str) {
@@ -76,7 +77,7 @@ public class Logger {
         String prefix = formatPrefix("[WAR]");
         System.out.println(colorize(prefix + str, 33));
         controller.updateLogArea(prefix + str);
-        logManager.saveLog(str, LogManager.WARNING);
+        logManager.saveLog(str, LogLevel.WARNING);
     }
 
     public void cmd(String str) {
@@ -84,7 +85,6 @@ public class Logger {
         String prefix = formatPrefix("[CMD]");
         System.out.println(colorize(prefix + str, 37));
         controller.updateLogArea(prefix + str);
-        logManager.saveLog(str, LogManager.COMMAND);
     }
 
     public void message(String str) {
@@ -92,14 +92,14 @@ public class Logger {
         String prefix = formatPrefix("[MSG]");
         System.out.println(colorize(prefix + str, 0));
         controller.updateLogArea(prefix + str);
-        logManager.saveLog(str, LogManager.MESSAGE);
+        logManager.saveLog(str, LogLevel.MESSAGE);
     }
 
     public void administration(String str){
         String prefix = formatPrefix("[ADM]");
         System.out.println(colorize(prefix + str, 0));
         controller.updateLogArea(prefix + str);
-        logManager.saveLog(str, LogManager.ADMINISTRATION);
+        logManager.saveLog(str, LogLevel.ADMINISTRATION);
     }
 
     public void print(String str) {

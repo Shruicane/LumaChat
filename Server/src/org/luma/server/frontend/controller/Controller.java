@@ -533,7 +533,9 @@ public class Controller {
         try{
             int amount = Integer.parseInt(amountTextfield.getText());
             String path = dirTextfield.getText();
-            //TODO: hier deine tolle funktion aufrufen
+            exportLogs(path, amount);
+            Alert al = new Alert(AlertType.INFORMATION, "Export Successfully");
+            al.show();
 
         }catch (NumberFormatException e){
             Alert err = new Alert(AlertType.ERROR, "Please enter a valid number");
@@ -574,6 +576,7 @@ public class Controller {
         server = new ServerMain(this, ioManager, mySQLConnection);
         cm = server.getClientManager();
         log = server.getLogger();
+        logManager = new LogManager(mySQLConnection.getMysqlDatabase());
 
         logArea.setFont(Font.font("Monospaced", FontWeight.MEDIUM, FontPosture.REGULAR, 15));
 
@@ -619,6 +622,7 @@ public class Controller {
     ServerMain server;
     ClientManager cm;
     Logger log;
+    LogManager logManager;
 
 
     private ObservableList<String> emptyDummyList;
@@ -652,7 +656,7 @@ public class Controller {
         cm.sendUpdateInfo(username, type, data);
     }
 
-
-
-
+    public void exportLogs(String path, int count) {
+        ioManager.writeLog(path + "\\logs.txt", logManager.getLogs(count));
+    }
 }

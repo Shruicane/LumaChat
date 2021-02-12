@@ -2,7 +2,7 @@ package org.luma.server.database;
 
 
 public enum LogLevel {
-    MSG(0), NET(1), WARN(2), ERR(3);
+    MESSAGE(0), ADMINISTRATION(1), NETWORK(2), WARNING(3), ERROR(4);
 
     private final int level;
 
@@ -17,13 +17,15 @@ public enum LogLevel {
     public static LogLevel resolveLogLvl(int i){
         switch (i){
             case 1:
-                return LogLevel.NET;
+                return LogLevel.ADMINISTRATION;
             case 2:
-                return LogLevel.WARN;
+                return LogLevel.NETWORK;
             case 3:
-                return LogLevel.ERR;
+                return LogLevel.WARNING;
+            case 4:
+                return LogLevel.ERROR;
             default:
-                return LogLevel.MSG;
+                return LogLevel.MESSAGE;
         }
     }
 
@@ -31,10 +33,12 @@ public enum LogLevel {
     public String toString() {
         switch (this.level){
             case 1:
-                return "NET";
+                return "ADM";
             case 2:
-                return "WARN";
+                return "NET";
             case 3:
+                return "WAR";
+            case 4:
                 return "ERR";
             default:
                 return "MSG";
