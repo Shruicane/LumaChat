@@ -1,6 +1,9 @@
 package org.luma.server.database;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class LogManager {
@@ -29,6 +32,32 @@ public class LogManager {
         String query = "INSERT INTO `logdata` (`LogMessage`, `LogLvl`, `Datum`, `Uhrzeit`) " +
                 "VALUES ('" + logMsg+ "', '" + logLevel + "', '" + datum + "', '" + time + "');";
         mySQLDataBase.executeUpdate(query);
+    }
+
+    public ArrayList<String> getLogs(int amountOfEntries){
+        ArrayList<String> result = new ArrayList<>();
+        int count = 0;
+        String amountQuery = "SELECT COUNT(*) FROM logdata";
+        ResultSet rs = mySQLDataBase.executeQuery(amountQuery);
+
+        try {
+            count = rs.getInt("COUNT(*)");
+            String listQuery = "SELECT * FROM `logdata` WHERE `ID` >= " + (count - amountOfEntries);
+            rs = mySQLDataBase.executeQuery(listQuery);
+
+            String msg = "";
+            while (rs.next()){
+                LogLevel logLevel = LogLevel.resolveLogLvl(rs.getInt("LogLvl"));
+                msg = rs.getString("Datum") + " " + rs.getString("Uhrzeit") + " [" + logLevel.toString() + "] >> " +
+                        rs.getString("LogMessage");
+                result.add(msg);
+            }
+
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+
+        return result;
     }
 
 }
