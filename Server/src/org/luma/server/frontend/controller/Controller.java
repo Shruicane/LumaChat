@@ -265,6 +265,10 @@ public class Controller {
 
             for(String aUser:affectedUsers)
                 sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUser(aUser));
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ignored) {
+            }
             cm.message(group.getName(), username, username + " has left the Room!");
 
         }
@@ -320,6 +324,10 @@ public class Controller {
                         ArrayList<String> affectedUsers = groupManager.getAllUsers(getSelectedGroup().getName());
                         for (String aUser : affectedUsers)
                             sendUpdateInfo(aUser, "group", userManager.getAllGroupsWithUser(aUser));
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ignored) {
+                        }
                         cm.message(getSelectedGroup().getName(), username, username + " has joined the Room!");
 
                     } else {

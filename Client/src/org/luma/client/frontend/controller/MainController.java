@@ -222,7 +222,7 @@ public class MainController {
             chatData.get(receiver).add(msg);
 
             if (getSelectedChat() != null && receiver.matches(getSelectedChat()) && chatTabs.getSelectionModel().getSelectedIndex() == 0)
-                messagesTextArea.appendText(msg + "\n");
+                updateUserList();
         }
     }
 
@@ -282,6 +282,11 @@ public class MainController {
 
                 groupChats.getSelectionModel().select(selectedGroup);
                 selectedGroup = "";
+
+                for(String group:groupMessages.keySet()){
+                    if(!groupData.containsKey(group))
+                        groupMessages.remove(group);
+                }
 
                 updateUserList();
             });
