@@ -195,7 +195,7 @@ public class MainController {
         if (chatTabs.getSelectionModel().getSelectedIndex() == 0) {
             if (!msg.isEmpty() && getSelectedChat() != null) {
                 if(client.sendPrivate(getSelectedChat(), msg)) {
-                    new Logger(ClientGUI.getClient().getGui()).message("private", getSelectedChat(), "Du: " + msg);
+                    new Logger(ClientGUI.getClient().getGui()).message("private", getSelectedChat(), ClientGUI.getClient().getName() + ": " + msg);
                 }
             }
         } else {
@@ -295,7 +295,6 @@ public class MainController {
     private String selectedChat;
 
     public void updatePrivateView(Map<String, ArrayList<String>> data) {
-        System.out.println("Update -- wohoo");
         Thread thread = new Thread(() -> {
             Platform.runLater(() -> {
                 selectedChat = privateChats.getSelectionModel().getSelectedItem();

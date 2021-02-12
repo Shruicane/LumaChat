@@ -22,9 +22,9 @@ public class GroupManagement {
         this.mySQLDataBase = mySQLDataBase;
     }
 
-    public String createGroup(String groupName){
+    public String createGroup(String groupName) {
 
-        if(! groupExists(groupName)){
+        if (!groupExists(groupName)) {
             String query = "INSERT INTO `groupdata` (`ID`, `Type`, `Name`) VALUES (NULL, '1', '" + groupName + "');\n";
             mySQLDataBase.executeUpdate(query);
         }
@@ -32,9 +32,15 @@ public class GroupManagement {
     }
 
     public void createPrivate(String name1, String name2) {
-        String query = "INSERT INTO chatdata (Groupname, Username) VALUES ('" + name1 + "', '" + name2 + "');\n";
+        String query = "INSERT INTO chatdata (Groupname, Username)\n" +
+                "Select '" + name1 + "', '" + name2 + "'\n" +
+                "WHERE NOT EXISTS(\n" +
+                "SELECT * FROM chatdata WHERE Groupname='" + name1 + "' AND Username='" + name2 + "')";
         mySQLDataBase.executeUpdate(query);
-        query = "INSERT INTO chatdata (Groupname, Username) VALUES ('" + name2 + "', '" + name1 + "');\n";
+        query = "INSERT INTO chatdata (Groupname, Username)\n" +
+                "Select '" + name2 + "', '" + name1 + "'\n" +
+                "WHERE NOT EXISTS(\n" +
+                "SELECT * FROM chatdata WHERE Groupname='" + name2 + "' AND Username='" + name1 + "')";
         mySQLDataBase.executeUpdate(query);
     }
 
@@ -43,12 +49,12 @@ public class GroupManagement {
         mySQLDataBase.executeUpdate(query);
     }
 
-    public Map<String, String> getUsers(){
+    public Map<String, String> getUsers() {
         HashMap<String, String> res = new HashMap<>();
         String query = "SELECT * FROM `userdata`";
         ResultSet rs = mySQLDataBase.executeQuery(query);
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 res.put(rs.getString("Username"), rs.getString("Password"));
             }
         } catch (SQLException throwables) {
@@ -57,7 +63,7 @@ public class GroupManagement {
         return res;
     }
 
-    public boolean groupExists(String groupName){
+    public boolean groupExists(String groupName) {
         //Username abgleichen
         String query = "SELECT * FROM `groupdata` WHERE Name=\"" + groupName + "\"";
         ResultSet rs = mySQLDataBase.executeQuery(query);
@@ -69,31 +75,30 @@ public class GroupManagement {
         }
     }
 
-    public void deleteGroup(Group group){
+    public void deleteGroup(Group group) {
         String query1 = "DELETE FROM groupdata WHERE Name='" + group + "'";
         mySQLDataBase.executeUpdate(query1);
         String query2 = "DELETE FROM chatdata WHERE Groupname='" + group + "'";
         mySQLDataBase.executeUpdate(query2);
     }
 
-    public void addUser(Group group, String username){
+    public void addUser(Group group, String username) {
         String query = "INSERT INTO `chatdata` (`ID`, `Groupname`, `Username`) VALUES (NULL, '" + group + "', '" + username + "');\n";
         mySQLDataBase.executeUpdate(query);
     }
 
 
-
-    public void removeUser(Group group, String username){
+    public void removeUser(Group group, String username) {
         String query = "DELETE FROM chatdata WHERE Groupname='" + group + "' AND Username='" + username + "'";
         mySQLDataBase.executeUpdate(query);
     }
 
-    public ArrayList<String> getAllUsers(String groupName){
+    public ArrayList<String> getAllUsers(String groupName) {
         ArrayList<String> res = new ArrayList<>();
         String query = "SELECT * FROM `chatdata` WHERE Groupname=\"" + groupName + "\"";
         ResultSet rs = mySQLDataBase.executeQuery(query);
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 res.add(rs.getString("Username"));
             }
         } catch (SQLException throwables) {
@@ -109,12 +114,12 @@ public class GroupManagement {
         mySQLDataBase.executeUpdate(query2);
     }
 
-    public ArrayList<String> getAllGroups(){
+    public ArrayList<String> getAllGroups() {
         ArrayList<String> res = new ArrayList<>();
         String query = "SELECT * FROM `groupdata`";
         ResultSet rs = mySQLDataBase.executeQuery(query);
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 res.add(rs.getString("Name"));
             }
         } catch (SQLException throwables) {
