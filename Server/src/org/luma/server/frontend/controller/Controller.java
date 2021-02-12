@@ -494,6 +494,11 @@ public class Controller {
         this.dataBaseUserTextField.setText(Settings.getDatabaseUser());
         this.databasePasswordTextField.setText(Settings.getDatabasePassword());
     }
+
+    @FXML
+    private void onClickExportLogs(){
+
+    }
     //</editor-fold>
 
 
@@ -605,6 +610,8 @@ public class Controller {
     public void sendUpdateInfo(String username, String type, Object data){
         cm.sendUpdateInfo(username, type, data);
     }
+
+
 
 
 }
