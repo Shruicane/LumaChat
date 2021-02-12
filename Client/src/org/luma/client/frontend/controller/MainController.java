@@ -138,7 +138,6 @@ public class MainController {
         expContent.setMaxWidth(Double.MAX_VALUE);
         expContent.add(onlineList, 0, 1);
 
-        // Set expandable Exception into the dialog pane.
         alert.getDialogPane().setContent(expContent);
 
         Optional<ButtonType> result = alert.showAndWait();
@@ -181,7 +180,6 @@ public class MainController {
         expContent.setMaxWidth(Double.MAX_VALUE);
         expContent.add(onlineList, 0, 1);
 
-        // Set expandable Exception into the dialog pane.
         alert.getDialogPane().setContent(expContent);
         alert.showAndWait();
 

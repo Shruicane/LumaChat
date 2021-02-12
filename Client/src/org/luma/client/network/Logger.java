@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Logger {
-    GUI gui;
+    private GUI gui;
 
     public Logger(GUI gui){
         this.gui = gui;

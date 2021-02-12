@@ -2,7 +2,6 @@ package org.luma.server.database;
 
 import org.luma.server.frontend.controller.Controller;
 
-import javax.security.auth.login.CredentialException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -93,29 +92,6 @@ public class UserManagement {
         }
         return true;
     }
-
-    /*
-    public boolean createUser(String username, String password){
-        if(!exists(username)){
-            database.addUser(username, password);
-            controller.updateUser(username, password, false);
-            return true;
-        }
-        return false;
-    }*/
-
-    /*public boolean deleteUser(String username){
-        if(exists(username)) {
-            database.removeUser(username);
-            return true;
-        }
-        return false;
-    }*/
-
-    /*
-    public boolean loginUser(String username, String password){
-        return database.checkPassword(username, password) && !database.isBanned(username);
-    }*/
 
     public BanStatus getBanStatus(String username) {
         String query = "SELECT * FROM `userdata` WHERE Username=\"" + username + "\"";

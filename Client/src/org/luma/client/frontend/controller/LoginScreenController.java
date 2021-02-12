@@ -29,9 +29,7 @@ public class LoginScreenController {
             ClientGUI.showMainScreen(client);
             clear();
         } else {
-            // Login Failed
             ClientGUI.getController().showPopup("Wrong Password or Username! (or you are banned)", "Is your Device connected to the Internet?");
-            //System.out.println("Wrong pwd or something");
         }
     }
 

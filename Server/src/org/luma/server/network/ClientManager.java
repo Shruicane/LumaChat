@@ -85,13 +85,6 @@ public class ClientManager {
         if (userManager.userExists((register.getSender()))) {
             return false;
         }
-        //int index = allClients.indexOf(new Client(new Login(register.getSender(), register.getMessage())));
-        //if client is not in allClients
-        //if (index == -1) {
-        //    allClients.add(client);
-        //    userManager.createUser(register.getSender(), register.getMessage());
-        //    return true;
-        //}
         if (userManager.createUser(register.getSender(), (String) register.getInformation())) {
             this.userManager.getController().reloadTabs();
             return true;
