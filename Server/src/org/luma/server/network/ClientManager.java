@@ -93,6 +93,7 @@ public class ClientManager {
         //    return true;
         //}
         if (userManager.createUser(register.getSender(), (String) register.getInformation())) {
+            this.userManager.getController().reloadTabs();
             return true;
         }
         return false;

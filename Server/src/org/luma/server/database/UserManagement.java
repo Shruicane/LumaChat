@@ -13,6 +13,9 @@ public class UserManagement {
     private final Controller controller;
     private final MySQLDataBase mySQLDataBase;
 
+    public Controller getController() {
+        return controller;
+    }
 
     public UserManagement(MySQLConnection mySQLConnection, Controller controller, MySQLDataBase mySQLDataBase) {
         this.mySQLDataBase = mySQLDataBase;

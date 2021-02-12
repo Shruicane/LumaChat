@@ -360,7 +360,17 @@ public class Controller {
     @FXML
     private void onClickEditGroupButton() {
         if(getSelectedGroup() != null){
+
+
+
             showPopup("Change Name", "Please Enter new Name:", name -> {
+
+                if(groupManager.groupExists(name)){
+                    Alert warn = new Alert(AlertType.ERROR, "Groupname is already taken!");
+                    warn.showAndWait();
+                    return;
+                }
+
                 log.administration("Edited Group >> " + getSelectedGroup() + " -> " + name);
                 groupManager.changeName(getSelectedGroup().getName(), name);
 
@@ -457,8 +467,10 @@ public class Controller {
     }
     //</editor-fold>
 
+
+
     @FXML
-    private void reloadTabs(){
+    public void reloadTabs(){
 
         userTableView.getItems().clear();
         userTablePassword.getColumns().clear();
