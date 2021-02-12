@@ -12,6 +12,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.stage.DirectoryChooser;
 import org.luma.server.database.*;
 import org.luma.server.frontend.ServerGUI;
 import org.luma.server.network.ClientManager;
@@ -20,6 +21,7 @@ import org.luma.server.network.ServerMain;
 import org.luma.server.settings.ServerSettings;
 import org.luma.server.settings.Settings;
 
+import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -274,7 +276,7 @@ public class Controller {
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Selection Dialog");
-            alert.setHeaderText("Please select someone to chat with!");
+            alert.setHeaderText("Please select someone to add!");
 
 
             ListView<String> onlineList = new ListView<>();
@@ -497,7 +499,44 @@ public class Controller {
 
     @FXML
     private void onClickExportLogs(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Print Logs");
+        alert.setHeaderText("Please enter the amount of Logs you want to print.");
 
+        TextField amountTextfield = new TextField();
+        TextField dirTextfield = new TextField();
+        Button btn = new Button("...");
+        btn.setPrefSize(25, 25);
+        Label dirLabel = new Label("Please select a directory.");
+        dirLabel.setPrefWidth(200);
+        Label amountLabel = new Label("Please enter the amount of Logs you want to print.");
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        btn.setOnMouseClicked(event -> {
+
+            File selectedFile = dirChooser.showDialog(this.databaseTextField.getParent().getScene().getWindow());
+            dirTextfield.setText(selectedFile.getAbsolutePath());
+        });
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(amountLabel, 0, 0);
+        expContent.add(amountTextfield, 0, 1);
+        expContent.add(dirLabel, 0, 3);
+        expContent.add(dirTextfield, 0, 4);
+        expContent.add(btn, 1, 4);
+
+        alert.getDialogPane().setContent(expContent);
+        alert.showAndWait();
+
+        try{
+            int amount = Integer.parseInt(amountTextfield.getText());
+            String path = dirTextfield.getText();
+            //TODO: hier deine tolle funktion aufrufen
+
+        }catch (NumberFormatException e){
+            Alert err = new Alert(AlertType.ERROR, "Please enter a valid number");
+            err.showAndWait();
+        }
     }
     //</editor-fold>
 

@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 public class Logger {
     Controller controller;
     IOManagement ioManager;
-    LogManager logManager;
+    private LogManager logManager;
 
     public Logger(Controller controller, IOManagement ioManager, MySQLDataBase mySQLDataBase){
         this.controller = controller;
@@ -104,5 +104,9 @@ public class Logger {
 
     public void print(String str) {
         System.out.println(str);
+    }
+
+    public LogManager getLogManager() {
+        return logManager;
     }
 }
